@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>报名表单 - 骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- 顶部 -->
+        <div class="mp-header">
+            <span class="back-btn">←</span>
+            <span>填写报名信息</span>
+        </div>
+
+        <div class="page-content">
+            <!-- 活动摘要 -->
+            <div class="order-card" style="margin:12px 12px 0;">
+                <div style="display:flex;gap:12px;align-items:center;">
+                    <div style="width:60px;height:60px;background:linear-gradient(135deg,#1a5f9e,#2d8bc9);border-radius:8px;flex-shrink:0;"></div>
+                    <div>
+                        <div style="font-size:15px;font-weight:600;margin-bottom:4px;">2026 环青海湖国际骑行挑战赛</div>
+                        <div style="font-size:12px;color:#999;">2026年7月15日-18日 · 4天3晚</div>
+                        <div style="font-size:14px;color:#f5a623;font-weight:600;margin-top:4px;">¥1680/人</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 表单 -->
+            <div class="form-container">
+                <div class="form-group">
+                    <label class="form-label">姓名 <span style="color:#ff4d4f">*</span></label>
+                    <input type="text" class="form-input" placeholder="请输入真实姓名" value="张伟">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">手机号 <span style="color:#ff4d4f">*</span></label>
+                    <input type="tel" class="form-input" placeholder="用于接收报名通知" value="138****6789">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">身份证号 <span style="color:#ff4d4f">*</span></label>
+                    <input type="text" class="form-input" placeholder="用于购买保险和实名认证">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">紧急联系人 <span style="color:#ff4d4f">*</span></label>
+                    <input type="text" class="form-input" placeholder="请输入紧急联系人姓名">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">紧急联系人电话 <span style="color:#ff4d4f">*</span></label>
+                    <input type="tel" class="form-input" placeholder="请输入紧急联系人电话">
+                </div>
+
+                <!-- 附加选项 -->
+                <div style="background:white;border-radius:8px;padding:12px;margin-bottom:16px;">
+                    <div style="font-size:14px;font-weight:600;margin-bottom:10px;">附加服务</div>
+                    <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer;">
+                        <input type="checkbox" style="accent-color:#1a5f9e;width:16px;height:16px;">
+                        <span style="font-size:14px;">租用专业骑行装备（+¥280）</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                        <input type="checkbox" style="accent-color:#1a5f9e;width:16px;height:16px;">
+                        <span style="font-size:14px;">额外购买骑行保险（+¥50）</span>
+                    </label>
+                </div>
+
+                <!-- 健康承诺 -->
+                <div class="form-agree">
+                    <input type="checkbox" id="agree">
+                    <label for="agree">我已阅读并同意<a href="#" style="color:#1a5f9e;">《健康承诺书》</a>和<a href="#" style="color:#1a5f9e;">《报名协议》</a>。本人确认身体健康，适合参加此次骑行活动，如因个人健康问题导致意外，自行承担相应责任。</label>
+                </div>
+
+                <!-- 费用明细 -->
+                <div style="background:white;border-radius:8px;padding:12px;margin-bottom:16px;">
+                    <div style="font-size:14px;font-weight:600;margin-bottom:10px;">费用明细</div>
+                    <div style="display:flex;justify-content:space-between;font-size:13px;color:#666;margin-bottom:6px;">
+                        <span>报名费</span><span>¥1680</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:13px;color:#666;margin-bottom:6px;">
+                        <span>骑行装备租赁</span><span>¥0</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:13px;color:#666;margin-bottom:6px;">
+                        <span>额外保险</span><span>¥0</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:600;padding-top:10px;border-top:1px solid #eee;">
+                        <span>应付总额</span><span style="color:#ff4d4f;">¥1680</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部提交 -->
+        <div class="bottom-bar">
+            <a href="payment.html" class="btn-primary" style="flex:1;">确认报名</a>
+        </div>
+    </div>
+
+    <!-- 底部Tab -->
+    <nav class="tab-bar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">🏠</div>
+            <span>首页</span>
+        </a>
+        <a href="offline.html" class="tab-item">
+            <div class="tab-icon">📍</div>
+            <span>线下</span>
+        </a>
+        <a href="charity.html" class="tab-item">
+            <div class="tab-icon">❤️</div>
+            <span>公益</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">👤</div>
+            <span>我的</span>
+        </a>
+    </nav>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Banner Section -->
+        <section class="banner">
+            <div class="banner-slide active">
+                <img src="images/banner1.jpg" alt="骑行活动">
+                <div class="banner-content">
+                    <h2>高原骑行挑战赛</h2>
+                    <p>挑战极限，超越自我</p>
+                </div>
+            </div>
+            <div class="banner-slide">
+                <img src="images/banner2.jpg" alt="骑行路线">
+                <div class="banner-content">
+                    <h2>探索最美骑行路线</h2>
+                    <p>领略高原壮丽风光</p>
+                </div>
+            </div>
+            <div class="banner-dots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+            </div>
+        </section>
+
+        <!-- Activity Cards Section -->
+        <section class="activities">
+            <div class="section-header">
+                <h2>热门活动</h2>
+                <a href="#" class="more-link">查看更多 &gt;</a>
+            </div>
+            <div class="activity-list">
+                <a href="activity-detail.html" class="activity-card">
+                    <div class="card-image">
+                        <img src="images/activity1.jpg" alt="环湖挑战赛" onerror="this.style.display='none'">
+                        <span class="tag tag-hot">热门</span>
+                    </div>
+                    <div class="card-content">
+                        <h3>2026 环青海湖国际骑行挑战赛</h3>
+                        <p class="card-desc">全程360公里，4天3夜，高原骑行终极挑战</p>
+                        <div class="card-meta">
+                            <span class="time">📅 7月15日-18日</span>
+                            <span class="card-price">¥1680</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="activity-detail.html" class="activity-card">
+                    <div class="card-image">
+                        <img src="images/activity2.jpg" alt="亲子夏令营" onerror="this.style.display='none'">
+                        <span class="tag tag-new">新上线</span>
+                    </div>
+                    <div class="card-content">
+                        <h3>2026 暑期亲子骑行夏令营</h3>
+                        <p class="card-desc">6-14岁儿童及家长，4天3晚亲子时光</p>
+                        <div class="card-meta">
+                            <span class="time">📅 7月20日-25日</span>
+                            <span class="card-price">¥2980</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="activity-detail.html" class="activity-card">
+                    <div class="card-image">
+                        <img src="images/activity3.jpg" alt="春季邀请赛" onerror="this.style.display='none'">
+                    </div>
+                    <div class="card-content">
+                        <h3>2026 春季高原骑行邀请赛</h3>
+                        <p class="card-desc">三天两夜，翻越垭口，挑战极限</p>
+                        <div class="card-meta">
+                            <span class="time">📅 4月05日-07日</span>
+                            <span class="card-price">¥880</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="activity-detail.html" class="activity-card">
+                    <div class="card-image">
+                        <img src="images/activity4.jpg" alt="深度环线" onerror="this.style.display='none'">
+                        <span class="tag tag-recommend">推荐</span>
+                    </div>
+                    <div class="card-content">
+                        <h3>拉萨 - 羊卓雍措深度骑行</h3>
+                        <p class="card-desc">高原圣湖，天路骑行，摄影天堂</p>
+                        <div class="card-meta">
+                            <span class="time">📅 8月01日-05日</span>
+                            <span class="card-price">¥3280</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="tab-bar">
+        <a href="index.html" class="tab-item active">
+            <div class="tab-icon">🏠</div>
+            <span>首页</span>
+        </a>
+        <a href="offline.html" class="tab-item">
+            <div class="tab-icon">📍</div>
+            <span>线下</span>
+        </a>
+        <a href="charity.html" class="tab-item">
+            <div class="tab-icon">❤️</div>
+            <span>公益</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">👤</div>
+            <span>我的</span>
+        </a>
+    </nav>
+
+    <script>
+    // 简单的Banner轮播
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.banner-slide');
+    const dots = document.querySelectorAll('.dot');
+    setInterval(() => {
+        slides[currentSlide].classList.remove('active');
+        dots[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+        dots[currentSlide].classList.add('active');
+    }, 3000);
+    </script>
+</body>
+</html>

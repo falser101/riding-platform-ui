@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>我的报名 - 骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- 顶部 -->
+        <div class="mp-header">
+            <span class="back-btn">←</span>
+            <span>我的报名</span>
+        </div>
+
+        <div class="page-content">
+            <!-- Tab切换 -->
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab(this)">全部</div>
+                <div class="tab" onclick="switchTab(this)">待支付</div>
+                <div class="tab" onclick="switchTab(this)">已报名</div>
+                <div class="tab" onclick="switchTab(this)">已结束</div>
+            </div>
+
+            <!-- 已报名卡片 -->
+            <div class="signup-card">
+                <div class="signup-thumb">🏔️<br>环青海湖</div>
+                <div class="signup-info">
+                    <div class="signup-title">2026 环青海湖国际骑行挑战赛</div>
+                    <div class="signup-meta">7月15日-18日 · 西宁</div>
+                    <div class="signup-meta">报名编号：RB20260715001</div>
+                    <span class="signup-status status-paid">已报名</span>
+                </div>
+            </div>
+
+            <!-- 待支付卡片 -->
+            <div class="signup-card">
+                <div class="signup-thumb" style="background:linear-gradient(135deg,#f5a623,#ff8c00);">🏕️<br>亲子营</div>
+                <div class="signup-info">
+                    <div class="signup-title">2026 暑期亲子骑行夏令营</div>
+                    <div class="signup-meta">7月20日-25日 · 青海湖</div>
+                    <div class="signup-meta">报名编号：RB20260720003</div>
+                    <span class="signup-status status-pending">待支付 ¥2980</span>
+                </div>
+            </div>
+
+            <!-- 已结束卡片 -->
+            <div class="signup-card">
+                <div class="signup-thumb" style="background:linear-gradient(135deg,#8B4513,#a0522d);">🏆<br>拉萨站</div>
+                <div class="signup-info">
+                    <div class="signup-title">2025 拉萨国际自行车挑战赛</div>
+                    <div class="signup-meta">8月10日-15日 · 拉萨</div>
+                    <div class="signup-meta">报名编号：RB20250810012</div>
+                    <span class="signup-status status-finished">已结束</span>
+                </div>
+            </div>
+
+            <!-- 取消卡片 -->
+            <div class="signup-card">
+                <div class="signup-thumb" style="background:linear-gradient(135deg,#999,#bbb);">🌸<br>春季赛</div>
+                <div class="signup-info">
+                    <div class="signup-title">2026 春季高原骑行邀请赛</div>
+                    <div class="signup-meta">4月5日-7日 · 四川康定</div>
+                    <div class="signup-meta">报名编号：RB20260405008</div>
+                    <span class="signup-status status-cancelled">已取消</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部Tab -->
+    <nav class="tab-bar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">🏠</div>
+            <span>首页</span>
+        </a>
+        <a href="offline.html" class="tab-item">
+            <div class="tab-icon">📍</div>
+            <span>线下</span>
+        </a>
+        <a href="charity.html" class="tab-item">
+            <div class="tab-icon">❤️</div>
+            <span>公益</span>
+        </a>
+        <a href="profile.html" class="tab-item active">
+            <div class="tab-icon">👤</div>
+            <span>我的</span>
+        </a>
+    </nav>
+
+    <script>
+    function switchTab(el) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+    }
+    </script>
+</body>
+</html>

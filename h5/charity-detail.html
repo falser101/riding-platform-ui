@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>公益活动详情 - 骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- 封面 -->
+        <div class="charity-detail-cover">
+            <span class="back-btn">←</span>
+            <div style="color:white;">
+                <div style="font-size:13px;opacity:0.8;margin-bottom:4px;">公益活动</div>
+                <div style="font-size:22px;font-weight:700;">"骑向未来"亲子骑行活动</div>
+            </div>
+        </div>
+
+        <!-- 活动信息 -->
+        <div class="detail-info">
+            <div class="detail-tags">
+                <span class="detail-tag" style="background:#fff0f0;color:#ff4d4f;">🔥 热门</span>
+                <span class="detail-tag">报名中</span>
+                <span class="detail-tag">公益</span>
+            </div>
+            <div class="detail-meta">
+                <div>📅 每周六/周日 09:00 - 12:00</div>
+                <div>📍 青海湖二郎剑景区入口广场</div>
+                <div>👨‍👩‍👧 适合年龄：6-14岁儿童及家长</div>
+                <div>👥 已报名：28组 / 限50组</div>
+            </div>
+            <div class="detail-price" style="color:#52c41a;">免费报名</div>
+        </div>
+
+        <!-- Tab切换 -->
+        <div class="detail-tabs">
+            <div class="detail-tab active" onclick="switchTab(this, 0)">活动介绍</div>
+            <div class="detail-tab" onclick="switchTab(this, 1)">往期回顾</div>
+            <div class="detail-tab" onclick="switchTab(this, 2)">报名须知</div>
+        </div>
+        <div class="detail-tab-content" id="tabContent">
+            <strong>🚴 活动简介</strong><br><br>
+            "骑向未来"亲子骑行活动是面向6-14岁儿童及家长的公益骑行项目，由西藏骑闯第三极体育文化传播有限公司联合青海省慈善总会共同举办。<br><br>
+            每周末，我们邀请家长和孩子一起参与轻松的亲子骑行活动，感受高原自然风光，培养孩子的骑行兴趣和户外运动习惯。<br><br>
+            <strong>📋 活动流程</strong><br>
+            09:00 - 09:30 集合签到，发放活动装备<br>
+            09:30 - 09:45 骑行安全讲解<br>
+            09:45 - 11:30 亲子骑行（约5公里）<br>
+            11:30 - 12:00 互动游戏、合影留念<br><br>
+            <strong>🎁 活动福利</strong><br>
+            • 免费使用儿童自行车（需预约）<br>
+            • 活动纪念品一份<br>
+            • 公益骑行证书<br>
+            • 沿途补给及安全保障
+        </div>
+
+        <!-- 底部报名 -->
+        <div class="bottom-bar">
+            <a href="signup-form.html" class="btn-primary" style="flex:1;background:#ff4d4f;">立即报名</a>
+        </div>
+    </div>
+
+    <!-- 底部Tab -->
+    <nav class="tab-bar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">🏠</div>
+            <span>首页</span>
+        </a>
+        <a href="offline.html" class="tab-item">
+            <div class="tab-icon">📍</div>
+            <span>线下</span>
+        </a>
+        <a href="charity.html" class="tab-item active">
+            <div class="tab-icon">❤️</div>
+            <span>公益</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">👤</div>
+            <span>我的</span>
+        </a>
+    </nav>
+
+    <script>
+    function switchTab(el, idx) {
+        document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        var contents = [
+            '【活动简介】\n"骑向未来"亲子骑行活动是面向6-14岁儿童及家长的公益骑行项目。\n\n【活动流程】\n09:00 - 09:30 集合签到\n09:30 - 09:45 骑行安全讲解\n09:45 - 11:30 亲子骑行（约5公里）\n11:30 - 12:00 互动游戏、合影\n\n【活动福利】\n• 免费使用儿童自行车\n• 活动纪念品一份\n• 公益骑行证书\n• 沿途补给及安全保障',
+            '【2026年3月】"骑向未来"公益骑行\n共40组家庭参与，筹集善款 ¥12,800\n用于资助青海贫困地区儿童\n\n【2026年2月】"为爱骑行"山区助学\n共68人参与，资助学生 15 名\n\n【2026年1月】"绿色骑行"环保行\n收集沿途垃圾 200+ 袋\n\n"和孩子一起参加这个活动非常有意义，孩子特别开心！" —— 家长反馈',
+            '【报名条件】\n1. 6-14岁儿童及家长共同参与\n2. 身体健康，适合户外运动\n3. 自备自行车或提前预约租借\n\n【注意事项】\n1. 请准时到达集合地点\n2. 活动全程需佩戴头盔\n3. 请遵守教练安排，注意安全\n4. 如有特殊健康情况请提前告知\n\n【退款政策】\n公益活动不支持退款，但可转让名额，请提前24小时联系客服。'
+        ];
+        document.getElementById('tabContent').innerText = contents[idx];
+    }
+    </script>
+</body>
+</html>

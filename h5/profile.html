@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>个人中心 - 骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app">
+        <div class="page-content">
+            <!-- 头部信息 -->
+            <div class="profile-header">
+                <div class="profile-info">
+                    <div class="profile-avatar">👤</div>
+                    <div>
+                        <div class="profile-name">张伟</div>
+                        <div class="profile-phone">138****6789</div>
+                        <div class="member-badge">⭐ 银卡会员</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 会员权益 -->
+            <div style="background:white;margin:12px;border-radius:12px;padding:12px;display:flex;gap:8px;">
+                <div style="flex:1;text-align:center;padding:8px 0;">
+                    <div style="font-size:18px;font-weight:700;color:#f5a623;">9.2</div>
+                    <div style="font-size:11px;color:#999;">骑行里程(百公里)</div>
+                </div>
+                <div style="width:1px;background:#eee;"></div>
+                <div style="flex:1;text-align:center;padding:8px 0;">
+                    <div style="font-size:18px;font-weight:700;color:#1a5f9e;">3</div>
+                    <div style="font-size:11px;color:#999;">累计参赛(次)</div>
+                </div>
+                <div style="width:1px;background:#eee;"></div>
+                <div style="flex:1;text-align:center;padding:8px 0;">
+                    <div style="font-size:18px;font-weight:700;color:#52c41a;">128</div>
+                    <div style="font-size:11px;color:#999;">积分</div>
+                </div>
+            </div>
+
+            <!-- 功能菜单 -->
+            <div class="profile-menus">
+                <div class="menu-item" onclick="location.href='my-activities.html'">
+                    <div class="menu-icon">📋</div>
+                    <div class="menu-label">我的报名</div>
+                    <div style="font-size:12px;color:#999;margin-right:8px;">3个活动</div>
+                    <span class="menu-arrow">›</span>
+                </div>
+                <div class="menu-item" onclick="location.href='#'">
+                    <div class="menu-icon">🛒</div>
+                    <div class="menu-label">自行车商城</div>
+                    <span class="menu-arrow">›</span>
+                </div>
+                <div class="menu-item" onclick="location.href='#'">
+                    <div class="menu-icon">🚴</div>
+                    <div class="menu-label">儿童运动成长中心</div>
+                    <span class="menu-arrow">›</span>
+                </div>
+                <div class="menu-item" onclick="location.href='#'">
+                    <div class="menu-icon">⚙️</div>
+                    <div class="menu-label">个人信息</div>
+                    <span class="menu-arrow">›</span>
+                </div>
+                <div class="menu-item" onclick="location.href='#'">
+                    <div class="menu-icon">📞</div>
+                    <div class="menu-label">联系客服</div>
+                    <span class="menu-arrow">›</span>
+                </div>
+            </div>
+
+            <!-- 其他 -->
+            <div class="profile-menus">
+                <div class="menu-item" onclick="location.href='#'">
+                    <div class="menu-icon">📜</div>
+                    <div class="menu-label">报名协议</div>
+                    <span class="menu-arrow">›</span>
+                </div>
+                <div class="menu-item" onclick="location.href='#'">
+                    <div class="menu-icon">ℹ️</div>
+                    <div class="menu-label">关于我们</div>
+                    <span class="menu-arrow">›</span>
+                </div>
+            </div>
+
+            <!-- 退出登录 -->
+            <div style="padding:16px;margin:12px;">
+                <button style="width:100%;padding:12px;background:white;border:1px solid #ddd;border-radius:8px;font-size:15px;color:#666;">退出登录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部Tab -->
+    <nav class="tab-bar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">🏠</div>
+            <span>首页</span>
+        </a>
+        <a href="offline.html" class="tab-item">
+            <div class="tab-icon">📍</div>
+            <span>线下</span>
+        </a>
+        <a href="charity.html" class="tab-item">
+            <div class="tab-icon">❤️</div>
+            <span>公益</span>
+        </a>
+        <a href="profile.html" class="tab-item active">
+            <div class="tab-icon">👤</div>
+            <span>我的</span>
+        </a>
+    </nav>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>活动详情 - 骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            height: 100vh;
+        }
+        .app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 0;
+        }
+        .detail-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 70px;
+        }
+        .detail-tabs {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+        }
+        .detail-tab-content {
+            min-height: 400px;
+        }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- 封面 -->
+        <div class="detail-cover">
+            <span class="back-btn" onclick="history.back()">←</span>
+        </div>
+
+        <!-- 可滚动区域 -->
+        <div class="detail-content-wrapper">
+            <!-- 活动信息 -->
+            <div class="detail-info">
+                <h1 class="detail-title">2026 环青海湖国际骑行挑战赛</h1>
+                <div class="detail-tags">
+                    <span class="detail-tag">热门赛事</span>
+                    <span class="detail-tag">报名中</span>
+                    <span class="detail-tag">高原挑战</span>
+                </div>
+                <div class="detail-meta">
+                    <div>📅 2026年7月15日 - 7月18日</div>
+                    <div>📍 青海湖二郎剑景区 → 鸟岛 → 沙岛 → 金沙湾</div>
+                    <div>🚴 累计爬升 1200m · 全程约 360km</div>
+                    <div>👥 已报名 386 / 500 人</div>
+                </div>
+                <div class="detail-price"><span class="yuan">¥</span>1680 <span style="font-size:12px;color:#666;font-weight:normal;">/ 人</span></div>
+            </div>
+
+            <!-- Tab切换 - 悬浮在顶部 -->
+            <div class="detail-tabs">
+                <div class="detail-tab active" data-tab="0">赛事规程</div>
+                <div class="detail-tab" data-tab="1">路线轨迹</div>
+                <div class="detail-tab" data-tab="2">奖项设置</div>
+                <div class="detail-tab" data-tab="3">往期回顾</div>
+            </div>
+
+            <!-- Tab1：赛事规程 -->
+            <div class="tab-pane active" id="tab0">
+                <div class="detail-tab-content">
+<strong>一、赛事简介</strong>
+环青海湖国际骑行挑战赛已成功举办五届，是国内最具影响力的高原骑行赛事之一。赛道环绕中国最大内陆咸水湖——青海湖，全程约360公里，海拔落差大，对体能和意志都是极大考验。
+
+<strong>二、报名条件</strong>
+1. 年龄18-55周岁，身体健康
+2. 近半年内有骑行经历，单日骑行100km以上
+3. 无高血压、心脏病等不适宜高强度运动的疾病
+4. 需签署健康承诺书
+
+<strong>三、赛事流程</strong>
+D1：西宁集结 → 发放装备 → 行前培训
+D2：二郎剑 → 鸟岛（全程约90km）
+D3：鸟岛 → 沙岛（全程约95km）
+D4：沙岛 → 金沙湾 → 颁奖典礼（全程约85km）
+
+<strong>四、费用说明</strong>
+报名费包含：赛事装备、沿途食宿、后勤保障、医疗救援、景区门票、完赛奖牌。
+
+<strong>五、退款政策</strong>
+• 赛事开始前15天申请退款：退还报名费的80%
+• 赛事开始前7天申请退款：退还报名费的50%
+• 赛事开始前3天内不予退款，但可转让名额
+                </div>
+            </div>
+
+            <!-- Tab2：路线轨迹 -->
+            <div class="tab-pane" id="tab1">
+                <div class="detail-tab-content">
+<strong>【路线数据】</strong>
+📍 起点：青海湖二郎剑景区（海拔3196m）
+⛰️ 最高点：橡皮山垭口（海拔3817m）
+📈 累计爬升：1200m
+🛣️ 路面类型：柏油路 95%，砂石路 5%
+⭐ 难度等级：★★★★☆
+
+<strong>【详细路线】</strong>
+Day 1（7月15日）：西宁集结
+• 14:00-18:00 酒店报到、领取装备
+• 19:00 行前说明会
+
+Day 2（7月16日）：二郎剑 → 鸟岛
+• 07:00 早餐
+• 08:00 出发仪式
+• 08:30-17:00 骑行（约90km）
+• 17:30 入住鸟岛酒店
+
+Day 3（7月17日）：鸟岛 → 沙岛
+• 07:00 早餐
+• 08:00 出发
+• 08:30-17:30 骑行（约95km）
+• 18:00 入住沙岛营地
+
+Day 4（7月18日）：沙岛 → 金沙湾 → 颁奖
+• 07:00 早餐
+• 08:00 出发
+• 08:30-12:30 骑行（约85km）
+• 13:00 终点冲刺
+• 14:00 颁奖典礼
+                </div>
+            </div>
+
+            <!-- Tab3：奖项设置 -->
+            <div class="tab-pane" id="tab2">
+                <div class="detail-tab-content">
+<strong>🏆 总杆奖项</strong>
+🥇 冠军：奖金 ¥5,000 + 冠军奖杯
+🥈 亚军：奖金 ¥3,000 + 奖牌
+🥉 季军：奖金 ¥2,000 + 奖牌
+
+<strong>👥 分组奖项</strong>
+• 男子精英组（18-35岁）：前3名获得定制奖牌
+• 男子大师组（36-55岁）：前3名获得定制奖牌
+• 女子组：前3名获得定制奖牌
+
+<strong>🌟 特别奖项</strong>
+• 最佳团队奖：奖金 ¥2,000
+• 最具拼搏奖：奖金 ¥1,000
+• 巾帼英雄奖：奖金 ¥1,000
+• 最佳新人奖：奖金 ¥500
+
+<strong>🎁 完赛奖励</strong>
+所有完赛选手获得：
+✅ 完赛奖牌一枚
+✅ 官方完赛证书
+✅ 纪念骑行服一件
+✅ 赛事纪念相册
+✅ 青海湖景区门票优惠券
+
+<strong>💰 奖金总额</strong>
+总计：¥18,000
+                </div>
+            </div>
+
+            <!-- Tab4：往期回顾 -->
+            <div class="tab-pane" id="tab3">
+                <div class="detail-tab-content">
+<strong>📅 2025年（第五届）</strong>
+参赛人数：428人
+完赛率：89%（381人完赛）
+最高年龄：53岁
+平均用时：2天14小时
+
+"这是一次灵魂的洗礼，青海湖的美让人窒息。"
+—— 2025参赛选手 王先生
+
+"后勤保障非常到位，骑行过程中完全不用担心。"
+—— 2025参赛选手 李女士
+
+<strong>📅 2024年（第四届）</strong>
+参赛人数：386人
+完赛率：92%
+最高年龄：51岁
+平均用时：2天12小时
+
+<strong>📅 2023年（第三届）</strong>
+参赛人数：312人
+完赛率：87%
+
+<strong>📅 2022年（第二届）</strong>
+参赛人数：256人
+完赛率：85%
+
+<strong>📅 2021年（第一届）</strong>
+参赛人数：168人
+完赛率：82%
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部操作栏 -->
+        <div class="bottom-bar">
+            <a href="signup-form.html" class="btn-primary" style="flex:1;">立即报名</a>
+        </div>
+
+        <!-- 底部Tab -->
+        <nav class="tab-bar">
+            <a href="index.html" class="tab-item">
+                <div class="tab-icon">🏠</div>
+                <span>首页</span>
+            </a>
+            <a href="offline.html" class="tab-item">
+                <div class="tab-icon">📍</div>
+                <span>线下</span>
+            </a>
+            <a href="charity.html" class="tab-item">
+                <div class="tab-icon">❤️</div>
+                <span>公益</span>
+            </a>
+            <a href="profile.html" class="tab-item">
+                <div class="tab-icon">👤</div>
+                <span>我的</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+    // Tab切换逻辑
+    document.querySelectorAll('.detail-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // 切换Tab高亮
+            document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            // 切换内容显示
+            const tabIndex = this.dataset.tab;
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById('tab' + tabIndex).classList.add('active');
+        });
+    });
+    </script>
+</body>
+</html>
