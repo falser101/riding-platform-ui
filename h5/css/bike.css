@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>骑行 - 骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { overflow-y: auto; -webkit-overflow-scrolling: touch; height: 100vh; }
+        .app { display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 0; }
+        .page-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 70px; }
+
+        /* 品牌卡片网格 */
+        .brand-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 12px 16px;
+        }
+        .brand-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .brand-card:active { transform: scale(0.97); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+        .brand-card-img {
+            height: 100px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+        .brand-card-img.trek   { background: linear-gradient(135deg, #e31837, #ff4d4f); }
+        .brand-card-img.giant { background: linear-gradient(135deg, #00a0e9, #005fcc); }
+        .brand-card-img.merida { background: linear-gradient(135deg, #ff6b00, #ff8c00); }
+        .brand-card-img.specialized { background: linear-gradient(135deg, #ff4500, #ff6a00); }
+        .brand-card-img.canyon { background: linear-gradient(135deg, #ff3200, #ff5500); }
+        .brand-card-img.bianchi { background: linear-gradient(135deg, #6eb5ff, #005bea); }
+        .brand-card-info { padding: 10px 12px; }
+        .brand-card-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+        .brand-card-desc { font-size: 11px; color: #999; }
+        .brand-card-count { font-size: 11px; color: #1a5f9e; margin-top: 4px; }
+
+        /* 页面标题栏 */
+        .page-title-bar {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: white;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .page-title-bar h2 { font-size: 17px; font-weight: 600; flex: 1; }
+        .back-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #666;
+            margin-right: 8px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 系列/车型列表 */
+        .series-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+        .series-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.15s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .series-card:active { transform: scale(0.98); }
+        .series-card-img {
+            height: 120px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        .series-card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .series-card-body { padding: 12px; }
+        .series-card-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .series-card-type { font-size: 12px; color: #999; margin-bottom: 6px; }
+        .series-card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        .series-tag { padding: 2px 8px; background: #f0f4f8; border-radius: 4px; font-size: 11px; color: #666; }
+
+        /* 年份选择 */
+        .year-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            background: white;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .year-tabs::-webkit-scrollbar { display: none; }
+        .year-tab {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #666;
+            background: #f0f4f8;
+            white-space: nowrap;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .year-tab.active { background: #1a5f9e; color: white; }
+
+        /* 车型卡片 */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 12px 16px;
+        }
+        .model-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+            cursor: pointer;
+            transition: transform 0.15s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .model-card:active { transform: scale(0.97); }
+        .model-card-img {
+            height: 110px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+        .model-card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .model-card-body { padding: 8px 10px; }
+        .model-card-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; line-height: 1.3; }
+        .model-card-year { font-size: 11px; color: #999; }
+        .model-card-price { font-size: 14px; color: #f5a623; font-weight: 600; margin-top: 4px; }
+
+        /* 自行车详情 */
+        .bike-detail-cover {
+            height: 260px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            overflow: hidden;
+        }
+        .bike-detail-cover::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 120px;
+            background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+        }
+        .bike-detail-cover .back-btn {
+            position: absolute;
+            top: env(safe-area-inset-top, 10px);
+            left: 10px;
+            z-index: 10;
+            width: 36px; height: 36px;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+            border-radius: 50%;
+            color: white;
+            font-size: 18px;
+        }
+        .bike-detail-content {
+            background: white;
+            margin: -24px 12px 12px;
+            border-radius: 12px;
+            padding: 16px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .bike-detail-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+        .bike-detail-sub { font-size: 13px; color: #999; margin-bottom: 12px; }
+        .bike-detail-price { font-size: 24px; color: #f5a623; font-weight: 700; margin-bottom: 16px; }
+        .bike-detail-price .unit { font-size: 13px; font-weight: normal; color: #999; margin-left: 2px; }
+
+        .spec-section { margin-top: 16px; }
+        .spec-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: #333; }
+        .spec-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .spec-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+        .spec-label { font-size: 11px; color: #999; margin-bottom: 3px; }
+        .spec-value { font-size: 13px; color: #333; font-weight: 500; }
+
+        .bike-desc { margin-top: 16px; font-size: 13px; color: #666; line-height: 1.7; }
+
+        .add-to-my-btn {
+            width: 100%;
+            padding: 14px;
+            background: #1a5f9e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: all 0.15s;
+        }
+        .add-to-my-btn:active { opacity: 0.85; transform: scale(0.99); }
+        .add-to-my-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .add-to-my-btn.added { background: #52c41a; }
+
+        /* 我的自行车 */
+        .my-bikes-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; }
+        .my-bike-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .my-bike-img {
+            height: 140px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+        .my-bike-img img { width: 100%; height: 100%; object-fit: cover; }
+        .my-bike-body { padding: 12px; }
+        .my-bike-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+        .my-bike-brand { font-size: 12px; color: #999; margin-bottom: 8px; }
+        .my-bike-specs { font-size: 12px; color: #666; line-height: 1.6; }
+        .my-bike-actions { display: flex; gap: 8px; margin-top: 10px; }
+        .my-bike-actions button {
+            flex: 1; padding: 8px; border-radius: 6px; font-size: 13px;
+            cursor: pointer; border: none; transition: opacity 0.15s;
+        }
+        .my-bike-actions .btn-remove { background: #fff0f0; color: #ff4d4f; }
+        .my-bike-actions .btn-detail { background: #f0f4f8; color: #1a5f9e; }
+
+        .my-bikes-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        .my-bikes-empty .icon { font-size: 56px; margin-bottom: 12px; }
+        .my-bikes-empty p { font-size: 14px; margin-bottom: 16px; }
+        .my-bikes-empty .add-link {
+            display: inline-block;
+            padding: 10px 24px;
+            background: #1a5f9e;
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Toast提示 */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.75);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 9999;
+            pointer-events: none;
+            animation: toastAnim 2s ease forwards;
+        }
+        @keyframes toastAnim {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>

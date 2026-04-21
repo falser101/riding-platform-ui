@@ -5,12 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>报名表单 - 骑行平台</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            height: 100vh;
+        }
+        .app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 0;
+        }
+        .page-content {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 70px;
+        }
+    </style>
 </head>
 <body>
     <div class="app">
         <!-- 顶部 -->
         <div class="mp-header">
-            <span class="back-btn">←</span>
+            <span class="back-btn" onclick="history.back()">←</span>
             <span>填写报名信息</span>
         </div>
 
@@ -94,21 +113,17 @@
         </div>
     </div>
 
-    <!-- 底部Tab -->
+            <!-- 底部Tab -->
     <nav class="tab-bar">
-        <a href="index.html" class="tab-item">
-            <div class="tab-icon">🏠</div>
-            <span>首页</span>
-        </a>
-        <a href="offline.html" class="tab-item">
+        <a href="offline.html" class="tab-item" id="tabActivity" class="tab-item active">
             <div class="tab-icon">📍</div>
-            <span>线下</span>
+            <span>活动</span>
         </a>
-        <a href="charity.html" class="tab-item">
-            <div class="tab-icon">❤️</div>
-            <span>公益</span>
+        <a href="bike.html" class="tab-item" id="tabBike">
+            <div class="tab-icon">🚴</div>
+            <span>骑行</span>
         </a>
-        <a href="profile.html" class="tab-item">
+        <a href="profile.html" class="tab-item" id="tabProfile">
             <div class="tab-icon">👤</div>
             <span>我的</span>
         </a>

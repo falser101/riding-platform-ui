@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>车型列表 - 骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bike.css">
+</head>
+<body>
+    <div class="app">
+        <div class="page-title-bar">
+            <span class="back-btn" onclick="history.back()">‹</span>
+            <h2 id="seriesTitle">Domane 系列</h2>
+        </div>
+
+        <!-- 年份Tab -->
+        <div class="year-tabs" id="yearTabs">
+            <!-- 动态渲染 -->
+        </div>
+
+        <!-- 车型网格 -->
+        <div class="model-grid" id="modelGrid">
+            <!-- 动态渲染 -->
+        </div>
+    </div>
+
+    <nav class="tab-bar">
+        <a href="offline.html" class="tab-item"><div class="tab-icon">📍</div><span>活动</span></a>
+        <a href="bike.html" class="tab-item active"><div class="tab-icon">🚴</div><span>骑行</span></a>
+        <a href="profile.html" class="tab-item"><div class="tab-icon">👤</div><span>我的</span></a>
+    </nav>
+
+    <script>
+    // 系列车型数据（按 brand/series 分层）
+    const modelsData = {
+        // TREK
+        trek: {
+            domane: {
+                name: 'Domane 耐力公路',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'domane-sl-2025', name: 'Domane SL 7 Gen 4', price: 36800, specs: { weight: '8.2kg', material: 'OCLV 600碳纤维', groupset: 'Shimano 105 Di2', brakes: '油压碟刹', tires: 'Bontrager R3 32mm' } },
+                        { id: 'domane-sl-2025-pro', name: 'Domane SL 8', price: 52800, specs: { weight: '7.8kg', material: 'OCLV 800碳纤维', groupset: 'Shimano Ultegra Di2', brakes: '油压碟刹', tires: 'Bontrager R4 28mm' } },
+                    ]},
+                    { year: 2024, items: [
+                        { id: 'domane-sl-2024', name: 'Domane SL 6 Gen 3', price: 29800, specs: { weight: '8.5kg', material: 'OCLV 500碳纤维', groupset: 'Shimano 105', brakes: '油压碟刹', tires: 'Bontrager R2 32mm' } },
+                    ]},
+                    { year: 2023, items: [
+                        { id: 'domane-al-2023', name: 'Domane AL 4', price: 15800, specs: { weight: '9.4kg', material: '铝合金', groupset: 'Shimano Tiagra', brakes: '线拉碟刹', tires: 'Bontrager R2 32mm' } },
+                    ]}
+                ]
+            },
+            madone: {
+                name: 'Madone 空气动力学',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'madone-slr-2025', name: 'Madone SLR 9 Gen 8', price: 98800, specs: { weight: '7.1kg', material: 'OCLV 900碳纤维', groupset: 'SRAM RED eTap AXS', brakes: '油压碟刹', tires: 'Bontrager RSL 28mm' } },
+                        { id: 'madone-sl-2025', name: 'Madone SL 6 Gen 8', price: 42800, specs: { weight: '7.8kg', material: 'OCLV 700碳纤维', groupset: 'Shimano 105 Di2', brakes: '油压碟刹', tires: 'Bontrager R3 30mm' } },
+                    ]},
+                    { year: 2024, items: [
+                        { id: 'madone-sl-2024', name: 'Madone SL 5 Gen 7', price: 32800, specs: { weight: '8.1kg', material: 'OCLV 600碳纤维', groupset: 'Shimano Ultegra', brakes: '油压碟刹', tires: 'Bontrager R3 28mm' } },
+                    ]}
+                ]
+            },
+            emonda: {
+                name: 'Emonda 轻量爬坡',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'emonda-slr-2025', name: 'Emonda SLR 9 AXS', price: 89800, specs: { weight: '6.5kg', material: 'OCLV 900碳纤维', groupset: 'SRAM RED eTap AXS', brakes: '油压碟刹', tires: 'Bontrager RSL 25mm' } },
+                        { id: 'emonda-sl-2025', name: 'Emonda SL 7 Gen 6', price: 39800, specs: { weight: '7.1kg', material: 'OCLV 500碳纤维', groupset: 'Shimano Ultegra Di2', brakes: '油压碟刹', tires: 'Bontrager R3 28mm' } },
+                    ]},
+                    { year: 2024, items: [
+                        { id: 'emonda-al-2024', name: 'Emonda AL 5', price: 13800, specs: { weight: '8.8kg', material: 'Alpha铝合金', groupset: 'Shimano 105', brakes: '线拉碟刹', tires: 'Bontrager R2 28mm' } },
+                    ]}
+                ]
+            },
+            checkpoint: {
+                name: 'Checkpoint 砾石公路',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'checkpoint-sl-2025', name: 'Checkpoint SL 7', price: 35800, specs: { weight: '8.8kg', material: 'OCLV 500碳纤维', groupset: 'Shimano GRX Di2', brakes: '油压碟刹', tires: 'Bontrager GR2 40mm' } },
+                    ]},
+                    { year: 2024, items: [
+                        { id: 'checkpoint-al-2024', name: 'Checkpoint AL 4', price: 12800, specs: { weight: '10.1kg', material: '铝合金', groupset: 'Shimano GRX', brakes: '线拉碟刹', tires: 'Bontrager GR1 38mm' } },
+                    ]}
+                ]
+            },
+            fuelex: {
+                name: 'Fuel EX 林道山地',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'fuelex-9-2025', name: 'Fuel EX 9.8', price: 49800, specs: { weight: '13.2kg', material: 'OCLV 500碳纤维', groupset: 'Shimano XT', brakes: 'Shimano MT420 4活塞', tires: 'Maxxis Minion 29x2.4' } },
+                    ]},
+                    { year: 2024, items: [
+                        { id: 'fuelex-7-2024', name: 'Fuel EX 7', price: 28800, specs: { weight: '14.5kg', material: '铝合金', groupset: 'Shimano Deore', brakes: 'Shimano MT410', tires: 'Maxxis Aggressor 29x2.3' } },
+                    ]}
+                ]
+            },
+            superfly: {
+                name: 'Superfly 竞赛山地',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'superfly-9-2025', name: 'Superfly 9.8', price: 46800, specs: { weight: '9.8kg', material: 'OCLV 600碳纤维', groupset: 'Shimano XT', brakes: 'Shimano XT 4活塞', tires: 'Maxxis Rekon 29x2.4' } },
+                    ]}
+                ]
+            }
+        },
+        // GIANT
+        giant: {
+            defy: {
+                name: 'Defy 耐力公路',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'defy-advanced-2025', name: 'Defy Advanced Pro 1', price: 35800, specs: { weight: '7.9kg', material: 'Advanced碳纤维', groupset: 'Shimano 105 Di2', brakes: '油压碟刹', tires: 'Giant Gavia 32mm' } },
+                    ]},
+                    { year: 2024, items: [
+                        { id: 'defy-sl-2024', name: 'Defy SL 1', price: 19800, specs: { weight: '8.8kg', material: '碳纤维复合材料', groupset: 'Shimano Tiagra', brakes: '线拉碟刹', tires: 'Giant S-R3 28mm' } },
+                    ]}
+                ]
+            },
+            tcr: {
+                name: 'TCR 综合竞赛',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'tcr-advanced-sl-2025', name: 'TCR Advanced SL 0', price: 69800, specs: { weight: '6.8kg', material: 'Advanced SL碳纤维', groupset: 'Shimano Dura-Ace Di2', brakes: '油压碟刹', tires: 'Giant SLR 25mm' } },
+                        { id: 'tcr-advanced-2025', name: 'TCR Advanced Pro 1', price: 42800, specs: { weight: '7.3kg', material: 'Advanced Pro碳纤维', groupset: 'Shimano Ultegra Di2', brakes: '油压碟刹', tires: 'Giant Gavia 28mm' } },
+                    ]},
+                    { year: 2024, items: [
+                        { id: 'tcr-sl-2024', name: 'TCR Advanced SL 2', price: 54800, specs: { weight: '7.0kg', material: 'Advanced SL碳纤维', groupset: 'SRAM Force eTap AXS', brakes: '油压碟刹', tires: 'Giant SLR 25mm' } },
+                    ]}
+                ]
+            },
+            propel: {
+                name: 'Propel 气动冲刺',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'propel-advanced-2025', name: 'Propel Advanced Pro 0', price: 48800, specs: { weight: '7.4kg', material: 'Advanced碳纤维', groupset: 'Shimano Ultegra Di2', brakes: '油压碟刹', tires: 'Giant Gavia 28mm' } },
+                    ]}
+                ]
+            },
+            revolt: {
+                name: 'Revolt 砾石探险',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'revolt-advanced-2025', name: 'Revolt Advanced Pro', price: 32800, specs: { weight: '8.5kg', material: 'Advanced碳纤维', groupset: 'Shimano GRX Di2', brakes: '油压碟刹', tires: 'Giant CrossCut 38mm' } },
+                    ]}
+                ]
+            },
+            trance: {
+                name: 'Trance X 林道山地',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'trance-x-advanced-2025', name: 'Trance X Advanced Pro 29', price: 44800, specs: { weight: '13.0kg', material: 'Advanced碳纤维', groupset: 'Shimano XT', brakes: 'Shimano MT420 4活塞', tires: 'Maxxis Minion 29x2.5' } },
+                    ]}
+                ]
+            }
+        },
+        // Specialized
+        specialized: {
+            tarmac: {
+                name: 'Tarmac SL8 爬坡冲刺',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'tarmac-s8-pro', name: 'Tarmac SL8 Expert', price: 55900, specs: { weight: '7.4kg', material: 'FACT 11r碳纤维', groupset: 'Shimano Ultegra Di2', brakes: 'Shimano Ultegra Disc', tires: 'S-Works Turpon 28mm' } },
+                        { id: 'tarmac-s8-sworks', name: 'S-Works Tarmac SL8', price: 109900, specs: { weight: '6.8kg', material: 'FACT 12r碳纤维', groupset: 'SRAM RED eTap AXS', brakes: 'SRAM RED Disc', tires: 'S-Works Turbo 26mm' } },
+                    ]}
+                ]
+            },
+            stumpjumper: {
+                name: 'Stumpjumper EVO 林道',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'stumpjumper-15', name: 'Stumpjumper 15 Expert', price: 53900, specs: { weight: '13.8kg', material: 'FACT 11m碳纤维', groupset: 'Shimano XT', brakes: 'Shimano XT 4活塞', tires: 'Butcher Grid 29x2.3' } },
+                        { id: 'stumpjumper-15-sworks', name: 'S-Works Stumpjumper 15', price: 94900, specs: { weight: '12.5kg', material: 'FACT 12m碳纤维', groupset: 'SRAM XX Eagle T-Type', brakes: 'SRAM Code Silver', tires: 'S-Works Butcher 29x2.3' } },
+                    ]}
+                ]
+            },
+            diverge: {
+                name: 'Diverge 砾石冒险',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'diverge-expert', name: 'Diverge Expert Carbon', price: 39900, specs: { weight: '8.6kg', material: 'FACT 9r碳纤维', groupset: 'Shimano GRX 810', brakes: 'Shimano GRX Disc', tires: 'Pathfinder Pro 42mm' } },
+                    ]}
+                ]
+            },
+            roubaix: {
+                name: 'Roubaix 舒适耐力',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'roubaix-expert', name: 'Roubaix Expert', price: 44900, specs: { weight: '8.1kg', material: 'FACT 10r碳纤维', groupset: 'Shimano Ultegra Di2', brakes: 'Shimano Ultegra Disc', tires: 'S-Works Turbo 28mm' } },
+                    ]}
+                ]
+            }
+        },
+        // CANYON
+        canyon: {
+            aeroad: {
+                name: 'Aeroad 气动冲刺',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'aeroad-cfr', name: 'Aeroad CFR', price: 59900, specs: { weight: '7.0kg', material: 'CFR碳纤维', groupset: 'Shimano Dura-Ace Di2', brakes: 'Shimano Dura-Ace Disc', tires: 'Continental GP5000 28mm' } },
+                        { id: 'aeroad-cf', name: 'Aeroad CF 8', price: 42900, specs: { weight: '7.6kg', material: 'CF碳纤维', groupset: 'Shimano Ultegra Di2', brakes: 'Shimano Ultegra Disc', tires: 'Continental GP5000 28mm' } },
+                    ]}
+                ]
+            },
+            ultimate: {
+                name: 'Ultimate CF 爬坡竞赛',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'ultimate-cfr', name: 'Ultimate CF CFR', price: 54900, specs: { weight: '6.3kg', material: 'CFR Ultra碳纤维', groupset: 'SRAM RED eTap AXS', brakes: 'SRAM RED Disc', tires: 'Continental GP5000 25mm' } },
+                    ]}
+                ]
+            },
+            spectral: {
+                name: 'Spectral 山地林道',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'spectral-29', name: 'Spectral 29 CF 8', price: 47900, specs: { weight: '12.9kg', material: 'CF碳纤维', groupset: 'Shimano XT', brakes: 'Shimano XT 4活塞', tires: 'Maxxis Minion 29x2.4' } },
+                    ]}
+                ]
+            },
+            grail: {
+                name: 'Grail 砾石探险',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'grail-cf', name: 'Grail CF 7', price: 33900, specs: { weight: '8.9kg', material: 'CF碳纤维', groupset: 'Shimano GRX', brakes: 'Shimano GRX Disc', tires: 'Schwalbe G-One 40mm' } },
+                    ]}
+                ]
+            },
+            endurace: {
+                name: 'Endurace 耐力舒适',
+                models: [
+                    { year: 2025, items: [
+                        { id: 'endurace-cf', name: 'Endurace CF 8', price: 32900, specs: { weight: '8.3kg', material: 'CF碳纤维', groupset: 'Shimano Ultegra Di2', brakes: 'Shimano Ultegra Disc', tires: 'Continental GP5000 30mm' } },
+                    ]}
+                ]
+            }
+        }
+    };
+
+    // 获取参数
+    const params = new URLSearchParams(location.search);
+    const brand = params.get('brand') || 'trek';
+    const seriesId = params.get('series') || 'domane';
+
+    // 系列标题
+    const brandSeries = {
+        trek: { domane:'Domane耐力公路', madone:'Madone空气动力学', emonda:'Emonda轻量爬坡', checkpoint:'Checkpoint砾石', fuelex:'Fuel林道山地', superfly:'Superfly竞赛山地' },
+        giant: { defy:'Defy耐力公路', tcr:'TCR综合竞赛', propel:'Propel气动冲刺', revolt:'Revolt砾石探险', trance:'Trance林道山地' },
+        specialized: { tarmac:'Tarmac爬坡冲刺', stumpjumper:'Stumpjumper林道', diverge:'Diverge砾石冒险', roubaix:'Roubaix舒适耐力', rockhopper:'Rockhopper入门山地' },
+        canyon: { aeroad:'Aeroad气动冲刺', ultimate:'Ultimate CF爬坡', grail:'Grail砾石探险', endurace:'Endurace耐力', spectral:'Spectral林道山地' },
+        merida: { reacto:'Reacto气动', scultura:'Scultura爬坡', silex:'Silex探险', nineteen:'NINETY-SIX竞赛' },
+        bianchi: { oltre:'Oltre XR4气动', specialissima:'Specialissima爬坡', via:'Via Nirone耐力' }
+    };
+    document.getElementById('seriesTitle').textContent = brandSeries[brand]?.[seriesId] || seriesId;
+
+    // 获取数据
+    const seriesData = (modelsData[brand] && modelsData[brand][seriesId]) || { models: [] };
+    const years = seriesData.models.map(m => m.year).sort((a, b) => b - a); // 降序
+    let currentYear = years[0] || 2025;
+
+    function renderYearTabs() {
+        const el = document.getElementById('yearTabs');
+        el.innerHTML = years.map(y =>
+            `<div class="year-tab${y === currentYear ? ' active' : ''}" data-year="${y}">${y}款</div>`
+        ).join('');
+        el.querySelectorAll('.year-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                currentYear = parseInt(this.dataset.year);
+                renderYearTabs();
+                renderModels();
+            });
+        });
+    }
+
+    function renderModels() {
+        const el = document.getElementById('modelGrid');
+        const yearData = seriesData.models.find(m => m.year === currentYear);
+        if (!yearData || !yearData.items.length) {
+            el.innerHTML = '<div style="text-align:center;padding:40px;color:#999;">暂无该年份数据</div>';
+            return;
+        }
+        el.innerHTML = yearData.items.map(m => `
+            <div class="model-card" onclick="location.href='bike-detail.html?brand=${brand}&series=${seriesId}&model=${m.id}&year=${currentYear}'">
+                <div class="model-card-img">
+                    <span style="font-size:36px;">🚴</span>
+                </div>
+                <div class="model-card-body">
+                    <div class="model-card-name">${m.name}</div>
+                    <div class="model-card-year">${currentYear}款</div>
+                    <div class="model-card-price">¥${m.price.toLocaleString()}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderYearTabs();
+    renderModels();
+    </script>
+</body>
+</html>

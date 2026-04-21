@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>车型详情 - 骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bike.css">
+</head>
+<body>
+    <div class="app">
+        <div class="bike-detail-cover" id="coverEmoji">🚴
+            <span class="back-btn" onclick="history.back()">‹</span>
+        </div>
+
+        <div class="bike-detail-content">
+            <div class="bike-detail-name" id="bikeName">Domane SL 7 Gen 4</div>
+            <div class="bike-detail-sub" id="bikeSub">TREK · 2025款 · 耐力型公路车</div>
+            <div class="bike-detail-price"><span id="bikePrice">¥36,800</span><span class="unit">起</span></div>
+
+            <!-- 核心参数 -->
+            <div class="spec-section">
+                <div class="spec-title">⚙️ 核心参数</div>
+                <div class="spec-grid" id="specsGrid">
+                    <!-- 动态渲染 -->
+                </div>
+            </div>
+
+            <!-- 车架组 -->
+            <div class="spec-section">
+                <div class="spec-title">🛠️ 配置信息</div>
+                <div id="configInfo" style="font-size:13px;color:#666;line-height:1.8;"></div>
+            </div>
+
+            <!-- 车型描述 -->
+            <div class="spec-section">
+                <div class="spec-title">📝 车型介绍</div>
+                <div class="bike-desc" id="bikeDesc"></div>
+            </div>
+
+            <!-- 添加按钮 -->
+            <button class="add-to-my-btn" id="addBtn" onclick="addToMyBike()">添加到我的自行车</button>
+        </div>
+    </div>
+
+    <nav class="tab-bar">
+        <a href="offline.html" class="tab-item"><div class="tab-icon">📍</div><span>活动</span></a>
+        <a href="bike.html" class="tab-item active"><div class="tab-icon">🚴</div><span>骑行</span></a>
+        <a href="profile.html" class="tab-item"><div class="tab-icon">👤</div><span>我的</span></a>
+    </nav>
+
+    <script>
+    // 完整的车型数据（all models combined here for detail lookup）
+    const allModels = {
+        'domane-sl-2025': {
+            name: 'Domane SL 7 Gen 4', year: 2025, brand: 'TREK 崔克', series: 'Domane 耐力公路',
+            type: '耐力型公路车', price: 36800,
+            emoji: '🏁', color: '#e31837',
+            specs: { weight: '8.2kg', material: 'OCLV 600碳纤维', groupset: 'Shimano 105 Di2', brakes: '油压碟刹', tires: 'Bontrager R3 32mm' },
+            desc: 'Domane SL 7 是耐力骑行爱好者的理想之选。搭载 Trek 标志性的 IsoSpeed 车座管减震技术，能有效过滤路面颠簸，让您在长距离骑行中保持舒适。SHIMANO 105 Di2 电子变速提供精准快速的换挡体验，配合 32mm 宽胎，兼顾速度与舒适。适合人群：长途骑行、耐力赛、Gran Fondo。'
+        },
+        'domane-sl-2025-pro': {
+            name: 'Domane SL 8', year: 2025, brand: 'TREK 崔克', series: 'Domane 耐力公路',
+            type: '耐力型公路车', price: 52800,
+            emoji: '🏁', color: '#e31837',
+            specs: { weight: '7.8kg', material: 'OCLV 800碳纤维', groupset: 'Shimano Ultegra Di2', brakes: '油压碟刹', tires: 'Bontrager R4 28mm' },
+            desc: 'Domane SL 8 采用更高级别的 OCLV 800 碳纤维车架，轻量化与舒适性并存。IsoSpeed 前后双减震系统让这款车在顶级耐力车中独树一帜。Ultegra Di2 电子变速精确可靠，适合追求舒适长途体验又不妥协于性能的骑行者。'
+        },
+        'tcr-advanced-pro-2025': {
+            name: 'TCR Advanced Pro 1', year: 2025, brand: 'GIANT 捷安特', series: 'TCR 综合竞赛',
+            type: '综合型公路车', price: 42800,
+            emoji: '🏎️', color: '#005fcc',
+            specs: { weight: '7.3kg', material: 'Advanced Pro碳纤维', groupset: 'Shimano Ultegra Di2', brakes: '油压碟刹', tires: 'Giant Gavia 28mm' },
+            desc: 'TCR 是捷安特最具代表性的综合型公路车，兼顾爬坡和气动性能。Advanced Pro 级别碳纤维车架提供出色的刚性和轻量化，是竞赛和训练的全能利器。新款涂装更加简洁锐利。'
+        },
+        'tarmac-s8-pro': {
+            name: 'Tarmac SL8 Expert', year: 2025, brand: 'Specialized', series: 'Tarmac 爬坡冲刺',
+            type: '综合型公路车', price: 55900,
+            emoji: '⚡', color: '#ff4500',
+            specs: { weight: '7.4kg', material: 'FACT 11r碳纤维', groupset: 'Shimano Ultegra Di2', brakes: 'Shimano Ultegra Disc', tires: 'S-Works Turpon 28mm' },
+            desc: '全新 Tarmac SL8 打破了"气动车不爬坡，爬坡车不气动"的传统。凭借 Rider-First Engineered™ 技术，FACT 11r 碳纤维车架在所有尺寸都达到完美刚性重量比。无论是爬坡还是冲刺，Tarmac SL8 都是顶级竞赛利器。'
+        },
+        'stumpjumper-15': {
+            name: 'Stumpjumper 15 Expert', year: 2025, brand: 'Specialized', series: 'Stumpjumper EVO 林道',
+            type: '林道/Enduro山地车', price: 53900,
+            emoji: '🌲', color: '#52c41a',
+            specs: { weight: '13.8kg', material: 'FACT 11m碳纤维', groupset: 'Shimano XT', brakes: 'Shimano XT 4活塞', tires: 'Butcher Grid 29x2.3' },
+            desc: 'Stumpjumper 是山地车的传奇之作。第15代 Stumpjumper 搭载新一代避震几何，可调节车手重心分布，适配各种林道和Enduro地形。FACT 11m 碳纤维车架提供轻盈灵敏的骑感，是下山猛兽也是爬坡能手。'
+        },
+        'aeroad-cfr': {
+            name: 'Aeroad CFR', year: 2025, brand: 'CANYON', series: 'Aeroad 气动冲刺',
+            type: '气动型公路车', price: 59900,
+            emoji: '💨', color: '#ff3200',
+            specs: { weight: '7.0kg', material: 'CFR碳纤维', groupset: 'Shimano Dura-Ace Di2', brakes: 'Shimano Dura-Ace Disc', tires: 'Continental GP5000 28mm' },
+            desc: 'Canyon Aeroad 以风洞数据为基础，每一根管型都经过空气动力学优化。CFR 级别碳纤维车架兼顾轻量与刚性，Dura-Ace Di2 变速系统提供顶级竞赛体验。德国制造，Direct Sales 模式让价格更具竞争力。'
+        },
+        'madone-slr-2025': {
+            name: 'Madone SLR 9 Gen 8', year: 2025, brand: 'TREK 崔克', series: 'Madone 空气动力学',
+            type: '气动型公路车', price: 98800,
+            emoji: '⚡', color: '#ff4500',
+            specs: { weight: '7.1kg', material: 'OCLV 900碳纤维', groupset: 'SRAM RED eTap AXS', brakes: '油压碟刹', tires: 'Bontrager RSL 28mm' },
+            desc: 'Madone SLR 9 是 Trek 最顶级的气动竞赛战车。全新 Gen 8 整合了 IsoSpeed 减震技术，让气动车也能舒适骑行长距离。SRAM RED eTap AXS 无线电子变速系统简洁高效，是冲刺和计时赛的完美选择。'
+        },
+        'ultimate-cfr': {
+            name: 'Ultimate CF CFR', year: 2025, brand: 'CANYON', series: 'Ultimate CF 爬坡竞赛',
+            type: '爬坡型公路车', price: 54900,
+            emoji: '⛰️', color: '#1a1a2e',
+            specs: { weight: '6.3kg', material: 'CFR Ultra碳纤维', groupset: 'SRAM RED eTap AXS', brakes: 'SRAM RED Disc', tires: 'Continental GP5000 25mm' },
+            desc: 'Ultimate CF 是 Canyon 爬坡利器，CFR Ultra 碳纤维车架仅重约790g，6.3kg的整车重量在同价位几乎无对手。SRAM RED eTap AXS 无线变速简洁可靠，是爬坡手和轻量化追求者的终极选择。'
+        }
+    };
+
+    // 获取参数
+    const params = new URLSearchParams(location.search);
+    const modelId = params.get('model') || 'domane-sl-2025';
+    const bike = allModels[modelId] || allModels['domane-sl-2025'];
+
+    // 渲染
+    document.getElementById('coverEmoji').innerHTML = bike.emoji + '<span class="back-btn" onclick="history.back()">‹</span>';
+    document.getElementById('coverEmoji').style.background = `linear-gradient(135deg, ${bike.color}, ${bike.color}88)`;
+    document.getElementById('bikeName').textContent = bike.name;
+    document.getElementById('bikeSub').textContent = `${bike.brand} · ${bike.year}款 · ${bike.type}`;
+    document.getElementById('bikePrice').textContent = `¥${bike.price.toLocaleString()}`;
+    document.getElementById('bikeDesc').textContent = bike.desc;
+
+    // 渲染规格参数
+    const specs = bike.specs;
+    document.getElementById('specsGrid').innerHTML = Object.entries(specs).map(([key, val]) => `
+        <div class="spec-item">
+            <div class="spec-label">${key === 'weight' ? '整车重量' : key === 'material' ? '车架材质' : key === 'groupset' ? '变速套件' : key === 'brakes' ? '刹车系统' : key === 'tires' ? '轮胎规格' : key}</div>
+            <div class="spec-value">${val}</div>
+        </div>
+    `).join('');
+
+    // 读取我的自行车
+    function getMyBikes() {
+        return JSON.parse(localStorage.getItem('myBikes') || '[]');
+    }
+    function saveMyBikes(bikes) {
+        localStorage.setItem('myBikes', JSON.stringify(bikes));
+    }
+
+    // 更新按钮状态
+    function updateBtn() {
+        const bikes = getMyBikes();
+        const exists = bikes.some(b => b.id === modelId);
+        const full = bikes.length >= 2;
+        const btn = document.getElementById('addBtn');
+        if (exists) {
+            btn.textContent = '✓ 已添加到我的自行车';
+            btn.classList.add('added');
+            btn.disabled = true;
+        } else if (full) {
+            btn.textContent = '我的自行车已满（最多2辆）';
+            btn.disabled = true;
+        } else {
+            btn.textContent = `添加到我的自行车（${bikes.length}/2）`;
+            btn.disabled = false;
+        }
+    }
+
+    function addToMyBike() {
+        const bikes = getMyBikes();
+        if (bikes.length >= 2) {
+            showToast('我的自行车已满（最多2辆）');
+            return;
+        }
+        if (bikes.some(b => b.id === modelId)) {
+            showToast('已在我的自行车中');
+            return;
+        }
+        bikes.push({
+            id: modelId,
+            name: bike.name,
+            brand: bike.brand,
+            year: bike.year,
+            price: bike.price,
+            type: bike.type,
+            emoji: bike.emoji,
+            addedAt: Date.now()
+        });
+        saveMyBikes(bikes);
+        updateBtn();
+        showToast('已添加到我的自行车 ✓');
+    }
+
+    function showToast(msg) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    }
+
+    updateBtn();
+    </script>
+</body>
+</html>

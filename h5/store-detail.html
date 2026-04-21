@@ -5,54 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>门店详情 - 骑行平台</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            height: 100vh;
+        }
+        .app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 0;
+        }
+        .store-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 70px;
+        }
+    </style>
 </head>
 <body>
     <div class="app">
         <!-- 顶部大图 -->
         <div class="store-banner">
-            <span class="back-btn">←</span>
+            <span class="back-btn" onclick="history.back()">←</span>
             <div style="text-align:center;">
                 <div style="font-size:48px;margin-bottom:8px;">🚴</div>
                 <div style="font-size:16px;font-weight:600;">高原骑行体验店</div>
             </div>
         </div>
 
-        <!-- 门店信息 -->
-        <div class="store-detail-content">
-            <div style="font-size:18px;font-weight:700;margin-bottom:12px;">高原骑行体验店（西宁旗舰店）</div>
+        <!-- 可滚动区域 -->
+        <div class="store-content-wrapper">
+            <!-- 门店信息 -->
+            <div class="store-detail-content">
+                <div style="font-size:18px;font-weight:700;margin-bottom:12px;">高原骑行体验店（西宁旗舰店）</div>
 
-            <div class="detail-row">
-                <div class="detail-label">联系电话</div>
-                <div class="detail-value" style="color:#1a5f9e;">0971-6258888</div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">门店地址</div>
-                <div class="detail-value">青海省西宁市城中区长江路98号</div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">营业时间</div>
-                <div class="detail-value">09:00 - 21:00（全年无休）</div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">门店简介</div>
-                <div class="detail-value">西宁最大规模专业骑行装备店，涵盖公路车、山地车、骑行服、头盔等全品类，提供专业Bike Fitting和维修服务。</div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">特色服务</div>
-                <div class="detail-value">专业Bike Fitting / 车辆调试 / 装备租赁 / 骑行培训</div>
-            </div>
+                <div class="detail-row">
+                    <div class="detail-label">联系电话</div>
+                    <div class="detail-value" style="color:#1a5f9e;">0971-6258888</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">门店地址</div>
+                    <div class="detail-value">青海省西宁市城中区长江路98号</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">营业时间</div>
+                    <div class="detail-value">09:00 - 21:00（全年无休）</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">门店简介</div>
+                    <div class="detail-value">西宁最大规模专业骑行装备店，涵盖公路车、山地车、骑行服、头盔等全品类，提供专业Bike Fitting和维修服务。</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">特色服务</div>
+                    <div class="detail-value">专业Bike Fitting / 车辆调试 / 装备租赁 / 骑行培训</div>
+                </div>
 
-            <!-- 地图占位 -->
-            <div style="height:150px;background:#f0f4f8;border-radius:8px;margin:12px 0;display:flex; align-items:center;justify-content:center;color:#999;font-size:13px;">
-                🗺️ 地图展示区域
-            </div>
+                <!-- 地图占位 -->
+                <div style="height:150px;background:#f0f4f8;border-radius:8px;margin:12px 0;display:flex; align-items:center;justify-content:center;color:#999;font-size:13px;">
+                    🗺️ 地图展示区域
+                </div>
 
-            <!-- 门店活动 -->
-            <div style="margin-top:16px;">
-                <div style="font-size:14px;font-weight:600;margin-bottom:10px;">📢 门店最新活动</div>
-                <div style="background:#fff5e6;border-radius:8px;padding:12px;">
-                    <div style="font-size:14px;font-weight:600;color:#8B4513;margin-bottom:4px;">🎉 春季骑行装备特惠季</div>
-                    <div style="font-size:12px;color:#666;">全场骑行装备8折起，部分品牌满500减100，优惠截止至4月30日。</div>
+                <!-- 门店活动 -->
+                <div style="margin-top:16px;">
+                    <div style="font-size:14px;font-weight:600;margin-bottom:10px;">📢 门店最新活动</div>
+                    <div style="background:#fff5e6;border-radius:8px;padding:12px;">
+                        <div style="font-size:14px;font-weight:600;color:#8B4513;margin-bottom:4px;">🎉 春季骑行装备特惠季</div>
+                        <div style="font-size:12px;color:#666;">全场骑行装备8折起，部分品牌满500减100，优惠截止至4月30日。</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,21 +86,17 @@
         </div>
     </div>
 
-    <!-- 底部Tab -->
+            <!-- 底部Tab -->
     <nav class="tab-bar">
-        <a href="index.html" class="tab-item">
-            <div class="tab-icon">🏠</div>
-            <span>首页</span>
-        </a>
-        <a href="offline.html" class="tab-item active">
+        <a href="offline.html" class="tab-item" id="tabActivity" class="tab-item active">
             <div class="tab-icon">📍</div>
-            <span>线下</span>
+            <span>活动</span>
         </a>
-        <a href="charity.html" class="tab-item">
-            <div class="tab-icon">❤️</div>
-            <span>公益</span>
+        <a href="bike.html" class="tab-item" id="tabBike">
+            <div class="tab-icon">🚴</div>
+            <span>骑行</span>
         </a>
-        <a href="profile.html" class="tab-item">
+        <a href="profile.html" class="tab-item" id="tabProfile">
             <div class="tab-icon">👤</div>
             <span>我的</span>
         </a>

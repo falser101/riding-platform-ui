@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>我的自行车 - 骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bike.css">
+</head>
+<body>
+    <div class="app">
+        <div class="page-title-bar">
+            <span class="back-btn" onclick="history.back()">‹</span>
+            <h2>我的自行车</h2>
+        </div>
+
+        <div class="page-content">
+            <div id="myBikesList">
+                <!-- 动态渲染 -->
+            </div>
+
+            <!-- 空状态 -->
+            <div class="my-bikes-empty" id="emptyState" style="display:none;">
+                <div class="icon">🚴</div>
+                <p>还没有添加自行车</p>
+                <div style="font-size:12px;color:#999;margin-bottom:16px;">去自行车库探索心仪的车型吧</div>
+                <a href="bike.html" class="add-link">去添加</a>
+            </div>
+
+            <!-- 提示 -->
+            <div id="bikeTip" style="padding:8px 16px 16px;font-size:12px;color:#999;line-height:1.6;">
+                💡 点击车型可查看详情；最多可添加 <strong>2辆</strong> 自行车
+            </div>
+        </div>
+    </div>
+
+    <nav class="tab-bar">
+        <a href="offline.html" class="tab-item"><div class="tab-icon">📍</div><span>活动</span></a>
+        <a href="bike.html" class="tab-item active"><div class="tab-icon">🚴</div><span>骑行</span></a>
+        <a href="profile.html" class="tab-item"><div class="tab-icon">👤</div><span>我的</span></a>
+    </nav>
+
+    <script>
+    function getMyBikes() {
+        return JSON.parse(localStorage.getItem('myBikes') || '[]');
+    }
+    function saveMyBikes(bikes) {
+        localStorage.setItem('myBikes', JSON.stringify(bikes));
+    }
+
+    function render() {
+        const bikes = getMyBikes();
+        const list = document.getElementById('myBikesList');
+        const empty = document.getElementById('emptyState');
+        const tip = document.getElementById('bikeTip');
+
+        if (bikes.length === 0) {
+            list.style.display = 'none';
+            empty.style.display = 'block';
+            tip.style.display = 'none';
+            return;
+        }
+
+        empty.style.display = 'none';
+        list.style.display = 'flex';
+        tip.style.display = 'block';
+
+        list.className = 'my-bikes-list';
+        list.innerHTML = bikes.map(b => `
+            <div class="my-bike-card">
+                <div class="my-bike-img" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+                    ${b.emoji}
+                </div>
+                <div class="my-bike-body">
+                    <div class="my-bike-name">${b.name}</div>
+                    <div class="my-bike-brand">${b.brand} · ${b.year}款</div>
+                    <div class="my-bike-specs">
+                        ${b.type ? '类型：' + b.type + '<br>' : ''}
+                        ${b.price ? '参考价：¥' + b.price.toLocaleString() : ''}
+                    </div>
+                    <div class="my-bike-actions">
+                        <button class="btn-detail" onclick="location.href='bike-detail.html?model=${b.id}'">查看详情</button>
+                        <button class="btn-remove" onclick="removeBike('${b.id}')">移除</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function removeBike(id) {
+        const bikes = getMyBikes().filter(b => b.id !== id);
+        saveMyBikes(bikes);
+        render();
+    }
+
+    render();
+    </script>
+</body>
+</html>

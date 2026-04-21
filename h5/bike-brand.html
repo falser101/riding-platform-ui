@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>品牌系列 - 骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bike.css">
+</head>
+<body>
+    <div class="app">
+        <div class="page-title-bar">
+            <span class="back-btn" onclick="history.back()">‹</span>
+            <h2 id="brandTitle">TREK 崔克</h2>
+        </div>
+
+        <div class="page-content">
+            <div class="series-list" id="seriesList">
+                <!-- 动态渲染 -->
+            </div>
+        </div>
+    </div>
+
+    <nav class="tab-bar">
+        <a href="offline.html" class="tab-item"><div class="tab-icon">📍</div><span>活动</span></a>
+        <a href="bike.html" class="tab-item active"><div class="tab-icon">🚴</div><span>骑行</span></a>
+        <a href="profile.html" class="tab-item"><div class="tab-icon">👤</div><span>我的</span></a>
+    </nav>
+
+    <script>
+    const brandData = {
+        trek: {
+            name: 'TREK 崔克',
+            series: [
+                {
+                    id: 'domane',
+                    name: 'Domane 耐力公路',
+                    type: '耐力型公路车',
+                    desc: '专为长途舒适骑行设计，搭载IsoSpeed减震技术',
+                    tags: ['耐力', '舒适', '碟刹'],
+                    color: '#e31837',
+                    emoji: '🏁'
+                },
+                {
+                    id: 'madone',
+                    name: 'Madone 空气动力学',
+                    type: '气动型公路车',
+                    desc: '追求极致速度，整合式气动设计，环法赛场常客',
+                    tags: ['气动', '竞赛', '轻量'],
+                    color: '#ff4500',
+                    emoji: '⚡'
+                },
+                {
+                    id: 'emonda',
+                    name: 'Emonda 轻量爬坡',
+                    type: '爬坡型公路车',
+                    desc: '极轻量化设计，主攻山路和高难度爬坡路段',
+                    tags: ['爬坡', '轻量', '铝合金/碳纤维'],
+                    color: '#1a1a2e',
+                    emoji: '⛰️'
+                },
+                {
+                    id: 'checkpoint',
+                    name: 'Checkpoint 砾石公路',
+                    type: '砾石/Adventure',
+                    desc: '全地形探险自行车，可应对碎石路和混合路面',
+                    tags: ['砾石', '探险', '长途'],
+                    color: '#8B4513',
+                    emoji: '🌍'
+                },
+                {
+                    id: 'fuelex',
+                    name: 'Fuel EX 林道山地',
+                    type: '林道/Trail山地车',
+                    desc: '全能型林道山地车，前后避震兼顾下坡和爬坡',
+                    tags: ['林道', '避震', '全山地'],
+                    color: '#2d8bc9',
+                    emoji: '🌲'
+                },
+                {
+                    id: 'superfly',
+                    name: 'Superfly 竞赛山地',
+                    type: 'XC竞赛山地车',
+                    desc: '轻量硬尾设计，追求爬坡效率和冲刺速度',
+                    tags: ['XC', '竞赛', '硬尾'],
+                    color: '#52c41a',
+                    emoji: '🏆'
+                }
+            ]
+        },
+        giant: {
+            name: 'GIANT 捷安特',
+            series: [
+                { id: 'defy', name: 'Defy 耐力公路', type: '耐力型公路车', desc: '舒适长程耐力车，适合长途骑行和全天候骑行', tags: ['耐力', '舒适', '铝合金'], color: '#00a0e9', emoji: '🛣️' },
+                { id: 'tcr', name: 'TCR 综合竞赛', type: '综合型公路车', desc: '捷安特旗舰综合型公路车，平衡爬坡与气动性能', tags: ['综合', '竞赛', '轻量'], color: '#005fcc', emoji: '🏎️' },
+                { id: 'propel', name: 'Propel 气动冲刺', type: '气动型公路车', desc: '气动化设计，团队计时和冲刺赛首选', tags: ['气动', '冲刺', '碟刹'], color: '#ff6b00', emoji: '💨' },
+                { id: 'revolt', name: 'Revolt 砾石探险', type: '砾石/Adventure', desc: '全地形砾石车，适合混合路面和长途探险', tags: ['砾石', '探险', '宽胎'], color: '#ff8c00', emoji: '🏜️' },
+                { id: 'trance', name: 'Trance 林道山地', type: '林道山地车', desc: '灵巧的林道山地车，适合技术性山路', tags: ['林道', '避震', '27.5/29寸'], color: '#52c41a', emoji: '🌲' }
+            ]
+        },
+        merida: {
+            name: 'MERIDA 美利达',
+            series: [
+                { id: 'reacto', name: 'Reacto 气动赛车', type: '气动型公路车', desc: '美利达气动旗舰，整合线管和空气动力学设计', tags: ['气动', '竞赛', '碳纤维'], color: '#ff6b00', emoji: '💨' },
+                { id: 'scultura', name: 'Scultura 爬坡战车', type: '爬坡型公路车', desc: '主打爬坡性能，轻量化车架和刚性输出', tags: ['爬坡', '轻量', '铝合金/碳纤维'], color: '#1a1a2e', emoji: '⛰️' },
+                { id: 'silex', name: 'Silex 耐力探险', type: '耐力/Adventure', desc: '混合路面探险车，兼顾舒适和长途通过性', tags: ['探险', '耐力', ' Gravel'], color: '#8B4513', emoji: '🌍' },
+                { id: 'nineteen', name: 'NINETY-SIX 竞赛山地', type: 'XC竞赛山地车', desc: '轻型竞赛山地车，高刚性快速输出', tags: ['XC', '竞赛', '硬尾/全避震'], color: '#52c41a', emoji: '🏆' }
+            ]
+        },
+        specialized: {
+            name: 'Specialized',
+            series: [
+                { id: 'tarmac', name: 'Tarmac SL8 爬坡冲刺', type: '综合型公路车', desc: '全新Tarmac，爬坡冲刺两相宜，UCI认证竞赛车', tags: ['综合', '竞赛', '轻量'], color: '#ff4500', emoji: '⚡' },
+                { id: 'venge', name: 'Venge 气动追击', type: '气动型公路车', desc: '风洞实验室打造的气动赛车，整合度极高', tags: ['气动', '碟刹', 'UCI'], color: '#ff3200', emoji: '🏁' },
+                { id: 'roubaix', name: 'Roubaix 舒适耐力', type: '耐力型公路车', desc: 'Future Shock坐管减震，长途骑行的舒适之选', tags: ['耐力', '舒适', '减震'], color: '#ff6a00', emoji: '🛣️' },
+                { id: 'diverge', name: 'Diverge 砾石冒险', type: '砾石/Adventure', desc: '砾石路面全能车，适合长途探险和混合路面', tags: ['砾石', '探险', '宽胎'], color: '#f5a623', emoji: '🏜️' },
+                { id: 'stumpjumper', name: 'Stumpjumper EVO 林道', type: '林道/Enduro山地车', desc: '标志性的全能山地车，可调节几何适配不同地形', tags: ['林道', 'Enduro', '避震'], color: '#52c41a', emoji: '🌲' },
+                { id: 'rockhopper', name: 'Rockhopper 入门山地', type: '入门山地车', desc: '铝合金山地车，适合山地骑行的入门首选', tags: ['入门', '铝合金', '山地'], color: '#1a5f9e', emoji: '🚵' }
+            ]
+        },
+        canyon: {
+            name: 'CANYON',
+            series: [
+                { id: 'aeroad', name: 'Aeroad 气动冲刺', type: '气动型公路车', desc: '德国制造的气动赛车，Peleton职业赛场常客', tags: ['气动', '竞赛', '德国制'], color: '#ff3200', emoji: '💨' },
+                { id: 'ultimate', name: 'Ultimate CF 爬坡竞赛', type: '爬坡型公路车', desc: '超轻碳纤维车架，UCI WorldTour爬坡利器', tags: ['爬坡', '轻量', '德国制'], color: '#1a1a2e', emoji: '⛰️' },
+                { id: 'grail', name: 'Grail 砾石探险', type: '砾石/Adventure', desc: '双置水壶和独特弯管设计，长途砾石骑行明星', tags: ['砾石', '探险', '创意'], color: '#f5a623', emoji: '🌍' },
+                { id: 'endurace', name: 'Endurace 耐力舒适', type: '耐力型公路车', desc: '耐力几何搭配舒适组件，适合长时间骑行', tags: ['耐力', '舒适', '德国制'], color: '#005fcc', emoji: '🛣️' },
+                { id: 'spectral', name: 'Spectral 山地林道', type: '林道/Enduro山地车', desc: 'Canyon标志性的山地车，强劲下坡和灵巧爬坡', tags: ['林道', 'Enduro', '避震'], color: '#52c41a', emoji: '🌲' }
+            ]
+        },
+        bianchi: {
+            name: 'Bianchi 比安奇',
+            series: [
+                { id: 'oltre', name: 'Oltre XR4 气动美学', type: '气动型公路车', desc: '经典气动设计，碧欧玺标志性的Turbo绿涂装', tags: ['气动', '竞赛', '经典'], color: '#6eb5ff', emoji: '🏁' },
+                { id: 'specialissima', name: 'Specialissima 爬坡', type: '爬坡型公路车', desc: '超轻爬坡车架，爬坡性能和经典外观兼备', tags: ['爬坡', '轻量', '经典'], color: '#005bea', emoji: '⛰️' },
+                { id: 'via', name: 'Via Nirone 10 耐力', type: '耐力型公路车', desc: '入门耐力车型，传承碧欧玺百年造车工艺', tags: ['耐力', '入门', '经典'], color: '#1a5f9e', emoji: '🛣️' }
+            ]
+        }
+    };
+
+    // 获取URL参数
+    function getBrand() {
+        const params = new URLSearchParams(location.search);
+        return params.get('brand') || 'trek';
+    }
+
+    const brand = getBrand();
+    const data = brandData[brand] || brandData.trek;
+    document.getElementById('brandTitle').textContent = data.name;
+
+    // 渲染系列列表
+    const list = document.getElementById('seriesList');
+    data.series.forEach(s => {
+        list.innerHTML += `
+            <div class="series-card" onclick="location.href='bike-series.html?brand=${brand}&series=${s.id}'">
+                <div class="series-card-img" style="background: linear-gradient(135deg, ${s.color}, ${s.color}cc);">
+                    ${s.emoji}
+                </div>
+                <div class="series-card-body">
+                    <div class="series-card-name">${s.name}</div>
+                    <div class="series-card-type">${s.type}</div>
+                    <div class="series-card-tags">
+                        ${s.tags.map(t => `<span class="series-tag">${t}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    </script>
+</body>
+</html>

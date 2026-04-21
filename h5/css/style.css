@@ -31,7 +31,10 @@ img { max-width: 100%; display: block; }
 .tab-item.active .tab-icon { background: var(--primary); }
 
 /* 页面容器 */
-.page-content { padding-bottom: 70px; }
+.page-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 70px; }
+
+/* App主容器（flex弹性布局，让page-content自动填满剩余高度） */
+.app { display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 0; }
 
 /* Banner */
 .banner { position: relative; height: 180px; overflow: hidden; background: linear-gradient(135deg, #1a5f9e 0%, #2d8bc9 50%, #1a5f9e 100%); }
