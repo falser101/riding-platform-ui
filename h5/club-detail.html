@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>俱乐部详情 - 骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { overflow-y: auto; -webkit-overflow-scrolling: touch; height: 100vh; }
+        .app { display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 0; }
+        .page-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 70px; }
+
+        .mp-header {
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+        }
+
+        .club-hero {
+            background: linear-gradient(135deg, #1a5f9e, #2d8bc9);
+            padding: 24px 16px;
+            color: white;
+            text-align: center;
+        }
+        .club-hero-icon { font-size: 64px; margin-bottom: 8px; }
+        .club-hero-name { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+        .club-hero-meta { font-size: 13px; opacity: 0.85; margin-bottom: 12px; }
+        .club-hero-desc { font-size: 13px; opacity: 0.8; line-height: 1.5; max-width: 300px; margin: 0 auto; }
+
+        .stats-row {
+            display: flex;
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 16px;
+            gap: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .stat { flex: 1; text-align: center; }
+        .stat-num { font-size: 20px; font-weight: 700; color: #1a5f9e; }
+        .stat-label { font-size: 11px; color: #999; margin-top: 2px; }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            padding: 12px 16px 8px;
+        }
+
+        .activity-list { padding: 0 12px 12px; display: flex; flex-direction: column; gap: 10px; }
+        .activity-card {
+            background: white;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .activity-card-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #1a5f9e, #2d8bc9);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .activity-card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .activity-card-info { flex: 1; min-width: 0; }
+        .activity-card-title { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+        .activity-card-meta { font-size: 12px; color: #999; }
+        .activity-card-price { font-size: 14px; color: #f5a623; font-weight: 600; }
+
+        .leave-btn {
+            display: block;
+            width: calc(100% - 32px);
+            margin: 16px;
+            padding: 12px;
+            background: white;
+            border: 1px solid #ff4d4f;
+            color: #ff4d4f;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .leave-btn:active { background: #fff5f5; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="mp-header">
+            <div class="back-btn" onclick="history.back()" style="font-size:24px;color:#1a5f9e;cursor:pointer;">‹</div>
+            <span style="font-size:14px;font-weight:600;">俱乐部详情</span>
+            <div style="width:24px;"></div>
+        </div>
+
+        <div class="page-content">
+            <div class="club-hero">
+                <div class="club-hero-icon" id="club-icon">🏔</div>
+                <div class="club-hero-name" id="club-name">青海湖骑迹俱乐部</div>
+                <div class="club-hero-meta" id="club-meta">西宁 · 328名成员</div>
+                <div class="club-hero-desc" id="club-desc">专注青海湖深度骑行，每年组织20+活动</div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat">
+                    <div class="stat-num" id="stat-events">24</div>
+                    <div class="stat-label">举办活动</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" id="stat-join">156</div>
+                    <div class="stat-label">参与人次</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" id="stat-km">4820</div>
+                    <div class="stat-label">累计里程(km)</div>
+                </div>
+            </div>
+
+            <div class="section-title">🏆 近期活动</div>
+            <div class="activity-list">
+                <div class="activity-card" onclick="location.href='activity-detail.html'">
+                    <div class="activity-card-img">
+                        <img src="/home/falser/Pictures/wallpapers/b-003.jpg" onerror="this.parentElement.style.background='linear-gradient(135deg,#1a5f9e,#2d8bc9)'">
+                    </div>
+                    <div class="activity-card-info">
+                        <div class="activity-card-title">环青海湖春季拉练</div>
+                        <div class="activity-card-meta">📅 4月20日 · 限30人</div>
+                    </div>
+                    <div class="activity-card-price">¥0</div>
+                </div>
+                <div class="activity-card" onclick="location.href='activity-detail.html'">
+                    <div class="activity-card-img">
+                        <img src="/home/falser/Pictures/wallpapers/b-015.jpg" onerror="this.parentElement.style.background='linear-gradient(135deg,#1a5f9e,#2d8bc9)'">
+                    </div>
+                    <div class="activity-card-info">
+                        <div class="activity-card-title">端午环湖挑战赛</div>
+                        <div class="activity-card-meta">📅 5月28日 · 限50人</div>
+                    </div>
+                    <div class="activity-card-price">¥280</div>
+                </div>
+            </div>
+
+            <button class="leave-btn" onclick="leaveClub()">退出俱乐部</button>
+        </div>
+    </div>
+
+    <script>
+    const ALL_CLUBS = [
+        { id: 'c1', name: '青海湖骑迹俱乐部', city: '西宁', avatar: '🏔', desc: '专注青海湖深度骑行，每年组织20+活动', memberCount: 328 },
+        { id: 'c2', name: '高原风骑行队', city: '兰州', avatar: '🌪', desc: '西北高原骑行爱好者聚集地，新人友好', memberCount: 215 },
+        { id: 'c3', name: '川藏线梦想团', city: '成都', avatar: '🏔', desc: '专注川藏线骑行，圆你一个天路梦', memberCount: 512 },
+        { id: 'c4', name: '草原单车会', city: '呼和浩特', avatar: '🌿', desc: '内蒙古大草原骑行，享受风吹草低见牛羊', memberCount: 178 },
+        { id: 'c5', name: '海边骑行社', city: '厦门', avatar: '🌊', desc: '沿海公路骑行，最美海岸线', memberCount: 445 },
+        { id: 'c6', name: '京城骑行帮', city: '北京', avatar: '🏯', desc: '北京周边骑行，文化与运动结合', memberCount: 623 },
+        { id: 'c7', name: '江南骑行联盟', city: '苏州', avatar: '🌸', desc: '水乡古镇骑行，诗情画意', memberCount: 389 },
+        { id: 'c8', name: '云贵高原挑战队', city: '昆明', avatar: '⛅', desc: '云贵高原山路骑行，爬坡圣地', memberCount: 267 },
+    ];
+
+    function getQueryParam(key) {
+        const params = new URLSearchParams(location.search);
+        return params.get(key);
+    }
+
+    function loadClub() {
+        const id = getQueryParam('id');
+        const club = ALL_CLUBS.find(c => c.id === id) || ALL_CLUBS[0];
+        document.getElementById('club-icon').textContent = club.avatar;
+        document.getElementById('club-name').textContent = club.name;
+        document.getElementById('club-meta').textContent = club.city + ' · ' + club.memberCount + '名成员';
+        document.getElementById('club-desc').textContent = club.desc;
+        document.title = club.name + ' - 骑行平台';
+    }
+
+    function leaveClub() {
+        const id = getQueryParam('id');
+        if (!id) return;
+        let myClubs = JSON.parse(localStorage.getItem('myClubs') || '[]');
+        myClubs = myClubs.filter(c => c !== id);
+        localStorage.setItem('myClubs', JSON.stringify(myClubs));
+        alert('已退出俱乐部');
+        location.href = 'offline.html';
+    }
+
+    loadClub();
+    </script>
+</body>
+</html>

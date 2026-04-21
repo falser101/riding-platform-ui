@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>发现俱乐部 - 骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { overflow-y: auto; -webkit-overflow-scrolling: touch; height: 100vh; }
+        .app { display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 0; }
+        .page-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 70px; }
+
+        .mp-header {
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+        }
+        .back-btn { font-size: 20px; color: #1a5f9e; cursor: pointer; }
+
+        .club-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; }
+        .club-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .club-avatar {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #1a5f9e, #2d8bc9);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+        .club-info { flex: 1; min-width: 0; }
+        .club-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .club-meta { font-size: 12px; color: #999; margin-bottom: 4px; }
+        .club-desc { font-size: 12px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .join-btn {
+            padding: 6px 14px;
+            background: #1a5f9e;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 13px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .join-btn:active { background: #154f85; }
+        .join-btn.joined {
+            background: #f0f0f0;
+            color: #999;
+            cursor: default;
+        }
+
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.75);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .toast.show { opacity: 1; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="mp-header">
+            <div class="back-btn" onclick="history.back()">‹</div>
+            <span style="font-size:14px;font-weight:600;">发现俱乐部</span>
+            <div style="width:24px;"></div>
+        </div>
+
+        <div class="page-content">
+            <div id="club-list" class="club-list"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+    const ALL_CLUBS = [
+        { id: 'c1', name: '青海湖骑迹俱乐部', city: '西宁', avatar: '🏔', desc: '专注青海湖深度骑行，每年组织20+活动', memberCount: 328 },
+        { id: 'c2', name: '高原风骑行队', city: '兰州', avatar: '🌪', desc: '西北高原骑行爱好者聚集地，新人友好', memberCount: 215 },
+        { id: 'c3', name: '川藏线梦想团', city: '成都', avatar: '🏔', desc: '专注川藏线骑行，圆你一个天路梦', memberCount: 512 },
+        { id: 'c4', name: '草原单车会', city: '呼和浩特', avatar: '🌿', desc: '内蒙古大草原骑行，享受风吹草低见牛羊', memberCount: 178 },
+        { id: 'c5', name: '海边骑行社', city: '厦门', avatar: '🌊', desc: '沿海公路骑行，最美海岸线', memberCount: 445 },
+        { id: 'c6', name: '京城骑行帮', city: '北京', avatar: '🏯', desc: '北京周边骑行，文化与运动结合', memberCount: 623 },
+        { id: 'c7', name: '江南骑行联盟', city: '苏州', avatar: '🌸', desc: '水乡古镇骑行，诗情画意', memberCount: 389 },
+        { id: 'c8', name: '云贵高原挑战队', city: '昆明', avatar: '⛅', desc: '云贵高原山路骑行，爬坡圣地', memberCount: 267 },
+    ];
+
+    function getMyClubIds() {
+        return JSON.parse(localStorage.getItem('myClubs') || '[]');
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 1500);
+    }
+
+    function joinClub(clubId, btn) {
+        const myClubs = getMyClubIds();
+        if (myClubs.includes(clubId)) return;
+        myClubs.push(clubId);
+        localStorage.setItem('myClubs', JSON.stringify(myClubs));
+        btn.textContent = '已加入';
+        btn.classList.add('joined');
+        showToast('加入成功！');
+    }
+
+    function render() {
+        const container = document.getElementById('club-list');
+        const myIds = getMyClubIds();
+        const unjoined = ALL_CLUBS.filter(c => !myIds.includes(c.id));
+
+        if (unjoined.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">🏛</div>
+                    <p>已加入全部俱乐部</p>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = unjoined.map(club => `
+            <div class="club-card">
+                <div class="club-avatar">${club.avatar}</div>
+                <div class="club-info">
+                    <div class="club-name">${club.name}</div>
+                    <div class="club-meta">${club.city} · ${club.memberCount}名成员</div>
+                    <div class="club-desc">${club.desc}</div>
+                </div>
+                <button class="join-btn" onclick="joinClub('${club.id}', this)">申请加入</button>
+            </div>`).join('');
+    }
+
+    render();
+    </script>
+</body>
+</html>
