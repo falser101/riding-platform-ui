@@ -45,20 +45,39 @@
         <div class="stat-card red"><div class="stat-icon red">❌</div><div class="stat-info"><div class="stat-value">46</div><div class="stat-label">已取消</div></div></div>
       </div>
 
-      <!-- 筛选 -->
-      <div class="filter-bar">
-        <select class="form-select" id="filterStatus">
-          <option value="">全部状态</option>
-          <option value="已报名">已报名</option>
-          <option value="待支付">待支付</option>
-          <option value="已结束">已结束</option>
-          <option value="已取消">已取消</option>
-        </select>
-        <input class="form-input" placeholder="搜索报名人/报名号..." id="filterKeyword" style="min-width:220px;">
-        <input class="form-input" placeholder="活动名称" id="filterActivity" style="min-width:180px;">
-        <button class="btn btn-primary btn-sm" onclick="filterTable()">筛选</button>
-        <button class="btn btn-default btn-sm" onclick="resetFilter()">重置</button>
-      </div>
+ <!-- 筛选 -->
+ <div class="filter-bar">
+ <select class="form-select" id="filterStatus">
+ <option value="">全部状态</option>
+ <option value="已报名">已报名</option>
+ <option value="待支付">待支付</option>
+ <option value="已结束">已结束</option>
+ <option value="已取消">已取消</option>
+ </select>
+ <div style="position:relative;min-width:200px;">
+ <input class="form-input" placeholder="搜索活动名称..." id="filterActivityInput" style="width:100%;padding-right:32px;" autocomplete="off">
+ <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px;">🔍</span>
+ </div>
+ <input class="form-input" placeholder="搜索报名人/报名号..." id="filterKeyword" style="min-width:220px;">
+ <button class="btn btn-primary btn-sm" onclick="filterTable()">筛选</button>
+ <button class="btn btn-default btn-sm" onclick="resetFilter()">重置</button>
+ </div>
+ 
+ <!-- 活动下拉选择器 -->
+ <div class="modal-overlay" id="activitySelectModal">
+ <div class="modal" style="max-width:480px;">
+ <div class="modal-header">
+ <div class="modal-title">选择活动</div>
+ <button class="modal-close" onclick="closeModal('activitySelectModal')">✕</button>
+ </div>
+ <div class="modal-body" style="padding:16px;">
+ <div style="margin-bottom:12px;">
+ <input class="form-input" placeholder="搜索活动..." id="activitySearchInput" style="width:100%;" oninput="filterActivityList()">
+ </div>
+ <div id="activityList" style="max-height:320px;overflow-y:auto;"></div>
+ </div>
+ </div>
+ </div>
 
       <!-- 表格 -->
       <div class="panel">
@@ -113,83 +132,163 @@
 <script>
 renderLayout('signups', '报名管理');
 
-const signups = [
-  { id:'RB20260421001', name:'张伟', phone:'138****6789', activity:'环青海湖骑行挑战赛', time:'2026-04-21 18:32', amount:1680, payMethod:'微信支付', status:'已报名', emergency:'李芳 139****2345', addons:['骑行装备租赁'] },
-  { id:'RB20260421002', name:'李娜', phone:'137****1234', activity:'亲子骑行夏令营', time:'2026-04-21 17:45', amount:980, payMethod:'-', status:'待支付', emergency:'王强 136****5678', addons:[] },
-  { id:'RB20260421003', name:'王强', phone:'136****5678', activity:'春季高原骑行邀请赛', time:'2026-04-21 16:20', amount:2250, payMethod:'微信支付', status:'已报名', emergency:'赵敏 135****9012', addons:['骑行装备租赁','额外保险'] },
-  { id:'RB20260421004', name:'赵敏', phone:'135****9012', activity:'拉萨-羊卓雍措深度骑行', time:'2026-04-21 15:10', amount:3500, payMethod:'微信支付', status:'已报名', emergency:'孙磊 134****3456', addons:[] },
-  { id:'RB20260421005', name:'孙磊', phone:'134****3456', activity:'周日公益骑行', time:'2026-04-21 14:05', amount:0, payMethod:'-', status:'已报名', emergency:'周静 133****7890', addons:[] },
-  { id:'RB20260420006', name:'周静', phone:'133****7890', activity:'绿色出行公益骑行', time:'2026-04-20 10:30', amount:0, payMethod:'-', status:'已结束', emergency:'吴刚 132****1234', addons:[] },
-  { id:'RB20260419007', name:'吴刚', phone:'132****1234', activity:'冬季环湖挑战赛', time:'2026-04-19 09:15', amount:1980, payMethod:'微信支付', status:'已取消', emergency:'郑丽 131****5678', addons:[] },
-  { id:'RB20260419008', name:'郑丽', phone:'131****5678', activity:'环青海湖骑行挑战赛', time:'2026-04-19 08:40', amount:1960, payMethod:'微信支付', status:'已报名', emergency:'吴刚 132****1234', addons:['骑行装备租赁'] },
+// 活动列表数据
+const activities = [
+ { id:1, name:'环青海湖骑行挑战赛'},
+ { id:2, name:'亲子骑行夏令营'},
+ { id:3, name:'春季高原骑行邀请赛'},
+ { id:4, name:'拉萨 - 羊卓雍措深度骑行'},
+ { id:5, name:'周日公益骑行'},
+ { id:6, name:'亲子骑行嘉年华'},
+ { id:7, name:'冬季环湖挑战赛'},
+ { id:8, name:'绿色出行公益骑行'},
 ];
 
+const signups = [
+ { id:'RB20260421001', name:'张伟', phone:'138****6789', activity:'环青海湖骑行挑战赛', activityId:1, time:'2026-04-21 18:32', amount:1680, payMethod:'微信支付', status:'已报名', emergency:'李芳 139****2345', addons:['骑行装备租赁'] },
+ { id:'RB20260421002', name:'李娜', phone:'137****1234', activity:'亲子骑行夏令营', activityId:2, time:'2026-04-21 17:45', amount:980, payMethod:'-', status:'待支付', emergency:'王强 136****5678', addons:[] },
+ { id:'RB20260421003', name:'王强', phone:'136****5678', activity:'春季高原骑行邀请赛', activityId:3, time:'2026-04-21 16:20', amount:2250, payMethod:'微信支付', status:'已报名', emergency:'赵敏 135****9012', addons:['骑行装备租赁','额外保险'] },
+ { id:'RB20260421004', name:'赵敏', phone:'135****9012', activity:'拉萨 - 羊卓雍措深度骑行', activityId:4, time:'2026-04-21 15:10', amount:3500, payMethod:'微信支付', status:'已报名', emergency:'孙磊 134****3456', addons:[] },
+ { id:'RB20260421005', name:'孙磊', phone:'134****3456', activity:'周日公益骑行', activityId:5, time:'2026-04-21 14:05', amount:0, payMethod:'-', status:'已报名', emergency:'周静 133****7890', addons:[] },
+ { id:'RB20260420006', name:'周静', phone:'133****7890', activity:'绿色出行公益骑行', activityId:8, time:'2026-04-20 10:30', amount:0, payMethod:'-', status:'已结束', emergency:'吴刚 132****1234', addons:[] },
+ { id:'RB20260419007', name:'吴刚', phone:'132****1234', activity:'冬季环湖挑战赛', activityId:7, time:'2026-04-19 09:15', amount:1980, payMethod:'微信支付', status:'已取消', emergency:'郑丽 131****5678', addons:[] },
+ { id:'RB20260419008', name:'郑丽', phone:'131****5678', activity:'环青海湖骑行挑战赛', activityId:1, time:'2026-04-19 08:40', amount:1960, payMethod:'微信支付', status:'已报名', emergency:'吴刚 132****1234', addons:['骑行装备租赁'] },
+];
+
+// 当前选中的活动 ID
+let selectedActivityId = null;
+let selectedActivityName = '';
+
+// 从 URL 参数获取活动 ID
+function initFromURL() {
+ const params = new URLSearchParams(window.location.search);
+ const activityId = params.get('activityId');
+ const activityName = params.get('activityName');
+ if (activityId && activityName) {
+ selectedActivityId = activityId;
+ selectedActivityName = decodeURIComponent(activityName);
+ document.getElementById('filterActivityInput').value = selectedActivityName;
+ }
+}
+
+// 渲染活动列表（用于选择器）
+function renderActivityList(list) {
+ const container = document.getElementById('activityList');
+ if (list.length === 0) {
+ container.innerHTML = '<div style="text-align:center;color:var(--text3);padding:40px 20px;">暂无匹配活动</div>';
+ return;
+ }
+ container.innerHTML = list.map(a => `
+ <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:8px;cursor:pointer;transition:all 0.15s;" 
+ onmouseenter="this.style.background='var(--border-light)'" 
+ onmouseleave="this.style.background=''"
+ onclick="selectActivity('${a.id}', '${a.name.replace(/'/g, "\\'")}');">
+ <div>
+ <div style="font-weight:500;">${a.name}</div>
+ <div style="font-size:12px;color:var(--text3);">ID: ${a.id}</div>
+ </div>
+ <span style="font-size:14px;color:var(--primary);">选择</span>
+ </div>
+ `).join('');
+}
+
+// 过滤活动列表
+function filterActivityList() {
+ const kw = document.getElementById('activitySearchInput').value.toLowerCase();
+ const filtered = activities.filter(a => a.name.toLowerCase().includes(kw));
+ renderActivityList(filtered);
+}
+
+// 选择活动
+function selectActivity(id, name) {
+ selectedActivityId = id;
+ selectedActivityName = name;
+ document.getElementById('filterActivityInput').value = name;
+ closeModal('activitySelectModal');
+ filterTable();
+}
+
+// 打开活动选择器
+function openActivitySelector() {
+ document.getElementById('activitySearchInput').value = '';
+ renderActivityList(activities);
+ openModal('activitySelectModal');
+}
+
 function renderTable(data) {
-  const tbody = document.getElementById('tableBody');
-  document.getElementById('totalCount').textContent = data.length;
-  tbody.innerHTML = data.map(s => `
-    <tr>
-      <td style="font-family:monospace;font-size:12px;color:var(--text2);">${s.id}</td>
-      <td><strong>${s.name}</strong></td>
-      <td style="color:var(--text2);">${s.phone}</td>
-      <td>${s.activity}</td>
-      <td style="font-size:13px;color:var(--text2);">${s.time}</td>
-      <td style="font-weight:600;color:${s.amount?'var(--text)':'var(--success)'};">${s.amount?'¥'+s.amount.toLocaleString():'免费'}</td>
-      <td style="font-size:13px;">${s.payMethod}</td>
-      <td>${statusTag(s.status)}</td>
-      <td>
-        <button class="btn btn-text btn-sm" onclick="viewDetail('${s.id}')">详情</button>
-        ${s.status==='待支付'?`<button class="btn btn-text btn-sm" onclick="cancelSignup('${s.id}')">取消</button>`:''}
-      </td>
-    </tr>
-  `).join('');
+ const tbody = document.getElementById('tableBody');
+ document.getElementById('totalCount').textContent = data.length;
+ tbody.innerHTML = data.map(s => `
+ <tr>
+ <td style="font-family:monospace;font-size:12px;color:var(--text2);">${s.id}</td>
+ <td><strong>${s.name}</strong></td>
+ <td style="color:var(--text2);">${s.phone}</td>
+ <td>${s.activity}</td>
+ <td style="font-size:13px;color:var(--text2);">${s.time}</td>
+ <td style="font-weight:600;color:${s.amount?'var(--text)':'var(--success)'};">${s.amount?'¥'+s.amount.toLocaleString():'免费'}</td>
+ <td style="font-size:13px;">${s.payMethod}</td>
+ <td>${statusTag(s.status)}</td>
+ <td>
+ <button class="btn btn-text btn-sm" onclick="viewDetail('${s.id}')">详情</button>
+ ${s.status==='待支付'?`<button class="btn btn-text btn-sm" onclick="cancelSignup('${s.id}')">取消</button>`:''}
+ </td>
+ </tr>
+ `).join('');
 }
 
 function filterTable() {
-  const status = document.getElementById('filterStatus').value;
-  const kw = document.getElementById('filterKeyword').value.toLowerCase();
-  const act = document.getElementById('filterActivity').value.toLowerCase();
-  const filtered = signups.filter(s => {
-    if (status && s.status !== status) return false;
-    if (kw && !s.name.toLowerCase().includes(kw) && !s.id.toLowerCase().includes(kw)) return false;
-    if (act && !s.activity.toLowerCase().includes(act)) return false;
-    return true;
-  });
-  renderTable(filtered);
+ const status = document.getElementById('filterStatus').value;
+ const kw = document.getElementById('filterKeyword').value.toLowerCase();
+ const actInput = document.getElementById('filterActivityInput').value.trim().toLowerCase();
+ const filtered = signups.filter(s => {
+ if (status && s.status !== status) return false;
+ if (kw && !s.name.toLowerCase().includes(kw) && !s.id.toLowerCase().includes(kw)) return false;
+ if (actInput && !s.activity.toLowerCase().includes(actInput)) return false;
+ return true;
+ });
+ renderTable(filtered);
 }
+
 function resetFilter() {
-  document.getElementById('filterStatus').value = '';
-  document.getElementById('filterKeyword').value = '';
-  document.getElementById('filterActivity').value = '';
-  renderTable(signups);
+ document.getElementById('filterStatus').value = '';
+ document.getElementById('filterKeyword').value = '';
+ document.getElementById('filterActivityInput').value = '';
+ selectedActivityId = null;
+ selectedActivityName = '';
+ renderTable(signups);
 }
 
 function viewDetail(id) {
-  const s = signups.find(x => x.id === id);
-  if (!s) return;
-  document.getElementById('detailBody').innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:14px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:18px;font-weight:700;">${s.name}</span>
-        ${statusTag(s.status)}
-      </div>
-      <div style="background:var(--border-light);border-radius:10px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">报名号</div><div style="font-family:monospace;">${s.id}</div></div>
-        <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">手机号</div><div>${s.phone}</div></div>
-        <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">活动名称</div><div>${s.activity}</div></div>
-        <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">报名时间</div><div>${s.time}</div></div>
-        <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">支付金额</div><div style="font-weight:600;">${s.amount?'¥'+s.amount.toLocaleString():'免费'}</div></div>
-        <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">支付方式</div><div>${s.payMethod}</div></div>
-        <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">紧急联系人</div><div>${s.emergency}</div></div>
-        <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">附加服务</div><div>${s.addons.length?s.addons.join('、'):'无'}</div></div>
-      </div>
-    </div>`;
-  openModal('detailModal');
+ const s = signups.find(x => x.id === id);
+ if (!s) return;
+ document.getElementById('detailBody').innerHTML = `
+ <div style="display:flex;flex-direction:column;gap:14px;">
+ <div style="display:flex;justify-content:space-between;align-items:center;">
+ <span style="font-size:18px;font-weight:700;">${s.name}</span>
+ ${statusTag(s.status)}
+ </div>
+ <div style="background:var(--border-light);border-radius:10px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+ <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">报名号</div><div style="font-family:monospace;">${s.id}</div></div>
+ <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">手机号</div><div>${s.phone}</div></div>
+ <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">活动名称</div><div>${s.activity}</div></div>
+ <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">报名时间</div><div>${s.time}</div></div>
+ <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">支付金额</div><div style="font-weight:600;">${s.amount?'¥'+s.amount.toLocaleString():'免费'}</div></div>
+ <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">支付方式</div><div>${s.payMethod}</div></div>
+ <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">紧急联系人</div><div>${s.emergency}</div></div>
+ <div><div style="font-size:12px;color:var(--text3);margin-bottom:2px;">附加服务</div><div>${s.addons.length?s.addons.join('、'):'无'}</div></div>
+ </div>
+ </div>`;
+ openModal('detailModal');
 }
 function cancelSignup(id) {
-  if(confirm('确认取消该报名？')) { showToast('报名已取消','success'); }
+ if(confirm('确认取消该报名？')) { showToast('报名已取消','success'); }
 }
 
+// 初始化
+initFromURL();
+// 点击输入框打开选择器
+document.getElementById('filterActivityInput').addEventListener('click', openActivitySelector);
+// 初始渲染全部数据
 renderTable(signups);
 </script>
 </body>

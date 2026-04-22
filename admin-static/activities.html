@@ -179,24 +179,30 @@ const activities = [
 ];
 
 function renderTable(data) {
-  const tbody = document.getElementById('tableBody');
-  document.getElementById('totalCount').textContent = data.length;
-  tbody.innerHTML = data.map(a => `
-    <tr>
-      <td><div class="cover-img" style="background:linear-gradient(135deg,${a.cat==='race'?'var(--danger),#ff7875':a.cat==='charity'?'var(--accent),#f7c948':'var(--success),#73d13d'});"></div></td>
-      <td><strong>${a.name}</strong></td>
-      <td><span class="tag ${a.cat==='race'?'tag-danger':a.cat==='charity'?'tag-warning':'tag-success'}">${a.catLabel}</span></td>
-      <td style="font-size:13px;color:var(--text2);">${a.date}</td>
-      <td>${a.signup}/${a.capacity}</td>
-      <td style="font-weight:600;color:${a.price?'var(--text)':'var(--success)'};">${a.price?'¥'+a.price.toLocaleString():'免费'}</td>
-      <td>${statusTag(a.status)}</td>
-      <td>
-        <button class="btn btn-text btn-sm" onclick="editActivity(${a.id})">编辑</button>
-        <button class="btn btn-text btn-sm" onclick="viewDetail(${a.id})">详情</button>
-        <button class="btn btn-text btn-sm danger" onclick="deleteActivity(${a.id})">删除</button>
-      </td>
-    </tr>
-  `).join('');
+ const tbody = document.getElementById('tableBody');
+ document.getElementById('totalCount').textContent = data.length;
+ tbody.innerHTML = data.map(a => `
+ <tr>
+ <td><div class="cover-img" style="background:linear-gradient(135deg,${a.cat==='race'?'var(--danger),#ff7875':a.cat==='charity'?'var(--accent),#f7c948':'var(--success),#73d13d'});"></div></td>
+ <td><strong>${a.name}</strong></td>
+ <td><span class="tag ${a.cat==='race'?'tag-danger':a.cat==='charity'?'tag-warning':'tag-success'}">${a.catLabel}</span></td>
+ <td style="font-size:13px;color:var(--text2);">${a.date}</td>
+ <td>${a.signup}/${a.capacity}</td>
+ <td style="font-weight:600;color:${a.price?'var(--text)':'var(--success)'};">${a.price?'¥'+a.price.toLocaleString():'免费'}</td>
+ <td>${statusTag(a.status)}</td>
+ <td>
+ <button class="btn btn-text btn-sm" onclick="editActivity(${a.id})">编辑</button>
+ <button class="btn btn-text btn-sm" onclick="viewSignups(${a.id}, '${a.name.replace(/'/g, "\\'")}')">报名</button>
+ <button class="btn btn-text btn-sm" onclick="viewDetail(${a.id})">详情</button>
+ <button class="btn btn-text btn-sm danger" onclick="deleteActivity(${a.id})">删除</button>
+ </td>
+ </tr>
+ `).join('');
+}
+
+// 跳转到报名管理页面
+function viewSignups(id, name) {
+ window.location.href = `signups.html?activityId=${id}&activityName=${encodeURIComponent(name)}`;
 }
 
 function filterTable() {
