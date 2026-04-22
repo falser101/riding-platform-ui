@@ -21,11 +21,10 @@
           <div class="user-avatar">管</div>
           <span class="user-name">管理员</span>
           <span class="user-dropdown-icon">▾</span>
-          <div class="user-dropdown">
-            <div class="dropdown-item" onclick="location.href='settings.html'">⚙️ 系统设置</div>
-            <div class="dropdown-divider"></div>
-            <div class="dropdown-item danger" onclick="handleLogout()">🚪 退出登录</div>
-          </div>
+ <div class="user-dropdown">
+ <div class="dropdown-divider"></div>
+ <div class="dropdown-item danger" onclick="handleLogout()">🚪 退出登录</div>
+ </div>
         </div>
       </div>
     </header>
@@ -126,16 +125,43 @@
 
 <!-- 详情弹窗 -->
 <div class="modal-overlay" id="detailModal">
-  <div class="modal" style="max-width:580px;">
-    <div class="modal-header">
-      <div class="modal-title" id="detailTitle">俱乐部详情</div>
-      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
-    </div>
-    <div class="modal-body" id="detailBody"></div>
-    <div class="modal-footer">
-      <button class="btn btn-default" onclick="closeModal('detailModal')">关闭</button>
-    </div>
-  </div>
+ <div class="modal" style="max-width:580px;">
+ <div class="modal-header">
+ <div class="modal-title" id="detailTitle">俱乐部详情</div>
+ <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+ </div>
+ <div class="modal-body" id="detailBody"></div>
+ <div class="modal-footer">
+ <button class="btn btn-default" onclick="closeModal('detailModal')">关闭</button>
+ </div>
+ </div>
+</div>
+
+<!-- 会员列表弹窗 -->
+<div class="modal-overlay" id="membersModal">
+ <div class="modal" style="max-width:720px;">
+ <div class="modal-header">
+ <div class="modal-title" id="membersTitle">俱乐部会员</div>
+ <button class="modal-close" onclick="closeModal('membersModal')">✕</button>
+ </div>
+ <div class="modal-body" style="padding:0;">
+ <div class="table-wrap">
+ <table class="data-table">
+ <thead>
+ <tr>
+ <th>用户</th>
+ <th>手机号</th>
+ <th>加入时间</th>
+ <th>状态</th>
+ <th>参与活动</th>
+ <th style="width:100px;">操作</th>
+ </tr>
+ </thead>
+ <tbody id="membersBody"></tbody>
+ </table>
+ </div>
+ </div>
+ </div>
 </div>
 
 <script src="js/common.js"></script>
@@ -143,15 +169,55 @@
 renderLayout('clubs', '俱乐部管理');
 
 const clubs = [
-  { id:'c1', name:'西宁高原骑行俱乐部', city:'西宁', emoji:'🏔️', desc:'专注高原骑行，挑战极限', members:128, events:32, joins:856, km:125000 },
-  { id:'c2', name:'兰州黄河骑行俱乐部', city:'兰州', emoji:'🌊', desc:'沿黄河骑行，感受丝路文化', members:72, events:18, joins:432, km:68000 },
-  { id:'c3', name:'成都天府骑行俱乐部', city:'成都', emoji:'🌿', desc:'蜀道骑行，体验天府之国', members:85, events:22, joins:520, km:72000 },
-  { id:'c4', name:'呼和浩特草原骑行俱乐部', city:'呼和浩特', emoji:'🐎', desc:'驰骋草原，领略北疆风光', members:56, events:14, joins:336, km:56000 },
-  { id:'c5', name:'厦门海风骑行俱乐部', city:'厦门', emoji:'🌊', desc:'环岛骑行，享受海风与阳光', members:96, events:26, joins:624, km:48000 },
-  { id:'c6', name:'北京长城骑行俱乐部', city:'北京', emoji:'🏯', desc:'长城脚下，骑行古都', members:110, events:28, joins:840, km:62000 },
-  { id:'c7', name:'苏州园林骑行俱乐部', city:'苏州', emoji:'🏡', desc:'园林水乡，诗意骑行', members:48, events:10, joins:240, km:32000 },
-  { id:'c8', name:'昆明春城骑行俱乐部', city:'昆明', emoji:'🌸', desc:'春城四季骑行，风光无限', members:37, events:6, joins:148, km:23000 },
+{ id:'c1', name:'西宁高原骑行俱乐部', city:'西宁', emoji:'🏔️', desc:'专注高原骑行，挑战极限', members:128, events:32, joins:856, km:125000 },
+{ id:'c2', name:'兰州黄河骑行俱乐部', city:'兰州', emoji:'🌊', desc:'沿黄河骑行，感受丝路文化', members:72, events:18, joins:432, km:68000 },
+{ id:'c3', name:'成都天府骑行俱乐部', city:'成都', emoji:'🌿', desc:'蜀道骑行，体验天府之国', members:85, events:22, joins:520, km:72000 },
+{ id:'c4', name:'呼和浩特草原骑行俱乐部', city:'呼和浩特', emoji:'🐎', desc:'驰骋草原，领略北疆风光', members:56, events:14, joins:336, km:56000 },
+{ id:'c5', name:'厦门海风骑行俱乐部', city:'厦门', emoji:'🌊', desc:'环岛骑行，享受海风与阳光', members:96, events:26, joins:624, km:48000 },
+{ id:'c6', name:'北京长城骑行俱乐部', city:'北京', emoji:'🏯', desc:'长城脚下，骑行古都', members:110, events:28, joins:840, km:62000 },
+{ id:'c7', name:'苏州园林骑行俱乐部', city:'苏州', emoji:'🏡', desc:'园林水乡，诗意骑行', members:48, events:10, joins:240, km:32000 },
+{ id:'c8', name:'昆明春城骑行俱乐部', city:'昆明', emoji:'🌸', desc:'春城四季骑行，风光无限', members:37, events:6, joins:148, km:23000 },
 ];
+
+// 会员数据
+const membersData = {
+'c1': [
+{ id:'m1', name:'张伟', phone:'138****6789', joinDate:'2025-03-15', status:'active', events:24 },
+{ id:'m2', name:'李娜', phone:'137****1234', joinDate:'2025-05-20', status:'active', events:18 },
+{ id:'m3', name:'王强', phone:'136****5678', joinDate:'2025-08-10', status:'active', events:15 },
+{ id:'m4', name:'赵敏', phone:'135****9012', joinDate:'2026-01-05', status:'frozen', events:8 },
+{ id:'m5', name:'孙磊', phone:'134****3456', joinDate:'2026-02-18', status:'active', events:12 },
+],
+'c2': [
+{ id:'m6', name:'周静', phone:'133****7890', joinDate:'2025-04-12', status:'active', events:10 },
+{ id:'m7', name:'吴刚', phone:'132****1234', joinDate:'2025-09-08', status:'active', events:6 },
+],
+'c3': [
+{ id:'m8', name:'郑丽', phone:'131****5678', joinDate:'2025-06-22', status:'active', events:14 },
+],
+};
+
+// 生成指定俱乐部的会员列表（如果该俱乐部没有预设数据，则生成模拟数据）
+function getClubMembers(clubId) {
+if (membersData[clubId]) {
+return membersData[clubId];
+}
+// 生成模拟数据
+const count = Math.floor(Math.random() * 5) + 2;
+const members = [];
+const names = ['张伟', '李娜', '王强', '赵敏', '孙磊', '周静', '吴刚', '郑丽', '王芳', '李明'];
+for (let i = 0; i < count; i++) {
+members.push({
+id: 'm' + clubId + i,
+name: names[i % names.length],
+phone: '13' + i + '****' + String(1000 + i * 111),
+joinDate: '2025-' + String(i + 1).padStart(2, '0') + '-15',
+status: i % 3 === 0 ? 'frozen' : 'active',
+events: Math.floor(Math.random() * 20) + 5
+});
+}
+return members;
+}
 
 function renderTable(data) {
   document.getElementById('tableBody').innerHTML = data.map(c => `
@@ -163,11 +229,12 @@ function renderTable(data) {
       <td>${c.events}</td>
       <td>${c.joins}</td>
       <td>${(c.km/10000).toFixed(1)}万km</td>
-      <td>
-        <button class="btn btn-text btn-sm" onclick="viewClub('${c.id}')">详情</button>
-        <button class="btn btn-text btn-sm" onclick="editClub('${c.id}')">编辑</button>
-        <button class="btn btn-text btn-sm danger" onclick="deleteClub('${c.id}')">删除</button>
-      </td>
+ <td>
+ <button class="btn btn-text btn-sm" onclick="viewClub('${c.id}')">详情</button>
+ <button class="btn btn-text btn-sm" onclick="viewMembers('${c.id}', '${c.name.replace(/'/g, "\\'")}')">会员</button>
+ <button class="btn btn-text btn-sm" onclick="editClub('${c.id}')">编辑</button>
+ <button class="btn btn-text btn-sm danger" onclick="deleteClub('${c.id}')">删除</button>
+ </td>
     </tr>
   `).join('');
 }
@@ -227,15 +294,35 @@ function viewClub(id) {
 }
 
 function editClub(id) {
-  const c = clubs.find(x => x.id === id);
-  if (!c) return;
-  document.getElementById('clubModalTitle').textContent = '编辑俱乐部';
-  document.getElementById('f_name').value = c.name;
-  document.getElementById('f_city').value = c.city;
-  document.getElementById('f_desc').value = c.desc;
-  document.getElementById('f_emoji').value = c.emoji;
-  openModal('clubModal');
+const c = clubs.find(x => x.id === id);
+if (!c) return;
+document.getElementById('clubModalTitle').textContent = '编辑俱乐部';
+document.getElementById('f_name').value = c.name;
+document.getElementById('f_city').value = c.city;
+document.getElementById('f_desc').value = c.desc;
+document.getElementById('f_emoji').value = c.emoji;
+openModal('clubModal');
 }
+
+// 查看会员列表
+function viewMembers(clubId, clubName) {
+const members = getClubMembers(clubId);
+document.getElementById('membersTitle').textContent = clubName + ' - 会员列表';
+document.getElementById('membersBody').innerHTML = members.map(m => `
+<tr>
+<td><strong>${m.name}</strong></td>
+<td style="color:var(--text2);">${m.phone}</td>
+<td style="font-size:13px;color:var(--text2);">${m.joinDate}</td>
+<td>${m.status === 'active' ? '<span class="tag tag-success">正常</span>' : '<span class="tag tag-default">冻结</span>'}</td>
+<td>${m.events}次</td>
+<td>
+<button class="btn btn-text btn-sm" onclick="showToast('查看 ${m.name} 详情','info')">详情</button>
+</td>
+</tr>
+`).join('');
+openModal('membersModal');
+}
+
 function deleteClub(id) { if(confirm('确认删除该俱乐部？')) showToast('俱乐部已删除','success'); }
 function saveClub() { closeModal('clubModal'); showToast('俱乐部已保存','success'); }
 

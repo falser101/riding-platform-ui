@@ -11,7 +11,6 @@ const NAV_CONFIG = [
  ]},
  { group: '运营', items: [
  { icon: '👤', label: '用户管理', href: 'users.html', id: 'users' },
- { icon: '⚙️', label: '系统设置', href: 'settings.html', id: 'settings' },
  ]},
 ];
 
