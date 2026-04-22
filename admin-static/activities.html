@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>活动管理 - 骑行平台管理后台</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-area">
+    <header class="header">
+      <div class="header-left">
+        <button class="collapse-btn" id="collapseBtn">☰</button>
+        <div class="breadcrumb" id="breadcrumb"></div>
+      </div>
+      <div class="header-right">
+        <button class="header-action" title="通知">🔔<span class="badge-dot"></span></button>
+        <div class="user-menu">
+          <div class="user-avatar">管</div>
+          <span class="user-name">管理员</span>
+          <span class="user-dropdown-icon">▾</span>
+          <div class="user-dropdown">
+            <div class="dropdown-item" onclick="location.href='settings.html'">⚙️ 系统设置</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item danger" onclick="handleLogout()">🚪 退出登录</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="content animate-in">
+      <div class="page-header">
+        <div class="page-title"><span class="page-title-icon">🏃</span>活动管理</div>
+        <div class="page-actions">
+          <button class="btn btn-primary" onclick="openModal('addModal')">➕ 创建活动</button>
+        </div>
+      </div>
+
+      <!-- 筛选 -->
+      <div class="filter-bar">
+        <select class="form-select" id="filterCategory">
+          <option value="">全部类别</option>
+          <option value="race">赛事</option>
+          <option value="charity">公益</option>
+          <option value="family">亲子</option>
+        </select>
+        <select class="form-select" id="filterStatus">
+          <option value="">全部状态</option>
+          <option value="报名中">报名中</option>
+          <option value="进行中">进行中</option>
+          <option value="已结束">已结束</option>
+          <option value="草稿">草稿</option>
+        </select>
+        <input class="form-input" placeholder="搜索活动名称..." id="filterKeyword">
+        <button class="btn btn-primary btn-sm" onclick="filterTable()">筛选</button>
+        <button class="btn btn-default btn-sm" onclick="resetFilter()">重置</button>
+      </div>
+
+      <!-- 表格 -->
+      <div class="panel">
+        <div class="table-wrap">
+          <table class="data-table" id="activityTable">
+            <thead>
+              <tr>
+                <th style="width:50px;">封面</th>
+                <th>活动名称</th>
+                <th>类别</th>
+                <th>时间</th>
+                <th>报名/容量</th>
+                <th>价格</th>
+                <th>状态</th>
+                <th style="width:180px;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div class="pagination-info">共 <strong id="totalCount">0</strong> 条记录</div>
+          <div class="pagination-btns">
+            <button class="page-btn" disabled>‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 创建/编辑弹窗 -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">创建活动</div>
+      <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="required">活动名称</label>
+          <input class="form-input" id="f_name" placeholder="请输入活动名称">
+        </div>
+        <div class="form-group">
+          <label class="required">活动类别</label>
+          <select class="form-select" id="f_category" style="width:100%;">
+            <option value="race">赛事</option>
+            <option value="charity">公益</option>
+            <option value="family">亲子</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="required">开始日期</label>
+          <input class="form-input" id="f_start" type="date">
+        </div>
+        <div class="form-group">
+          <label class="required">结束日期</label>
+          <input class="form-input" id="f_end" type="date">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>报名容量</label>
+          <input class="form-input" id="f_capacity" type="number" placeholder="人数上限">
+        </div>
+        <div class="form-group">
+          <label>报名费用 (元)</label>
+          <input class="form-input" id="f_price" type="number" placeholder="0 为免费">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>路线</label>
+        <input class="form-input" id="f_route" placeholder="如: 西宁 → 青海湖">
+      </div>
+      <div class="form-group">
+        <label>活动描述</label>
+        <textarea id="f_desc" rows="3" placeholder="请输入活动详细描述"></textarea>
+      </div>
+      <div class="form-group">
+        <label>标签</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;">
+            <input type="checkbox" value="热门"> 热门
+          </label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;">
+            <input type="checkbox" value="推荐"> 推荐
+          </label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;">
+            <input type="checkbox" value="新上线"> 新上线
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('addModal')">取消</button>
+      <button class="btn btn-primary" onclick="saveActivity()">确认创建</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script>
+renderLayout('activities', '活动管理');
+
+const activities = [
+  { id:1, name:'环青海湖骑行挑战赛', cat:'race', catLabel:'赛事', date:'2026-07-15 ~ 2026-07-20', signup:186, capacity:300, price:1680, status:'报名中', tags:['热门'] },
+  { id:2, name:'亲子骑行夏令营', cat:'family', catLabel:'亲子', date:'2026-08-01 ~ 2026-08-05', signup:42, capacity:50, price:980, status:'报名中', tags:['推荐'] },
+  { id:3, name:'春季高原骑行邀请赛', cat:'race', catLabel:'赛事', date:'2026-05-10 ~ 2026-05-14', signup:210, capacity:200, price:2200, status:'进行中', tags:['热门'] },
+  { id:4, name:'拉萨-羊卓雍措深度骑行', cat:'race', catLabel:'赛事', date:'2026-09-05 ~ 2026-09-12', signup:89, capacity:120, price:3500, status:'报名中', tags:[] },
+  { id:5, name:'周日公益骑行', cat:'charity', catLabel:'公益', date:'每周日', signup:35, capacity:40, price:0, status:'报名中', tags:['热门'] },
+  { id:6, name:'亲子骑行嘉年华', cat:'family', catLabel:'亲子', date:'2026-06-01 ~ 2026-06-02', signup:0, capacity:100, price:680, status:'草稿', tags:['新上线'] },
+  { id:7, name:'冬季环湖挑战赛', cat:'race', catLabel:'赛事', date:'2025-12-10 ~ 2025-12-15', signup:150, capacity:150, price:1980, status:'已结束', tags:[] },
+  { id:8, name:'绿色出行公益骑行', cat:'charity', catLabel:'公益', date:'2026-04-13', signup:28, capacity:30, price:0, status:'已结束', tags:[] },
+];
+
+function renderTable(data) {
+  const tbody = document.getElementById('tableBody');
+  document.getElementById('totalCount').textContent = data.length;
+  tbody.innerHTML = data.map(a => `
+    <tr>
+      <td><div class="cover-img" style="background:linear-gradient(135deg,${a.cat==='race'?'var(--danger),#ff7875':a.cat==='charity'?'var(--accent),#f7c948':'var(--success),#73d13d'});"></div></td>
+      <td><strong>${a.name}</strong></td>
+      <td><span class="tag ${a.cat==='race'?'tag-danger':a.cat==='charity'?'tag-warning':'tag-success'}">${a.catLabel}</span></td>
+      <td style="font-size:13px;color:var(--text2);">${a.date}</td>
+      <td>${a.signup}/${a.capacity}</td>
+      <td style="font-weight:600;color:${a.price?'var(--text)':'var(--success)'};">${a.price?'¥'+a.price.toLocaleString():'免费'}</td>
+      <td>${statusTag(a.status)}</td>
+      <td>
+        <button class="btn btn-text btn-sm" onclick="editActivity(${a.id})">编辑</button>
+        <button class="btn btn-text btn-sm" onclick="viewDetail(${a.id})">详情</button>
+        <button class="btn btn-text btn-sm danger" onclick="deleteActivity(${a.id})">删除</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterTable() {
+  const cat = document.getElementById('filterCategory').value;
+  const status = document.getElementById('filterStatus').value;
+  const kw = document.getElementById('filterKeyword').value.toLowerCase();
+  const filtered = activities.filter(a => {
+    if (cat && a.cat !== cat) return false;
+    if (status && a.status !== status) return false;
+    if (kw && !a.name.toLowerCase().includes(kw)) return false;
+    return true;
+  });
+  renderTable(filtered);
+}
+function resetFilter() {
+  document.getElementById('filterCategory').value = '';
+  document.getElementById('filterStatus').value = '';
+  document.getElementById('filterKeyword').value = '';
+  renderTable(activities);
+}
+
+function editActivity(id) {
+  document.getElementById('modalTitle').textContent = '编辑活动';
+  const a = activities.find(x => x.id === id);
+  if (a) {
+    document.getElementById('f_name').value = a.name;
+    document.getElementById('f_category').value = a.cat;
+    document.getElementById('f_price').value = a.price;
+    document.getElementById('f_capacity').value = a.capacity;
+  }
+  openModal('addModal');
+}
+function viewDetail(id) { showToast('查看活动详情 #' + id, 'info'); }
+function deleteActivity(id) { if(confirm('确认删除该活动？')) { showToast('活动已删除','success'); } }
+function saveActivity() { closeModal('addModal'); showToast('活动已保存','success'); }
+
+renderTable(activities);
+</script>
+</body>
+</html>

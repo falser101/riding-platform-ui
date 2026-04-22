@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工作台 - 骑行平台管理后台</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-area">
+    <header class="header">
+      <div class="header-left">
+        <button class="collapse-btn" id="collapseBtn">☰</button>
+        <div class="breadcrumb" id="breadcrumb"></div>
+      </div>
+      <div class="header-right">
+        <button class="header-action" title="通知">🔔<span class="badge-dot"></span></button>
+        <div class="user-menu">
+          <div class="user-avatar">管</div>
+          <span class="user-name">管理员</span>
+          <span class="user-dropdown-icon">▾</span>
+          <div class="user-dropdown">
+            <div class="dropdown-item" onclick="location.href='settings.html'">⚙️ 系统设置</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item danger" onclick="handleLogout()">🚪 退出登录</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="content animate-in">
+      <!-- 欢迎语 -->
+      <div style="margin-bottom:24px;">
+        <h2 style="font-size:22px;font-weight:700;">👋 欢迎回来，管理员</h2>
+        <p style="color:var(--text3);margin-top:4px;">以下是平台今日运行概况</p>
+      </div>
+
+      <!-- 统计卡片 -->
+      <div class="stats-grid">
+        <div class="stat-card blue">
+          <div class="stat-icon blue">🏃</div>
+          <div class="stat-info">
+            <div class="stat-value">24</div>
+            <div class="stat-label">进行中活动</div>
+            <div class="stat-change up">↑ 12% 较上月</div>
+          </div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon green">📋</div>
+          <div class="stat-info">
+            <div class="stat-value">1,286</div>
+            <div class="stat-label">总报名人次</div>
+            <div class="stat-change up">↑ 8% 较上月</div>
+          </div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon orange">👥</div>
+          <div class="stat-info">
+            <div class="stat-value">3,847</div>
+            <div class="stat-label">注册用户</div>
+            <div class="stat-change up">↑ 5% 较上月</div>
+          </div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon red">💰</div>
+          <div class="stat-info">
+            <div class="stat-value">¥86.4万</div>
+            <div class="stat-label">本月营收</div>
+            <div class="stat-change up">↑ 15% 较上月</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 快捷操作 -->
+      <div class="quick-grid">
+        <div class="quick-card" onclick="location.href='activities.html'">
+          <div class="quick-card-icon">➕</div>
+          <div class="quick-card-title">创建活动</div>
+        </div>
+        <div class="quick-card" onclick="location.href='signups.html'">
+          <div class="quick-card-icon">📋</div>
+          <div class="quick-card-title">报名审核</div>
+        </div>
+        <div class="quick-card" onclick="location.href='bikes.html'">
+          <div class="quick-card-icon">🚴</div>
+          <div class="quick-card-title">添加车型</div>
+        </div>
+        <div class="quick-card" onclick="location.href='charity.html'">
+          <div class="quick-card-icon">💚</div>
+          <div class="quick-card-title">公益项目</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <!-- 报名趋势 -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">📈 近7日报名趋势</div>
+          </div>
+          <div class="panel-body">
+            <div class="chart-bars">
+              <div style="text-align:center;">
+                <div class="chart-bar" style="height:120px;background:linear-gradient(180deg,var(--primary),var(--primary-light));"></div>
+                <div style="font-size:11px;color:var(--text3);margin-top:6px;">周一</div>
+              </div>
+              <div style="text-align:center;">
+                <div class="chart-bar" style="height:85px;background:linear-gradient(180deg,var(--primary),var(--primary-light));"></div>
+                <div style="font-size:11px;color:var(--text3);margin-top:6px;">周二</div>
+              </div>
+              <div style="text-align:center;">
+                <div class="chart-bar" style="height:150px;background:linear-gradient(180deg,var(--primary),var(--primary-light));"></div>
+                <div style="font-size:11px;color:var(--text3);margin-top:6px;">周三</div>
+              </div>
+              <div style="text-align:center;">
+                <div class="chart-bar" style="height:110px;background:linear-gradient(180deg,var(--primary),var(--primary-light));"></div>
+                <div style="font-size:11px;color:var(--text3);margin-top:6px;">周四</div>
+              </div>
+              <div style="text-align:center;">
+                <div class="chart-bar" style="height:170px;background:linear-gradient(180deg,var(--accent),#f7c948);"></div>
+                <div style="font-size:11px;color:var(--text3);margin-top:6px;">周五</div>
+              </div>
+              <div style="text-align:center;">
+                <div class="chart-bar" style="height:200px;background:linear-gradient(180deg,var(--accent),#f7c948);"></div>
+                <div style="font-size:11px;color:var(--text3);margin-top:6px;">周六</div>
+              </div>
+              <div style="text-align:center;">
+                <div class="chart-bar" style="height:180px;background:linear-gradient(180deg,var(--accent),#f7c948);"></div>
+                <div style="font-size:11px;color:var(--text3);margin-top:6px;">周日</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 活动类别分布 -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">🎯 活动类别分布</div>
+          </div>
+          <div class="panel-body">
+            <div style="display:flex;flex-direction:column;gap:16px;padding:10px 0;">
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;">
+                  <span>赛事活动</span><span style="color:var(--text3);">42%</span>
+                </div>
+                <div style="height:8px;background:var(--border-light);border-radius:4px;overflow:hidden;">
+                  <div style="width:42%;height:100%;background:var(--danger);border-radius:4px;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;">
+                  <span>公益活动</span><span style="color:var(--text3);">28%</span>
+                </div>
+                <div style="height:8px;background:var(--border-light);border-radius:4px;overflow:hidden;">
+                  <div style="width:28%;height:100%;background:var(--accent);border-radius:4px;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;">
+                  <span>亲子活动</span><span style="color:var(--text3);">18%</span>
+                </div>
+                <div style="height:8px;background:var(--border-light);border-radius:4px;overflow:hidden;">
+                  <div style="width:18%;height:100%;background:var(--success);border-radius:4px;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;">
+                  <span>俱乐部活动</span><span style="color:var(--text3);">12%</span>
+                </div>
+                <div style="height:8px;background:var(--border-light);border-radius:4px;overflow:hidden;">
+                  <div style="width:12%;height:100%;background:var(--primary);border-radius:4px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 最近报名 & 待处理 -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-top:0;">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">🕐 最近报名</div>
+            <a href="signups.html" class="btn btn-text" style="font-size:13px;">查看全部 →</a>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>报名人</th><th>活动名称</th><th>报名时间</th><th>金额</th><th>状态</th></tr></thead>
+              <tbody>
+                <tr><td>张伟</td><td>环青海湖骑行挑战赛</td><td>2026-04-21 18:32</td><td>¥1,680</td><td><span class="tag tag-success">已报名</span></td></tr>
+                <tr><td>李娜</td><td>亲子骑行夏令营</td><td>2026-04-21 17:45</td><td>¥980</td><td><span class="tag tag-warning">待支付</span></td></tr>
+                <tr><td>王强</td><td>春季高原骑行邀请赛</td><td>2026-04-21 16:20</td><td>¥2,200</td><td><span class="tag tag-success">已报名</span></td></tr>
+                <tr><td>赵敏</td><td>拉萨-羊卓雍措深度骑行</td><td>2026-04-21 15:10</td><td>¥3,500</td><td><span class="tag tag-success">已报名</span></td></tr>
+                <tr><td>孙磊</td><td>周日公益骑行</td><td>2026-04-21 14:05</td><td>免费</td><td><span class="tag tag-success">已报名</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">📌 待处理事项</div>
+          </div>
+          <div class="panel-body" style="padding:12px 24px;">
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--warning-bg);border-radius:8px;cursor:pointer;" onclick="location.href='signups.html'">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span>💰</span><span style="font-size:14px;">待支付订单</span>
+                </div>
+                <span class="tag tag-warning">8</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--danger-bg);border-radius:8px;cursor:pointer;" onclick="location.href='activities.html'">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span>⚠️</span><span style="font-size:14px;">活动即将开始</span>
+                </div>
+                <span class="tag tag-danger">3</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--info-bg);border-radius:8px;cursor:pointer;" onclick="location.href='clubs.html'">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span>👥</span><span style="font-size:14px;">入会申请</span>
+                </div>
+                <span class="tag tag-info">5</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--success-bg);border-radius:8px;cursor:pointer;" onclick="location.href='charity.html'">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span>💚</span><span style="font-size:14px;">公益项目审核</span>
+                </div>
+                <span class="tag tag-success">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 俱乐部动态 -->
+      <div class="panel" style="margin-top:0;">
+        <div class="panel-header">
+          <div class="panel-title">🏷️ 热门俱乐部</div>
+          <a href="clubs.html" class="btn btn-text" style="font-size:13px;">管理俱乐部 →</a>
+        </div>
+        <div class="panel-body">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--border-light);border-radius:10px;">
+              <span style="font-size:28px;">🏔️</span>
+              <div><div style="font-weight:600;font-size:14px;">西宁高原骑行</div><div style="font-size:12px;color:var(--text3);">128人</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--border-light);border-radius:10px;">
+              <span style="font-size:28px;">🌊</span>
+              <div><div style="font-weight:600;font-size:14px;">厦门海风骑行</div><div style="font-size:12px;color:var(--text3);">96人</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--border-light);border-radius:10px;">
+              <span style="font-size:28px;">🌿</span>
+              <div><div style="font-weight:600;font-size:14px;">成都天府骑行</div><div style="font-size:12px;color:var(--text3);">85人</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--border-light);border-radius:10px;">
+              <span style="font-size:28px;">🏔️</span>
+              <div><div style="font-weight:600;font-size:14px;">兰州黄河骑行</div><div style="font-size:12px;color:var(--text3);">72人</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script>
+  renderLayout('dashboard', '工作台');
+</script>
+</body>
+</html>

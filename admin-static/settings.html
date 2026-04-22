@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>系统设置 - 骑行平台管理后台</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-area">
+    <header class="header">
+      <div class="header-left">
+        <button class="collapse-btn" id="collapseBtn">☰</button>
+        <div class="breadcrumb" id="breadcrumb"></div>
+      </div>
+      <div class="header-right">
+        <button class="header-action" title="通知">🔔<span class="badge-dot"></span></button>
+        <div class="user-menu">
+          <div class="user-avatar">管</div>
+          <span class="user-name">管理员</span>
+          <span class="user-dropdown-icon">▾</span>
+          <div class="user-dropdown">
+            <div class="dropdown-item" onclick="location.href='settings.html'">⚙️ 系统设置</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item danger" onclick="handleLogout()">🚪 退出登录</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="content animate-in">
+      <div class="page-header">
+        <div class="page-title"><span class="page-title-icon">⚙️</span>系统设置</div>
+      </div>
+
+      <!-- 基本信息 -->
+      <div class="settings-section">
+        <div class="settings-section-title">🏢 平台信息</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">公司名称</div>
+            <div class="settings-desc">平台运营主体</div>
+          </div>
+          <div class="settings-value">
+            <input class="form-input" value="西藏骑闯第三极体育文化传播有限公司" style="width:340px;" id="s_company">
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">平台名称</div>
+            <div class="settings-desc">对外显示的平台名称</div>
+          </div>
+          <div class="settings-value">
+            <input class="form-input" value="骑闯第三极" style="width:200px;" id="s_name">
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">联系电话</div>
+            <div class="settings-desc">平台客服热线</div>
+          </div>
+          <div class="settings-value">
+            <input class="form-input" value="0891-6668888" style="width:180px;" id="s_phone">
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Logo</div>
+            <div class="settings-desc">品牌标识</div>
+          </div>
+          <div class="settings-value">
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;">🚴</div>
+            <button class="btn btn-default btn-sm" onclick="showToast('上传功能开发中','info')">更换Logo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 业务设置 -->
+      <div class="settings-section">
+        <div class="settings-section-title">📋 业务设置</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">报名截止时间</div>
+            <div class="settings-desc">活动开始前多久截止报名</div>
+          </div>
+          <div class="settings-value">
+            <select class="form-select" id="s_deadline">
+              <option value="1">活动开始前 1 小时</option>
+              <option value="6">活动开始前 6 小时</option>
+              <option value="24" selected>活动开始前 24 小时</option>
+              <option value="48">活动开始前 48 小时</option>
+              <option value="72">活动开始前 72 小时</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">自动取消未支付订单</div>
+            <div class="settings-desc">超过指定时间未支付将自动取消</div>
+          </div>
+          <div class="settings-value">
+            <select class="form-select" id="s_auto_cancel">
+              <option value="30">30 分钟</option>
+              <option value="60" selected>1 小时</option>
+              <option value="120">2 小时</option>
+              <option value="1440">24 小时</option>
+              <option value="0">不自动取消</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">报名需填写紧急联系人</div>
+            <div class="settings-desc">报名时是否必填紧急联系人信息</div>
+          </div>
+          <div class="settings-value">
+            <label class="toggle-switch"><input type="checkbox" checked id="s_emergency"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">允许报名后修改信息</div>
+            <div class="settings-desc">用户是否可在截止前修改报名信息</div>
+          </div>
+          <div class="settings-value">
+            <label class="toggle-switch"><input type="checkbox" checked id="s_edit"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">最大报名次数</div>
+            <div class="settings-desc">同一用户对同一活动的最大报名次数</div>
+          </div>
+          <div class="settings-value">
+            <select class="form-select" id="s_max_signup">
+              <option value="1" selected>1 次</option>
+              <option value="2">2 次</option>
+              <option value="3">3 次</option>
+              <option value="0">不限</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 支付设置 -->
+      <div class="settings-section">
+        <div class="settings-section-title">💰 支付设置</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">微信支付</div>
+            <div class="settings-desc">启用微信在线支付</div>
+          </div>
+          <div class="settings-value">
+            <label class="toggle-switch"><input type="checkbox" checked id="s_wechat_pay"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">线下支付</div>
+            <div class="settings-desc">允许线下转账后由管理员确认</div>
+          </div>
+          <div class="settings-value">
+            <label class="toggle-switch"><input type="checkbox" checked id="s_offline_pay"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">免费活动自动确认</div>
+            <div class="settings-desc">免费活动报名后自动确认，无需支付</div>
+          </div>
+          <div class="settings-value">
+            <label class="toggle-switch"><input type="checkbox" checked id="s_free_auto"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 消息通知 -->
+      <div class="settings-section">
+        <div class="settings-section-title">📬 消息通知</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">报名成功通知</div>
+            <div class="settings-desc">用户报名成功后发送短信通知</div>
+          </div>
+          <div class="settings-value">
+            <label class="toggle-switch"><input type="checkbox" checked id="s_sms_signup"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">活动提醒</div>
+            <div class="settings-desc">活动开始前 1 天发送提醒</div>
+          </div>
+          <div class="settings-value">
+            <label class="toggle-switch"><input type="checkbox" checked id="s_sms_remind"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">支付超时提醒</div>
+            <div class="settings-desc">待支付订单即将超时时发送提醒</div>
+          </div>
+          <div class="settings-value">
+            <label class="toggle-switch"><input type="checkbox" id="s_sms_pay"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 管理员账号 -->
+      <div class="settings-section">
+        <div class="settings-section-title">👤 管理员账号</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">当前账号</div>
+            <div class="settings-desc">已登录的管理员账号</div>
+          </div>
+          <div class="settings-value">
+            <span style="font-weight:500;">admin</span>
+            <button class="btn btn-text btn-sm" onclick="showToast('修改密码功能开发中','info')">修改密码</button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">管理员列表</div>
+            <div class="settings-desc">拥有后台访问权限的账号</div>
+          </div>
+          <div class="settings-value">
+            <span style="color:var(--text2);">3 位管理员</span>
+            <button class="btn btn-default btn-sm" onclick="openModal('adminModal')">管理</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 保存按钮 -->
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px;">
+        <button class="btn btn-default" onclick="showToast('设置已重置','info')">重置</button>
+        <button class="btn btn-primary" onclick="showToast('设置已保存','success')">💾 保存设置</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 管理员管理弹窗 -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <div class="modal-title">管理员管理</div>
+      <button class="modal-close" onclick="closeModal('adminModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--border-light);border-radius:8px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="user-avatar-sm" style="background:var(--primary);">管</div>
+            <div><div style="font-weight:600;">admin</div><div style="font-size:12px;color:var(--text3);">超级管理员</div></div>
+          </div>
+          <span class="tag tag-success">当前</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--border-light);border-radius:8px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="user-avatar-sm" style="background:var(--accent);">运</div>
+            <div><div style="font-weight:600;">operator</div><div style="font-size:12px;color:var(--text3);">运营管理员</div></div>
+          </div>
+          <button class="btn btn-text btn-sm danger" onclick="showToast('已移除管理员','success')">移除</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--border-light);border-radius:8px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="user-avatar-sm" style="background:var(--success);">编</div>
+            <div><div style="font-weight:600;">editor</div><div style="font-size:12px;color:var(--text3);">内容编辑</div></div>
+          </div>
+          <button class="btn btn-text btn-sm danger" onclick="showToast('已移除管理员','success')">移除</button>
+        </div>
+      </div>
+      <button class="btn btn-default" style="margin-top:12px;width:100%;" onclick="showToast('添加管理员功能开发中','info')">➕ 添加管理员</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('adminModal')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script>
+renderLayout('settings', '系统设置');
+</script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>俱乐部管理 - 骑行平台管理后台</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-area">
+    <header class="header">
+      <div class="header-left">
+        <button class="collapse-btn" id="collapseBtn">☰</button>
+        <div class="breadcrumb" id="breadcrumb"></div>
+      </div>
+      <div class="header-right">
+        <button class="header-action" title="通知">🔔<span class="badge-dot"></span></button>
+        <div class="user-menu">
+          <div class="user-avatar">管</div>
+          <span class="user-name">管理员</span>
+          <span class="user-dropdown-icon">▾</span>
+          <div class="user-dropdown">
+            <div class="dropdown-item" onclick="location.href='settings.html'">⚙️ 系统设置</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item danger" onclick="handleLogout()">🚪 退出登录</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="content animate-in">
+      <div class="page-header">
+        <div class="page-title"><span class="page-title-icon">👥</span>俱乐部管理</div>
+        <div class="page-actions">
+          <button class="btn btn-primary" onclick="openModal('clubModal')">➕ 新建俱乐部</button>
+        </div>
+      </div>
+
+      <!-- 统计 -->
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+        <div class="stat-card blue"><div class="stat-icon blue">👥</div><div class="stat-info"><div class="stat-value">8</div><div class="stat-label">俱乐部总数</div></div></div>
+        <div class="stat-card green"><div class="stat-icon green">🙋</div><div class="stat-info"><div class="stat-value">632</div><div class="stat-label">总会员数</div></div></div>
+        <div class="stat-card orange"><div class="stat-icon orange">🏃</div><div class="stat-info"><div class="stat-value">156</div><div class="stat-label">累计活动</div></div></div>
+        <div class="stat-card red"><div class="stat-icon red">🛣️</div><div class="stat-info"><div class="stat-value">48.6万</div><div class="stat-label">累计里程(km)</div></div></div>
+      </div>
+
+      <!-- 筛选 -->
+      <div class="filter-bar">
+        <select class="form-select" id="filterCity">
+          <option value="">全部城市</option>
+          <option>西宁</option><option>兰州</option><option>成都</option>
+          <option>呼和浩特</option><option>厦门</option><option>北京</option>
+          <option>苏州</option><option>昆明</option>
+        </select>
+        <input class="form-input" placeholder="搜索俱乐部名称..." id="filterKw">
+        <button class="btn btn-primary btn-sm" onclick="filterTable()">筛选</button>
+        <button class="btn btn-default btn-sm" onclick="resetFilter()">重置</button>
+      </div>
+
+      <!-- 表格 -->
+      <div class="panel">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>图标</th>
+                <th>俱乐部名称</th>
+                <th>城市</th>
+                <th>会员数</th>
+                <th>举办活动</th>
+                <th>参与人次</th>
+                <th>累计里程</th>
+                <th style="width:160px;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div class="pagination-info">共 8 条</div>
+          <div class="pagination-btns">
+            <button class="page-btn" disabled>‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 新建/编辑弹窗 -->
+<div class="modal-overlay" id="clubModal">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-header">
+      <div class="modal-title" id="clubModalTitle">新建俱乐部</div>
+      <button class="modal-close" onclick="closeModal('clubModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="required">俱乐部名称</label>
+          <input class="form-input" id="f_name" placeholder="请输入俱乐部名称">
+        </div>
+        <div class="form-group">
+          <label class="required">所在城市</label>
+          <input class="form-input" id="f_city" placeholder="如: 西宁">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>俱乐部简介</label>
+        <textarea id="f_desc" rows="3" placeholder="请输入俱乐部描述"></textarea>
+      </div>
+      <div class="form-group">
+        <label>图标 Emoji</label>
+        <input class="form-input" id="f_emoji" placeholder="如: 🏔️" style="width:100px;">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('clubModal')">取消</button>
+      <button class="btn btn-primary" onclick="saveClub()">确认保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 详情弹窗 -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal" style="max-width:580px;">
+    <div class="modal-header">
+      <div class="modal-title" id="detailTitle">俱乐部详情</div>
+      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('detailModal')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script>
+renderLayout('clubs', '俱乐部管理');
+
+const clubs = [
+  { id:'c1', name:'西宁高原骑行俱乐部', city:'西宁', emoji:'🏔️', desc:'专注高原骑行，挑战极限', members:128, events:32, joins:856, km:125000 },
+  { id:'c2', name:'兰州黄河骑行俱乐部', city:'兰州', emoji:'🌊', desc:'沿黄河骑行，感受丝路文化', members:72, events:18, joins:432, km:68000 },
+  { id:'c3', name:'成都天府骑行俱乐部', city:'成都', emoji:'🌿', desc:'蜀道骑行，体验天府之国', members:85, events:22, joins:520, km:72000 },
+  { id:'c4', name:'呼和浩特草原骑行俱乐部', city:'呼和浩特', emoji:'🐎', desc:'驰骋草原，领略北疆风光', members:56, events:14, joins:336, km:56000 },
+  { id:'c5', name:'厦门海风骑行俱乐部', city:'厦门', emoji:'🌊', desc:'环岛骑行，享受海风与阳光', members:96, events:26, joins:624, km:48000 },
+  { id:'c6', name:'北京长城骑行俱乐部', city:'北京', emoji:'🏯', desc:'长城脚下，骑行古都', members:110, events:28, joins:840, km:62000 },
+  { id:'c7', name:'苏州园林骑行俱乐部', city:'苏州', emoji:'🏡', desc:'园林水乡，诗意骑行', members:48, events:10, joins:240, km:32000 },
+  { id:'c8', name:'昆明春城骑行俱乐部', city:'昆明', emoji:'🌸', desc:'春城四季骑行，风光无限', members:37, events:6, joins:148, km:23000 },
+];
+
+function renderTable(data) {
+  document.getElementById('tableBody').innerHTML = data.map(c => `
+    <tr>
+      <td><span style="font-size:24px;">${c.emoji}</span></td>
+      <td><strong>${c.name}</strong></td>
+      <td>${c.city}</td>
+      <td style="font-weight:600;">${c.members}</td>
+      <td>${c.events}</td>
+      <td>${c.joins}</td>
+      <td>${(c.km/10000).toFixed(1)}万km</td>
+      <td>
+        <button class="btn btn-text btn-sm" onclick="viewClub('${c.id}')">详情</button>
+        <button class="btn btn-text btn-sm" onclick="editClub('${c.id}')">编辑</button>
+        <button class="btn btn-text btn-sm danger" onclick="deleteClub('${c.id}')">删除</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterTable() {
+  const city = document.getElementById('filterCity').value;
+  const kw = document.getElementById('filterKw').value.toLowerCase();
+  renderTable(clubs.filter(c => {
+    if (city && c.city !== city) return false;
+    if (kw && !c.name.toLowerCase().includes(kw)) return false;
+    return true;
+  }));
+}
+function resetFilter() {
+  document.getElementById('filterCity').value = '';
+  document.getElementById('filterKw').value = '';
+  renderTable(clubs);
+}
+
+function viewClub(id) {
+  const c = clubs.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('detailTitle').textContent = c.name;
+  document.getElementById('detailBody').innerHTML = `
+    <div style="text-align:center;margin-bottom:20px;">
+      <span style="font-size:48px;">${c.emoji}</span>
+      <h3 style="margin-top:10px;">${c.name}</h3>
+      <p style="color:var(--text3);margin-top:4px;">${c.city} · ${c.desc}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+      <div style="text-align:center;padding:12px;background:var(--info-bg);border-radius:10px;">
+        <div style="font-size:20px;font-weight:800;color:var(--primary);">${c.members}</div>
+        <div style="font-size:12px;color:var(--text3);">会员数</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:var(--success-bg);border-radius:10px;">
+        <div style="font-size:20px;font-weight:800;color:var(--success);">${c.events}</div>
+        <div style="font-size:12px;color:var(--text3);">举办活动</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:var(--warning-bg);border-radius:10px;">
+        <div style="font-size:20px;font-weight:800;color:var(--accent);">${c.joins}</div>
+        <div style="font-size:12px;color:var(--text3);">参与人次</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:var(--danger-bg);border-radius:10px;">
+        <div style="font-size:20px;font-weight:800;color:var(--danger);">${(c.km/10000).toFixed(1)}万</div>
+        <div style="font-size:12px;color:var(--text3);">累计km</div>
+      </div>
+    </div>
+    <div style="background:var(--border-light);border-radius:10px;padding:16px;">
+      <h4 style="margin-bottom:10px;">近期活动</h4>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;justify-content:space-between;font-size:13px;"><span>环湖骑行挑战</span><span style="color:var(--text3);">2026-05-15</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;"><span>周末休闲骑</span><span style="color:var(--text3);">2026-04-26</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;"><span>公益骑行活动</span><span style="color:var(--text3);">2026-04-20</span></div>
+      </div>
+    </div>`;
+  openModal('detailModal');
+}
+
+function editClub(id) {
+  const c = clubs.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('clubModalTitle').textContent = '编辑俱乐部';
+  document.getElementById('f_name').value = c.name;
+  document.getElementById('f_city').value = c.city;
+  document.getElementById('f_desc').value = c.desc;
+  document.getElementById('f_emoji').value = c.emoji;
+  openModal('clubModal');
+}
+function deleteClub(id) { if(confirm('确认删除该俱乐部？')) showToast('俱乐部已删除','success'); }
+function saveClub() { closeModal('clubModal'); showToast('俱乐部已保存','success'); }
+
+renderTable(clubs);
+</script>
+</body>
+</html>

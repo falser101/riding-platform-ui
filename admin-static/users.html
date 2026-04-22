@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>用户管理 - 骑行平台管理后台</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-area">
+    <header class="header">
+      <div class="header-left">
+        <button class="collapse-btn" id="collapseBtn">☰</button>
+        <div class="breadcrumb" id="breadcrumb"></div>
+      </div>
+      <div class="header-right">
+        <button class="header-action" title="通知">🔔<span class="badge-dot"></span></button>
+        <div class="user-menu">
+          <div class="user-avatar">管</div>
+          <span class="user-name">管理员</span>
+          <span class="user-dropdown-icon">▾</span>
+          <div class="user-dropdown">
+            <div class="dropdown-item" onclick="location.href='settings.html'">⚙️ 系统设置</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item danger" onclick="handleLogout()">🚪 退出登录</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="content animate-in">
+      <div class="page-header">
+        <div class="page-title"><span class="page-title-icon">👤</span>用户管理</div>
+        <div class="page-actions">
+          <button class="btn btn-default" onclick="showToast('导出功能开发中','info')">📥 导出用户</button>
+        </div>
+      </div>
+
+      <!-- 统计 -->
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+        <div class="stat-card blue"><div class="stat-icon blue">👤</div><div class="stat-info"><div class="stat-value">3,847</div><div class="stat-label">总用户数</div></div></div>
+        <div class="stat-card green"><div class="stat-icon green">✅</div><div class="stat-info"><div class="stat-value">2,156</div><div class="stat-label">活跃用户</div></div></div>
+        <div class="stat-card orange"><div class="stat-icon orange">🚴</div><div class="stat-info"><div class="stat-value">1,023</div><div class="stat-label">已绑定自行车</div></div></div>
+        <div class="stat-card red"><div class="stat-icon red">👥</div><div class="stat-info"><div class="stat-value">568</div><div class="stat-label">已加入俱乐部</div></div></div>
+      </div>
+
+      <!-- 筛选 -->
+      <div class="filter-bar">
+        <input class="form-input" placeholder="搜索用户名/手机号..." id="filterKw" style="min-width:220px;">
+        <select class="form-select" id="filterStatus">
+          <option value="">全部状态</option>
+          <option value="active">正常</option>
+          <option value="disabled">已禁用</option>
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="filterTable()">筛选</button>
+        <button class="btn btn-default btn-sm" onclick="resetFilter()">重置</button>
+      </div>
+
+      <!-- 表格 -->
+      <div class="panel">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:50px;">头像</th>
+                <th>用户名</th>
+                <th>手机号</th>
+                <th>报名次数</th>
+                <th>我的自行车</th>
+                <th>俱乐部</th>
+                <th>注册时间</th>
+                <th>状态</th>
+                <th style="width:140px;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div class="pagination-info">共 3,847 条</div>
+          <div class="pagination-btns">
+            <button class="page-btn" disabled>‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">...</button>
+            <button class="page-btn">20</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 用户详情弹窗 -->
+<div class="modal-overlay" id="userModal">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-header">
+      <div class="modal-title">用户详情</div>
+      <button class="modal-close" onclick="closeModal('userModal')">✕</button>
+    </div>
+    <div class="modal-body" id="userBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('userModal')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script>
+renderLayout('users', '用户管理');
+
+const users = [
+  { id:1, name:'张伟', phone:'138****6789', avatar:'张', signups:5, bikes:['TREK Domane SL 5','Specialized Roubaix'], clubs:['西宁高原骑行','北京长城骑行'], regTime:'2025-06-15', status:'active' },
+  { id:2, name:'李娜', phone:'137****1234', avatar:'李', signups:3, bikes:['GIANT Defy Advanced 2'], clubs:['厦门海风骑行'], regTime:'2025-08-22', status:'active' },
+  { id:3, name:'王强', phone:'136****5678', avatar:'王', signups:8, bikes:[], clubs:['成都天府骑行'], regTime:'2025-03-10', status:'active' },
+  { id:4, name:'赵敏', phone:'135****9012', avatar:'赵', signups:2, bikes:['CANYON Endurace CF SL 8'], clubs:[], regTime:'2026-01-05', status:'active' },
+  { id:5, name:'孙磊', phone:'134****3456', avatar:'孙', signups:12, bikes:['TREK Checkpoint SL 5','GIANT Revolt Advanced 2'], clubs:['昆明春城骑行'], regTime:'2024-11-20', status:'active' },
+  { id:6, name:'周静', phone:'133****7890', avatar:'周', signups:1, bikes:[], clubs:[], regTime:'2026-04-01', status:'active' },
+  { id:7, name:'吴刚', phone:'132****1234', avatar:'吴', signups:0, bikes:[], clubs:[], regTime:'2026-04-18', status:'disabled' },
+  { id:8, name:'郑丽', phone:'131****5678', avatar:'郑', signups:4, bikes:['MERIDA Scultura 6000'], clubs:['苏州园林骑行'], regTime:'2025-12-08', status:'active' },
+];
+
+function renderTable(data) {
+  document.getElementById('tableBody').innerHTML = data.map(u => `
+    <tr>
+      <td><div class="user-avatar-sm">${u.avatar}</div></td>
+      <td><strong>${u.name}</strong></td>
+      <td style="color:var(--text2);">${u.phone}</td>
+      <td>${u.signups}</td>
+      <td style="font-size:13px;color:var(--text2);">${u.bikes.length?u.bikes[0]+(u.bikes.length>1?' +'+(u.bikes.length-1):''):'未添加'}</td>
+      <td style="font-size:13px;color:var(--text2);">${u.clubs.length?u.clubs[0]+(u.clubs.length>1?' +'+(u.clubs.length-1):''):'未加入'}</td>
+      <td style="font-size:13px;color:var(--text2);">${u.regTime}</td>
+      <td>${u.status==='active'?'<span class="tag tag-success">正常</span>':'<span class="tag tag-danger">已禁用</span>'}</td>
+      <td>
+        <button class="btn btn-text btn-sm" onclick="viewUser(${u.id})">详情</button>
+        <button class="btn btn-text btn-sm ${u.status==='active'?'danger':''}" onclick="toggleUser(${u.id})">${u.status==='active'?'禁用':'启用'}</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterTable() {
+  const kw = document.getElementById('filterKw').value.toLowerCase();
+  const status = document.getElementById('filterStatus').value;
+  renderTable(users.filter(u => {
+    if (kw && !u.name.toLowerCase().includes(kw) && !u.phone.includes(kw)) return false;
+    if (status && u.status !== status) return false;
+    return true;
+  }));
+}
+function resetFilter() {
+  document.getElementById('filterKw').value = '';
+  document.getElementById('filterStatus').value = '';
+  renderTable(users);
+}
+
+function viewUser(id) {
+  const u = users.find(x => x.id === id);
+  if (!u) return;
+  document.getElementById('userBody').innerHTML = `
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+      <div class="user-avatar-sm" style="width:48px;height:48px;font-size:20px;">${u.avatar}</div>
+      <div>
+        <div style="font-size:18px;font-weight:700;">${u.name}</div>
+        <div style="color:var(--text3);font-size:13px;">${u.phone} · 注册于 ${u.regTime}</div>
+      </div>
+      ${u.status==='active'?'<span class="tag tag-success" style="margin-left:auto;">正常</span>':'<span class="tag tag-danger" style="margin-left:auto;">已禁用</span>'}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div style="text-align:center;padding:12px;background:var(--info-bg);border-radius:10px;">
+        <div style="font-size:20px;font-weight:800;color:var(--primary);">${u.signups}</div>
+        <div style="font-size:12px;color:var(--text3);">报名次数</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:var(--success-bg);border-radius:10px;">
+        <div style="font-size:20px;font-weight:800;color:var(--success);">${u.bikes.length}</div>
+        <div style="font-size:12px;color:var(--text3);">我的自行车</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:var(--warning-bg);border-radius:10px;">
+        <div style="font-size:20px;font-weight:800;color:var(--accent);">${u.clubs.length}</div>
+        <div style="font-size:12px;color:var(--text3);">加入俱乐部</div>
+      </div>
+    </div>
+    ${u.bikes.length ? `<div style="margin-bottom:14px;"><div style="font-weight:600;margin-bottom:8px;">🚴 我的自行车</div>${u.bikes.map(b=>`<div style="padding:8px 12px;background:var(--border-light);border-radius:8px;font-size:13px;margin-bottom:4px;">${b}</div>`).join('')}</div>` : ''}
+    ${u.clubs.length ? `<div><div style="font-weight:600;margin-bottom:8px;">👥 已加入俱乐部</div>${u.clubs.map(c=>`<div style="padding:8px 12px;background:var(--border-light);border-radius:8px;font-size:13px;margin-bottom:4px;">${c}</div>`).join('')}</div>` : ''}`;
+  openModal('userModal');
+}
+function toggleUser(id) {
+  const u = users.find(x => x.id === id);
+  const action = u.status === 'active' ? '禁用' : '启用';
+  if (confirm(`确认${action}用户 ${u.name}？`)) {
+    u.status = u.status === 'active' ? 'disabled' : 'active';
+    renderTable(users);
+    showToast(`用户已${action}`, 'success');
+  }
+}
+
+renderTable(users);
+</script>
+</body>
+</html>
