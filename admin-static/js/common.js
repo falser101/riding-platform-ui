@@ -1,20 +1,18 @@
 /* 骑行平台管理后台 - 公共组件 */
 const NAV_CONFIG = [
-  { group: '核心', items: [
-    { icon: '📊', label: '工作台', href: 'index.html', id: 'dashboard' },
-    { icon: '🏃', label: '活动管理', href: 'activities.html', id: 'activities' },
-    { icon: '📋', label: '报名管理', href: 'signups.html', id: 'signups', badge: 12 },
-  ]},
-  { group: '内容', items: [
-    { icon: '🚴', label: '车辆管理', href: 'bikes.html', id: 'bikes' },
-    { icon: '👥', label: '俱乐部管理', href: 'clubs.html', id: 'clubs' },
-    { icon: '💚', label: '公益活动', href: 'charity.html', id: 'charity' },
-    { icon: '🏪', label: '门店管理', href: 'stores.html', id: 'stores' },
-  ]},
-  { group: '运营', items: [
-    { icon: '👤', label: '用户管理', href: 'users.html', id: 'users' },
-    { icon: '⚙️', label: '系统设置', href: 'settings.html', id: 'settings' },
-  ]},
+ { group: '核心', items: [
+ { icon: '📊', label: '工作台', href: 'index.html', id: 'dashboard' },
+ { icon: '🏃', label: '活动管理', href: 'activities.html', id: 'activities' },
+ { icon: '📋', label: '报名管理', href: 'signups.html', id: 'signups', badge: 12 },
+ ]},
+ { group: '内容', items: [
+ { icon: '🚴', label: '车辆管理', href: 'bikes.html', id: 'bikes' },
+ { icon: '👥', label: '俱乐部管理', href: 'clubs.html', id: 'clubs' },
+ ]},
+ { group: '运营', items: [
+ { icon: '👤', label: '用户管理', href: 'users.html', id: 'users' },
+ { icon: '⚙️', label: '系统设置', href: 'settings.html', id: 'settings' },
+ ]},
 ];
 
 function renderLayout(activeId, breadcrumbText) {
