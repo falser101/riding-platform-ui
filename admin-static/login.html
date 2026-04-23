@@ -303,14 +303,14 @@ function handleLogin(e) {
   if (valid) {
     localStorage.setItem('admin_logged_in', 'true');
     localStorage.setItem('admin_user', username);
-    window.location.href = 'index.html';
+    window.location.href = 'activities.html';
   }
   return false;
 }
 
 // 如果已登录，直接跳转
 if (localStorage.getItem('admin_logged_in') === 'true') {
-  window.location.href = 'index.html';
+  window.location.href = 'activities.html';
 }
 </script>
 </body>

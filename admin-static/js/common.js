@@ -1,7 +1,6 @@
 /* 骑行平台管理后台 - 公共组件 */
 const NAV_CONFIG = [
  { group: '核心', items: [
- { icon: '📊', label: '工作台', href: 'index.html', id: 'dashboard' },
  { icon: '🏃', label: '活动管理', href: 'activities.html', id: 'activities' },
  { icon: '📋', label: '报名管理', href: 'signups.html', id: 'signups', badge: 12 },
  ]},
@@ -50,7 +49,7 @@ function renderLayout(activeId, breadcrumbText) {
   
   // Breadcrumb
   if (breadcrumb) {
-    breadcrumb.innerHTML = `<a href="index.html">首页</a><span>/</span><span class="current">${breadcrumbText}</span>`;
+    breadcrumb.innerHTML = `<span class="current">${breadcrumbText}</span>`;
   }
   
   // Collapse toggle
