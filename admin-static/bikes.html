@@ -30,13 +30,6 @@
       </div>
     </header>
     <div class="content animate-in">
-      <div class="page-header">
-        <div class="page-title"><span class="page-title-icon">🚴</span>车辆管理</div>
-        <div class="page-actions">
-          <button class="btn btn-primary" onclick="openModal('brandModal')">➕ 添加品牌</button>
-        </div>
-      </div>
-
       <!-- 统计 -->
       <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
         <div class="stat-card blue"><div class="stat-icon blue">🏷️</div><div class="stat-info"><div class="stat-value">6</div><div class="stat-label">品牌总数</div></div></div>
@@ -45,19 +38,8 @@
         <div class="stat-card red"><div class="stat-icon red">⭐</div><div class="stat-info"><div class="stat-value">2,847</div><div class="stat-label">用户收藏</div></div></div>
       </div>
 
-      <!-- Tab 切换 -->
-      <div style="display:flex;gap:8px;margin-bottom:20px;" id="viewTabs">
-        <button class="btn btn-primary btn-sm" data-tab="brands" onclick="switchView('brands')">品牌视图</button>
-        <button class="btn btn-default btn-sm" data-tab="models" onclick="switchView('models')">车型列表</button>
-      </div>
-
-      <!-- 品牌视图 -->
-      <div id="brandsView">
-        <div class="brand-grid" id="brandGrid"></div>
-      </div>
-
       <!-- 车型列表视图 -->
-      <div id="modelsView" style="display:none;">
+      <div id="modelsView">
         <div class="filter-bar">
           <select class="form-select" id="filterBrand">
             <option value="">全部品牌</option>
@@ -94,70 +76,9 @@
   </div>
 </div>
 
-<!-- 品牌弹窗 -->
-<div class="modal-overlay" id="brandModal">
-  <div class="modal" style="max-width:520px;">
-    <div class="modal-header">
-      <div class="modal-title">添加品牌</div>
-      <button class="modal-close" onclick="closeModal('brandModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label class="required">品牌名称 (中文)</label>
-        <input class="form-input" placeholder="如: 崔克">
-      </div>
-      <div class="form-group">
-        <label class="required">品牌名称 (英文)</label>
-        <input class="form-input" placeholder="如: TREK">
-      </div>
-      <div class="form-group">
-        <label>产地/国家</label>
-        <input class="form-input" placeholder="如: 美国">
-      </div>
-      <div class="form-group">
-        <label>品类范围</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="checkbox"> 公路车</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="checkbox"> 山地车</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="checkbox"> 砾石车</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="checkbox"> 城市通勤</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="checkbox"> 旅行车</label>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-default" onclick="closeModal('brandModal')">取消</button>
-      <button class="btn btn-primary" onclick="closeModal('brandModal');showToast('品牌已添加','success')">确认添加</button>
-    </div>
-  </div>
-</div>
-
-<!-- 系列弹窗 -->
-<div class="modal-overlay" id="seriesModal">
-  <div class="modal" style="max-width:560px;">
-    <div class="modal-header">
-      <div class="modal-title" id="seriesModalTitle">系列管理</div>
-      <button class="modal-close" onclick="closeModal('seriesModal')">✕</button>
-    </div>
-    <div class="modal-body" id="seriesModalBody"></div>
-    <div class="modal-footer">
-      <button class="btn btn-default" onclick="closeModal('seriesModal')">关闭</button>
-    </div>
-  </div>
-</div>
-
 <script src="js/common.js"></script>
 <script>
 renderLayout('bikes', '车辆管理');
-
-const brands = [
-  { slug:'trek', name:'崔克 TREK', origin:'美国', cats:['公路车','山地车','砾石车','城市通勤','旅行车','铁三'], series:['Domane','Madone','Émonda','Checkpoint','Fuel EX','Procaliber'], color:'#1a5f9e' },
-  { slug:'giant', name:'捷安特 GIANT', origin:'中国台湾', cats:['公路车','山地车','砾石车','城市通勤','旅行车'], series:['Defy','Propel','TCR','Revolt','Trance'], color:'#2d8bc9' },
-  { slug:'merida', name:'美利达 MERIDA', origin:'中国台湾', cats:['公路车','山地车','砾石车','城市通勤'], series:['Scultura','Reacto','Silex','Big.Seven'], color:'#8B4513' },
-  { slug:'specialized', name:'闪电 Specialized', origin:'美国', cats:['公路车','山地车','砾石车','城市通勤','旅行车','铁三'], series:['Roubaix','Tarmac','Aethos','Diverge','Stumpjumper','Epic'], color:'#d4380d' },
-  { slug:'canyon', name:'CANYON', origin:'德国', cats:['公路车','山地车','砾石车','城市通勤','旅行车'], series:['Endurace','Aeroad','Ultimate','Grail','Spectral'], color:'#52c41a' },
-  { slug:'bianchi', name:'比安奇 Bianchi', origin:'意大利', cats:['公路车','山地车','城市通勤'], series:['Oltre','Sprint','Impulso'], color:'#3da0d9' },
-];
 
 const models = [
   { brand:'TREK', series:'Domane', name:'Domane SL 5', year:2025, type:'公路车', price:22800, weight:'9.6kg', material:'碳纤维' },
@@ -174,53 +95,6 @@ const models = [
   { brand:'GIANT', series:'Revolt', name:'Revolt Advanced 2', year:2025, type:'砾石车', price:15800, weight:'9.5kg', material:'碳纤维' },
 ];
 
-// 品牌视图
-function renderBrands() {
-  document.getElementById('brandGrid').innerHTML = brands.map(b => `
-    <div class="brand-card" style="border-left-color:${b.color};">
-      <div class="brand-card-header">
-        <div class="brand-card-name">${b.name}</div>
-        <div style="font-size:12px;color:var(--text3);">${b.origin}</div>
-      </div>
-      <div class="brand-card-count">${b.series.length} 个系列 · ${b.cats.join(' / ')}</div>
-      <div class="brand-series-list">
-        ${b.series.map(s => `<span class="brand-series-tag">${s}</span>`).join('')}
-      </div>
-      <div class="brand-card-actions">
-        <button class="btn btn-text btn-sm" onclick="viewSeries('${b.slug}')">系列管理</button>
-        <button class="btn btn-text btn-sm" onclick="showToast('编辑品牌','info')">编辑</button>
-        <button class="btn btn-text btn-sm danger" onclick="showToast('品牌已删除','success')">删除</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function viewSeries(slug) {
-  const b = brands.find(x => x.slug === slug);
-  if (!b) return;
-  document.getElementById('seriesModalTitle').textContent = b.name + ' - 系列管理';
-  document.getElementById('seriesModalBody').innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      ${b.series.map((s,i) => `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--border-light);border-radius:8px;">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span style="font-size:18px;">📁</span>
-            <div>
-              <div style="font-weight:600;font-size:14px;">${s}</div>
-              <div style="font-size:12px;color:var(--text3);">3-6 个车型</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:4px;">
-            <button class="btn btn-text btn-sm" onclick="showToast('查看${s}车型列表','info')">车型</button>
-            <button class="btn btn-text btn-sm" onclick="showToast('编辑系列','info')">编辑</button>
-          </div>
-        </div>
-      `).join('')}
-      <button class="btn btn-default" style="margin-top:8px;" onclick="showToast('添加系列','info')">➕ 添加系列</button>
-    </div>`;
-  openModal('seriesModal');
-}
-
 // 车型列表视图
 function renderModels(data) {
   document.getElementById('modelBody').innerHTML = data.map(m => `
@@ -231,22 +105,14 @@ function renderModels(data) {
       <td>${m.year}</td>
       <td><span class="tag ${m.type==='公路车'?'tag-info':m.type==='砾石车'?'tag-warning':'tag-success'}">${m.type}</span></td>
       <td style="font-weight:600;">¥${m.price.toLocaleString()}</td>
-      <td style="color:var(--text2);">${m.weight}</td>
-      <td style="color:var(--text2);">${m.material}</td>
+      <td style="color:var(--el-text-color-secondary);">${m.weight}</td>
+      <td style="color:var(--el-text-color-secondary);">${m.material}</td>
       <td>
         <button class="btn btn-text btn-sm" onclick="showToast('编辑车型','info')">编辑</button>
         <button class="btn btn-text btn-sm danger" onclick="showToast('已删除','success')">删除</button>
       </td>
     </tr>
   `).join('');
-}
-
-function switchView(view) {
-  document.getElementById('brandsView').style.display = view==='brands' ? '' : 'none';
-  document.getElementById('modelsView').style.display = view==='models' ? '' : 'none';
-  document.querySelectorAll('#viewTabs .btn').forEach(b => {
-    b.className = b.dataset.tab === view ? 'btn btn-primary btn-sm' : 'btn btn-default btn-sm';
-  });
 }
 
 function filterModels() {
@@ -262,7 +128,6 @@ function filterModels() {
   renderModels(filtered);
 }
 
-renderBrands();
 renderModels(models);
 </script>
 </body>
