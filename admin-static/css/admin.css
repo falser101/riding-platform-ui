@@ -254,6 +254,24 @@ input, select, textarea { font-family: inherit; }
   padding: 20px;
 }
 
+/* ===== 页面标题栏 ===== */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+}
+.page-title-icon { font-size: 20px; }
+.page-actions { display: flex; gap: 10px; }
+
 /* ===== 面板卡片 ===== */
 .panel {
   background: #fff;
@@ -394,6 +412,8 @@ input, select, textarea { font-family: inherit; }
 .data-table tr:hover td { background: var(--el-bg-color); }
 
 /* ===== 表单元素 ===== */
+.form-row { display: flex; gap: 16px; }
+.form-row .form-group { flex: 1; }
 .form-group { margin-bottom: 16px; }
 .form-label {
   display: block;
@@ -515,6 +535,55 @@ input, select, textarea { font-family: inherit; }
 .filter-item .form-select {
   width: auto;
   min-width: 140px;
+}
+
+/* ===== 上传组件 ===== */
+.upload-area {
+  border: 2px dashed var(--el-border-color);
+  border-radius: var(--el-border-radius-base);
+  min-height: 120px;
+  position: relative;
+  transition: all 0.2s;
+}
+.upload-area:hover { border-color: var(--el-color-primary); }
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  cursor: pointer;
+  color: var(--el-text-color-secondary);
+}
+.upload-placeholder:hover { background: var(--el-color-primary-light-9); }
+.upload-icon { font-size: 28px; margin-bottom: 8px; }
+.upload-text { font-size: 14px; margin-bottom: 4px; }
+.upload-hint { font-size: 12px; color: var(--el-text-color-placeholder); }
+.upload-preview {
+  position: relative;
+  padding: 12px;
+}
+.upload-preview img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: var(--el-border-radius-base);
+}
+.upload-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ===== Toast ===== */

@@ -100,11 +100,11 @@
     </div>
     <div class="modal-body">
       <div class="form-row">
-        <div class="form-group">
+        <div class="form-group" style="flex:2;">
           <label class="required">活动名称</label>
           <input class="form-input" id="f_name" placeholder="请输入活动名称">
         </div>
-        <div class="form-group">
+        <div class="form-group" style="flex:1;">
           <label class="required">活动类别</label>
           <select class="form-select" id="f_category" style="width:100%;">
             <option value="race">赛事</option>
@@ -112,6 +112,22 @@
             <option value="family">亲子</option>
           </select>
         </div>
+      </div>
+      <div class="form-group">
+        <label>活动封面图</label>
+        <div class="upload-area" id="coverUpload">
+          <input type="file" id="coverInput" accept="image/*" style="display:none;" onchange="handleCoverUpload(this)">
+          <div class="upload-placeholder" onclick="document.getElementById('coverInput').click()">
+            <span class="upload-icon">📷</span>
+            <span class="upload-text">点击上传封面图片</span>
+            <span class="upload-hint">支持 JPG、PNG，建议尺寸 750×400</span>
+          </div>
+          <div class="upload-preview" id="coverPreview" style="display:none;">
+            <img id="previewImg" src="" alt="预览">
+            <button class="upload-remove" onclick="event.stopPropagation();removeCover()">✕</button>
+          </div>
+        </div>
+        <input type="hidden" id="f_cover" value="">
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -168,14 +184,14 @@
 renderLayout('activities', '活动管理');
 
 const activities = [
-  { id:1, name:'环青海湖骑行挑战赛', cat:'race', catLabel:'赛事', date:'2026-07-15 ~ 2026-07-20', signup:186, capacity:300, price:1680, status:'报名中', tags:['热门'] },
-  { id:2, name:'亲子骑行夏令营', cat:'family', catLabel:'亲子', date:'2026-08-01 ~ 2026-08-05', signup:42, capacity:50, price:980, status:'报名中', tags:['推荐'] },
-  { id:3, name:'春季高原骑行邀请赛', cat:'race', catLabel:'赛事', date:'2026-05-10 ~ 2026-05-14', signup:210, capacity:200, price:2200, status:'进行中', tags:['热门'] },
-  { id:4, name:'拉萨-羊卓雍措深度骑行', cat:'race', catLabel:'赛事', date:'2026-09-05 ~ 2026-09-12', signup:89, capacity:120, price:3500, status:'报名中', tags:[] },
-  { id:5, name:'周日公益骑行', cat:'charity', catLabel:'公益', date:'每周日', signup:35, capacity:40, price:0, status:'报名中', tags:['热门'] },
-  { id:6, name:'亲子骑行嘉年华', cat:'family', catLabel:'亲子', date:'2026-06-01 ~ 2026-06-02', signup:0, capacity:100, price:680, status:'草稿', tags:['新上线'] },
-  { id:7, name:'冬季环湖挑战赛', cat:'race', catLabel:'赛事', date:'2025-12-10 ~ 2025-12-15', signup:150, capacity:150, price:1980, status:'已结束', tags:[] },
-  { id:8, name:'绿色出行公益骑行', cat:'charity', catLabel:'公益', date:'2026-04-13', signup:28, capacity:30, price:0, status:'已结束', tags:[] },
+  { id:1, name:'环青海湖骑行挑战赛', cat:'race', catLabel:'赛事', date:'2026-07-15 ~ 2026-07-20', signup:186, capacity:300, price:1680, status:'报名中', tags:['热门'], cover:'' },
+  { id:2, name:'亲子骑行夏令营', cat:'family', catLabel:'亲子', date:'2026-08-01 ~ 2026-08-05', signup:42, capacity:50, price:980, status:'报名中', tags:['推荐'], cover:'' },
+  { id:3, name:'春季高原骑行邀请赛', cat:'race', catLabel:'赛事', date:'2026-05-10 ~ 2026-05-14', signup:210, capacity:200, price:2200, status:'进行中', tags:['热门'], cover:'' },
+  { id:4, name:'拉萨-羊卓雍措深度骑行', cat:'race', catLabel:'赛事', date:'2026-09-05 ~ 2026-09-12', signup:89, capacity:120, price:3500, status:'报名中', tags:[], cover:'' },
+  { id:5, name:'周日公益骑行', cat:'charity', catLabel:'公益', date:'每周日', signup:35, capacity:40, price:0, status:'报名中', tags:['热门'], cover:'' },
+  { id:6, name:'亲子骑行嘉年华', cat:'family', catLabel:'亲子', date:'2026-06-01 ~ 2026-06-02', signup:0, capacity:100, price:680, status:'草稿', tags:['新上线'], cover:'' },
+  { id:7, name:'冬季环湖挑战赛', cat:'race', catLabel:'赛事', date:'2025-12-10 ~ 2025-12-15', signup:150, capacity:150, price:1980, status:'已结束', tags:[], cover:'' },
+  { id:8, name:'绿色出行公益骑行', cat:'charity', catLabel:'公益', date:'2026-04-13', signup:28, capacity:30, price:0, status:'已结束', tags:[], cover:'' },
 ];
 
 function renderTable(data) {
@@ -183,12 +199,14 @@ function renderTable(data) {
  document.getElementById('totalCount').textContent = data.length;
  tbody.innerHTML = data.map(a => `
  <tr>
- <td><div class="cover-img" style="background:linear-gradient(135deg,${a.cat==='race'?'var(--danger),#ff7875':a.cat==='charity'?'var(--accent),#f7c948':'var(--success),#73d13d'});"></div></td>
+ <td>
+ ${a.cover ? `<img src="${a.cover}" style="width:48px;height:32px;object-fit:cover;border-radius:4px;">` : `<div class="cover-img" style="background:linear-gradient(135deg,${a.cat==='race'?'var(--danger),#ff7875':a.cat==='charity'?'var(--accent),#f7c948':'var(--success),#73d13d'});"></div>`}
+ </td>
  <td><strong>${a.name}</strong></td>
  <td><span class="tag ${a.cat==='race'?'tag-danger':a.cat==='charity'?'tag-warning':'tag-success'}">${a.catLabel}</span></td>
- <td style="font-size:13px;color:var(--text2);">${a.date}</td>
+ <td style="font-size:13px;color:var(--el-text-color-secondary);">${a.date}</td>
  <td>${a.signup}/${a.capacity}</td>
- <td style="font-weight:600;color:${a.price?'var(--text)':'var(--success)'};">${a.price?'¥'+a.price.toLocaleString():'免费'}</td>
+ <td style="font-weight:600;color:${a.price?'var(--el-text-color-primary)':'var(--el-color-success)'};">${a.price?'¥'+a.price.toLocaleString():'免费'}</td>
  <td>${statusTag(a.status)}</td>
  <td>
  <button class="btn btn-text btn-sm" onclick="editActivity(${a.id})">编辑</button>
@@ -198,6 +216,32 @@ function renderTable(data) {
  </td>
  </tr>
  `).join('');
+}
+
+// 封面图上传
+function handleCoverUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    showToast('请上传图片文件', 'error');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('previewImg').src = e.target.result;
+    document.getElementById('f_cover').value = e.target.result;
+    document.querySelector('.upload-placeholder').style.display = 'none';
+    document.getElementById('coverPreview').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeCover() {
+  document.getElementById('coverInput').value = '';
+  document.getElementById('f_cover').value = '';
+  document.getElementById('previewImg').src = '';
+  document.getElementById('coverPreview').style.display = 'none';
+  document.querySelector('.upload-placeholder').style.display = 'flex';
 }
 
 // 跳转到报名管理页面
