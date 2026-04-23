@@ -586,6 +586,52 @@ input, select, textarea { font-family: inherit; }
   justify-content: center;
 }
 
+/* ===== 分页 ===== */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid var(--el-border-color-lighter);
+  font-size: 13px;
+}
+.pagination-info {
+  color: var(--el-text-color-secondary);
+}
+.pagination-info strong {
+  color: var(--el-text-color-primary);
+}
+.pagination-btns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.page-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--el-border-color);
+  border-radius: var(--el-border-radius-base);
+  background: #fff;
+  color: var(--el-text-color-primary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.page-btn:hover:not(:disabled) {
+  border-color: var(--el-color-primary);
+  color: var(--el-color-primary);
+}
+.page-btn.active {
+  background: var(--el-color-primary);
+  border-color: var(--el-color-primary);
+  color: #fff;
+}
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* ===== Toast ===== */
 .toast-container {
   position: fixed;
