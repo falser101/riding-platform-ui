@@ -67,9 +67,6 @@
                 <th>俱乐部名称</th>
                 <th>城市</th>
                 <th>会员数</th>
-                <th>举办活动</th>
-                <th>参与人次</th>
-                <th>累计里程</th>
                 <th style="width:160px;">操作</th>
               </tr>
             </thead>
@@ -226,9 +223,6 @@ function renderTable(data) {
       <td><strong>${c.name}</strong></td>
       <td>${c.city}</td>
       <td style="font-weight:600;">${c.members}</td>
-      <td>${c.events}</td>
-      <td>${c.joins}</td>
-      <td>${(c.km/10000).toFixed(1)}万km</td>
  <td>
  <button class="btn btn-text btn-sm" onclick="viewClub('${c.id}')">详情</button>
  <button class="btn btn-text btn-sm" onclick="viewMembers('${c.id}', '${c.name.replace(/'/g, "\\'")}')">会员</button>
