@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>订单管理 - 骑行平台管理后台</title>
+<link rel="stylesheet" href="css/admin.css">
+<style>
+  .order-sn { font-family: monospace; font-size: 12px; color: #666; }
+  .order-amount { font-weight: 700; color: #ff4d4f; }
+  .status-tag { padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+  .status-pending { background: #fff7e6; color: #fa8c16; }
+  .status-paid { background: #e6f7ff; color: #1890ff; }
+  .status-done { background: #f6ffed; color: #52c41a; }
+  .status-cancel { background: #f5f5f5; color: #999; }
+  .bike-emoji-sm { width: 36px; height: 28px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; }
+  .stat-pending { border-left: 3px solid #fa8c16; }
+  .stat-paid { border-left: 3px solid #1890ff; }
+  .stat-done { border-left: 3px solid #52c41a; }
+</style>
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-area">
+    <header class="header">
+      <div class="header-left">
+        <button class="collapse-btn" id="collapseBtn">☰</button>
+        <div class="breadcrumb" id="breadcrumb"></div>
+      </div>
+      <div class="header-right">
+        <button class="header-action" title="通知">🔔<span class="badge-dot"></span></button>
+        <div class="user-menu">
+          <div class="user-avatar">管</div>
+          <span class="user-name">管理员</span>
+          <span class="user-dropdown-icon">▾</span>
+          <div class="user-dropdown">
+            <div class="dropdown-item" onclick="location.href='settings.html'">⚙️ 系统设置</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item danger" onclick="handleLogout()">🚪 退出登录</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="content animate-in">
+
+      <!-- 页面标题 -->
+      <div class="page-header">
+        <div class="page-title"><span class="page-title-icon">📋</span>订单管理</div>
+      </div>
+
+      <!-- 统计卡片 -->
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+        <div class="stat-card stat-pending" style="cursor:pointer;" onclick="filterByStatus('pending')">
+          <div class="stat-info">
+            <div class="stat-value" id="statPending">0</div>
+            <div class="stat-label">待付款</div>
+          </div>
+        </div>
+        <div class="stat-card stat-paid" style="cursor:pointer;" onclick="filterByStatus('paid')">
+          <div class="stat-info">
+            <div class="stat-value" id="statPaid">0</div>
+            <div class="stat-label">已付款</div>
+          </div>
+        </div>
+        <div class="stat-card stat-done">
+          <div class="stat-info">
+            <div class="stat-value" id="statDone">0</div>
+            <div class="stat-label">已完成</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info">
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-label">全部订单</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 订单列表 -->
+      <div class="panel">
+        <!-- 筛选工具栏 -->
+        <div class="filter-bar">
+          <div class="filter-item">
+            <label>状态</label>
+            <select class="form-select" id="fStatus" style="min-width:120px;">
+              <option value="">全部</option>
+              <option value="pending">⏳ 待付款</option>
+              <option value="paid">💳 已付款</option>
+              <option value="done">✅ 已完成</option>
+              <option value="cancel">❌ 已取消</option>
+            </select>
+          </div>
+          <div class="filter-item" style="flex:1;">
+            <label>搜索</label>
+            <input class="form-input" id="fKw" placeholder="输入订单号或车辆名称..." style="flex:1;min-width:180px;">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="applyFilter()">筛选</button>
+          <button class="btn btn-default btn-sm" onclick="resetFilter()">重置</button>
+        </div>
+
+        <!-- 表格 -->
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>订单号</th>
+                <th>车辆信息</th>
+                <th>套餐</th>
+                <th>数量</th>
+                <th>金额</th>
+                <th>预约日期</th>
+                <th>联系人</th>
+                <th>联系电话</th>
+                <th>状态</th>
+                <th>下单时间</th>
+                <th style="width:100px;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="orderBody"></tbody>
+          </table>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination">
+          <div class="pagination-info">共 <strong id="totalCount">0</strong> 条</div>
+          <div class="pagination-btns">
+            <button class="page-btn" disabled>‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 订单详情弹窗 -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header">
+      <div class="modal-title">📋 订单详情</div>
+      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="detailBody" style="max-height:500px;overflow-y:auto;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('detailModal')">关闭</button>
+      <button class="btn btn-primary" id="actionBtn" onclick="doAction()">确认收款</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script>
+renderLayout('orders', '订单管理');
+
+// 订单数据（实际项目应从后端API获取）
+let ordersData = [
+  { id:'DD202605011001', bike:'山地自行车·基础款', bikeEmoji:'🚵', bikeColor:'#2d8bc9', pkg:'1天', qty:1, amount:80, date:'2026-05-01', status:'pending', time:'2026-05-01 10:23', contact:'张三', phone:'13800138001' },
+  { id:'DD202605011002', bike:'公路自行车·进阶款', bikeEmoji:'🛣️', bikeColor:'#c0122e', pkg:'2天', qty:2, amount:270, date:'2026-05-03', status:'paid', time:'2026-05-01 14:35', contact:'李四', phone:'13800138002' },
+  { id:'DD202605011003', bike:'电助力自行车·通勤款', bikeEmoji:'⚡', bikeColor:'#faad14', pkg:'1天', qty:1, amount:180, date:'2026-05-02', status:'done', time:'2026-05-01 16:08', contact:'王五', phone:'13800138003' },
+  { id:'DD202604301001', bike:'儿童自行车·14寸', bikeEmoji:'🎠', bikeColor:'#ff85c0', pkg:'3天+', qty:1, amount:120, date:'2026-04-30', status:'pending', time:'2026-04-30 09:15', contact:'赵六', phone:'13800138004' },
+  { id:'DD202604301002', bike:'休闲自行车·城市款', bikeEmoji:'🌿', bikeColor:'#52c41a', pkg:'1天', qty:2, amount:108, date:'2026-04-30', status:'cancel', time:'2026-04-30 11:42', contact:'钱七', phone:'13800138005' },
+];
+
+let currentOrder = null;
+
+function getStatusTag(status) {
+  const map = {
+    pending: { label:'待付款', cls:'status-pending' },
+    paid: { label:'已付款', cls:'status-paid' },
+    done: { label:'已完成', cls:'status-done' },
+    cancel: { label:'已取消', cls:'status-cancel' },
+  };
+  const s = map[status] || map.pending;
+  return `<span class="status-tag ${s.cls}">${s.label}</span>`;
+}
+
+function getActionBtn(status) {
+  if (status === 'pending') return '确认收款';
+  if (status === 'paid') return '确认完成';
+  return null;
+}
+
+function updateStats() {
+  document.getElementById('statPending').textContent = ordersData.filter(o => o.status === 'pending').length;
+  document.getElementById('statPaid').textContent = ordersData.filter(o => o.status === 'paid').length;
+  document.getElementById('statDone').textContent = ordersData.filter(o => o.status === 'done').length;
+  document.getElementById('statTotal').textContent = ordersData.length;
+}
+
+function renderOrders(data) {
+  document.getElementById('totalCount').textContent = data.length;
+  document.getElementById('orderBody').innerHTML = data.map(o => `
+    <tr>
+      <td><span class="order-sn">${o.id}</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="bike-emoji-sm" style="background:linear-gradient(135deg,${o.bikeColor},${o.bikeColor}88);color:#fff;">${o.bikeEmoji}</span>
+          <span style="font-size:13px;">${o.bike}</span>
+        </div>
+      </td>
+      <td style="color:#666;font-size:13px;">${o.pkg}</td>
+      <td style="color:#666;font-size:13px;">${o.qty}辆</td>
+      <td><span class="order-amount">¥${o.amount}</span></td>
+      <td style="color:#666;font-size:13px;">${o.date}</td>
+      <td style="font-size:13px;">${o.contact}</td>
+      <td style="color:#666;font-size:13px;">${o.phone}</td>
+      <td>${getStatusTag(o.status)}</td>
+      <td style="color:#999;font-size:12px;">${o.time}</td>
+      <td>
+        <button class="btn btn-text btn-sm" onclick="viewOrder('${o.id}')">详情</button>
+        ${o.status === 'pending' ? `<button class="btn btn-text btn-sm" style="color:#52c41a;" onclick="markPaid('${o.id}')">收款</button>` : ''}
+      </td>
+    </tr>`).join('');
+}
+
+function applyFilter() {
+  const status = document.getElementById('fStatus').value;
+  const kw = document.getElementById('fKw').value.toLowerCase();
+  const filtered = ordersData.filter(o => {
+    if (status && o.status !== status) return false;
+    if (kw && !o.id.toLowerCase().includes(kw) && !o.bike.toLowerCase().includes(kw)) return false;
+    return true;
+  });
+  renderOrders(filtered);
+}
+
+function resetFilter() {
+  document.getElementById('fStatus').value = '';
+  document.getElementById('fKw').value = '';
+  renderOrders(ordersData);
+}
+
+function filterByStatus(status) {
+  document.getElementById('fStatus').value = status;
+  applyFilter();
+}
+
+function viewOrder(id) {
+  currentOrder = ordersData.find(o => o.id === id);
+  if (!currentOrder) return;
+  const o = currentOrder;
+  const actionBtn = getActionBtn(o.status);
+  document.getElementById('detailBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group">
+        <label class="form-label">订单编号</label>
+        <div style="padding:8px 0;font-size:13px;font-family:monospace;color:#666;">${o.id}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">订单状态</label>
+        <div style="padding:8px 0;">${getStatusTag(o.status)}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">车辆信息</label>
+        <div style="padding:8px 0;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:20px;">${o.bikeEmoji}</span>
+          <span style="font-size:13px;">${o.bike}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">预约套餐</label>
+        <div style="padding:8px 0;font-size:13px;">${o.pkg} × ${o.qty}辆</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">预约日期</label>
+        <div style="padding:8px 0;font-size:13px;">${o.date}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">应付金额</label>
+        <div style="padding:8px 0;font-size:18px;font-weight:700;color:#ff4d4f;">¥${o.amount}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">联系人</label>
+        <div style="padding:8px 0;font-size:13px;">${o.contact}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">联系电话</label>
+        <div style="padding:8px 0;font-size:13px;">${o.phone}</div>
+      </div>
+      <div class="form-group" style="grid-column:1/-1;">
+        <label class="form-label">下单时间</label>
+        <div style="padding:8px 0;font-size:13px;color:#999;">${o.time}</div>
+      </div>
+    </div>`;
+  const actionBtnEl = document.getElementById('actionBtn');
+  if (actionBtn) {
+    actionBtnEl.style.display = '';
+    actionBtnEl.textContent = actionBtn;
+  } else {
+    actionBtnEl.style.display = 'none';
+  }
+  openModal('detailModal');
+}
+
+function markPaid(id) {
+  const o = ordersData.find(x => x.id === id);
+  if (o) { o.status = 'paid'; updateStats(); renderOrders(getFiltered()); }
+}
+
+function doAction() {
+  if (!currentOrder) return;
+  if (currentOrder.status === 'pending') {
+    currentOrder.status = 'paid';
+    showToast('已确认收款');
+  } else if (currentOrder.status === 'paid') {
+    currentOrder.status = 'done';
+    showToast('订单已完成');
+  }
+  updateStats();
+  renderOrders(getFiltered());
+  closeModal('detailModal');
+}
+
+function getFiltered() {
+  const status = document.getElementById('fStatus').value;
+  const kw = document.getElementById('fKw').value.toLowerCase();
+  return ordersData.filter(o => {
+    if (status && o.status !== status) return false;
+    if (kw && !o.id.toLowerCase().includes(kw) && !o.bike.toLowerCase().includes(kw)) return false;
+    return true;
+  });
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;z-index:10000;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2000);
+}
+
+// 初始化
+updateStats();
+renderOrders(ordersData);
+</script>
+</body>
+</html>

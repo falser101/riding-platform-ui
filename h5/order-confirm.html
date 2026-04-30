@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>订单确认 - 骑行平台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { overflow-y: auto; -webkit-overflow-scrolling: touch; height: 100vh; }
+        .app { display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 0; }
+        .page-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 70px; }
+
+        /* 步骤条 */
+        .step-bar {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background: white;
+            margin-bottom: 12px;
+        }
+        .step-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .step-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 60%;
+            width: 80%;
+            height: 2px;
+            background: #e5e5e5;
+        }
+        .step-item.active:not(:last-child)::after { background: #1a5f9e; }
+        .step-item.done:not(:last-child)::after { background: #52c41a; }
+        .step-circle {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 600;
+            background: #e5e5e5; color: #999;
+            z-index: 1;
+        }
+        .step-item.active .step-circle { background: #1a5f9e; color: white; }
+        .step-item.done .step-circle { background: #52c41a; color: white; }
+        .step-label { font-size: 11px; color: #999; margin-top: 4px; }
+        .step-item.active .step-label { color: #1a5f9e; font-weight: 600; }
+        .step-item.done .step-label { color: #52c41a; }
+
+        /* 步骤1：联系人表单 */
+        .contact-form {
+            margin: 0 16px;
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .form-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .form-item {
+            margin-bottom: 14px;
+        }
+        .form-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .form-input:focus { border-color: #1a5f9e; }
+        .form-tip {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        /* 步骤2：订单信息 */
+        .order-status-bar {
+            background: linear-gradient(135deg, #1a5f9e, #2d8bc9);
+            color: white;
+            padding: 20px 16px;
+            text-align: center;
+        }
+        .order-status-icon { font-size: 40px; margin-bottom: 8px; }
+        .order-status-text { font-size: 16px; font-weight: 600; }
+        .order-status-desc { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+
+        .order-card {
+            margin: 12px 16px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .order-card-header {
+            padding: 12px 14px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+            color: #999;
+        }
+        .order-card-body { padding: 14px; }
+
+        .order-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        .order-row:not(:last-child) { border-bottom: 1px solid #f5f5f5; }
+        .order-label { color: #666; flex-shrink: 0; }
+        .order-value { color: #333; text-align: right; flex: 1; margin-left: 12px; }
+
+        .price-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px;
+            background: #fff9e6;
+            margin: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #ffe58f;
+        }
+        .price-total-label { font-size: 14px; color: #666; }
+        .price-total-value { font-size: 22px; font-weight: 700; color: #ff4d4f; }
+
+        .pay-guide {
+            margin: 12px 16px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .pay-guide-header {
+            padding: 12px 14px;
+            background: #fafafa;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+        .pay-guide-body { padding: 14px; }
+        .pay-guide-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        .pay-guide-icon { font-size: 20px; }
+        .pay-guide-text { flex: 1; }
+        .pay-guide-desc { font-size: 12px; color: #999; }
+
+        .contact-bar {
+            margin: 12px 16px;
+            padding: 14px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .contact-icon { font-size: 24px; }
+        .contact-info { flex: 1; }
+        .contact-name { font-size: 14px; font-weight: 600; color: #333; }
+        .contact-desc { font-size: 12px; color: #999; margin-top: 2px; }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: white;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            padding-bottom: env(safe-area-inset-bottom, 0);
+            box-shadow: 0 -1px 4px rgba(0,0,0,0.06);
+            z-index: 100;
+        }
+        .btn-primary-full {
+            flex: 1;
+            height: 44px;
+            background: linear-gradient(135deg, #1a5f9e, #2d8bc9);
+            color: white;
+            border: none;
+            border-radius: 22px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* 联系信息展示（步骤2） */
+        .contact-display {
+            margin: 12px 16px;
+            background: white;
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .contact-avatar {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, #1a5f9e, #2d8bc9);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+        .contact-detail { flex: 1; }
+        .contact-name-display { font-size: 15px; font-weight: 600; color: #333; }
+        .contact-phone-display { font-size: 13px; color: #666; margin-top: 2px; }
+        .contact-edit { font-size: 13px; color: #1a5f9e; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- 顶部 -->
+        <div class="mp-header">
+            <span class="back-btn" onclick="history.back()">←</span>
+            <span>订单确认</span>
+        </div>
+
+        <div class="page-content">
+            <!-- 步骤条 -->
+            <div class="step-bar">
+                <div class="step-item active" id="step1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">填写信息</div>
+                </div>
+                <div class="step-item" id="step2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">确认订单</div>
+                </div>
+            </div>
+
+            <!-- ====== 步骤1：联系信息 ====== -->
+            <div id="step1Content">
+                <div class="contact-form">
+                    <div class="form-title">📝 请填写您的联系信息</div>
+                    <div class="form-item">
+                        <div class="form-label">联系人姓名</div>
+                        <input class="form-input" id="inputName" placeholder="请输入您的姓名" maxlength="20">
+                    </div>
+                    <div class="form-item">
+                        <div class="form-label">联系电话</div>
+                        <input class="form-input" id="inputPhone" type="tel" placeholder="请输入手机号码" maxlength="11">
+                        <div class="form-tip">* 付款成功后，客服将通过此电话联系您确认</div>
+                    </div>
+                </div>
+
+                <!-- 订单摘要预览 -->
+                <div class="order-card" style="margin-top:12px;">
+                    <div class="order-card-header">📦 预约信息预览</div>
+                    <div class="order-card-body">
+                        <div class="order-row">
+                            <span class="order-label">预约车辆</span>
+                            <span class="order-value" id="previewBike">--</span>
+                        </div>
+                        <div class="order-row">
+                            <span class="order-label">预约套餐</span>
+                            <span class="order-value" id="previewPkg">--</span>
+                        </div>
+                        <div class="order-row">
+                            <span class="order-label">预约数量</span>
+                            <span class="order-value" id="previewQty">--</span>
+                        </div>
+                        <div class="order-row">
+                            <span class="order-label">应付金额</span>
+                            <span class="order-value" style="font-weight:700;color:#ff4d4f;" id="previewTotal">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== 步骤2：订单确认 ====== -->
+            <div id="step2Content" class="hidden">
+                <!-- 订单状态 -->
+                <div class="order-status-bar">
+                    <div class="order-status-icon">📋</div>
+                    <div class="order-status-text">订单已生成</div>
+                    <div class="order-status-desc">请按下方方式线下付款，并保留凭证</div>
+                </div>
+
+                <!-- 联系人信息 -->
+                <div class="contact-display">
+                    <div class="contact-avatar">👤</div>
+                    <div class="contact-detail">
+                        <div class="contact-name-display" id="confirmName">--</div>
+                        <div class="contact-phone-display" id="confirmPhone">--</div>
+                    </div>
+                    <span class="contact-edit" onclick="goStep1()">修改</span>
+                </div>
+
+                <!-- 订单信息 -->
+                <div class="order-card">
+                    <div class="order-card-header">📦 订单信息</div>
+                    <div class="order-card-body">
+                        <div class="order-row">
+                            <span class="order-label">订单编号</span>
+                            <span class="order-value" id="orderNo">--</span>
+                        </div>
+                        <div class="order-row">
+                            <span class="order-label">预约车辆</span>
+                            <span class="order-value" id="confirmBike">--</span>
+                        </div>
+                        <div class="order-row">
+                            <span class="order-label">预约套餐</span>
+                            <span class="order-value" id="confirmPkg">--</span>
+                        </div>
+                        <div class="order-row">
+                            <span class="order-label">预约数量</span>
+                            <span class="order-value" id="confirmQty">--</span>
+                        </div>
+                        <div class="order-row">
+                            <span class="order-label">预约日期</span>
+                            <span class="order-value" id="confirmDate">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 金额 -->
+                <div class="price-total">
+                    <span class="price-total-label">应付金额</span>
+                    <span class="price-total-value" id="confirmTotal">¥--</span>
+                </div>
+
+                <!-- 付款方式 -->
+                <div class="pay-guide">
+                    <div class="pay-guide-header">💳 线下付款方式</div>
+                    <div class="pay-guide-body">
+                        <div class="pay-guide-item">
+                            <span class="pay-guide-icon">💬</span>
+                            <div class="pay-guide-text">
+                                <div>微信转账</div>
+                                <div class="pay-guide-desc">添加客服微信，转账至个人账户</div>
+                            </div>
+                        </div>
+                        <div class="pay-guide-item">
+                            <span class="pay-guide-icon">📱</span>
+                            <div class="pay-guide-text">
+                                <div>支付宝转账</div>
+                                <div class="pay-guide-desc">转账至个人支付宝账户</div>
+                            </div>
+                        </div>
+                        <div class="pay-guide-item">
+                            <span class="pay-guide-icon">🏪</span>
+                            <div class="pay-guide-text">
+                                <div>到店付款</div>
+                                <div class="pay-guide-desc">前往门店现场付款</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 备注 -->
+                <div style="margin: 0 16px; padding: 12px 14px; background: #fffbe6; border-radius: 8px; font-size: 12px; color: #ad6800; line-height: 1.6;">
+                    ⚠️ 付款时请备注订单编号，付款成功后请联系客服确认，以便及时为您保留车辆。
+                </div>
+
+                <!-- 联系 -->
+                <div class="contact-bar">
+                    <span class="contact-icon">📞</span>
+                    <div class="contact-info">
+                        <div class="contact-name">如有疑问，请联系客服</div>
+                        <div class="contact-desc">工作时间：08:00 - 20:00</div>
+                    </div>
+                    <span style="font-size: 20px;">›</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部按钮 -->
+        <div class="bottom-bar">
+            <button class="btn-primary-full" id="bottomBtn" onclick="stepAction()">提交订单</button>
+        </div>
+    </div>
+
+    <!-- 底部Tab -->
+    <nav class="tab-bar">
+        <a href="offline.html" class="tab-item" id="tabActivity">
+            <div class="tab-icon">📍</div>
+            <span>活动</span>
+        </a>
+        <a href="bike.html" class="tab-item" id="tabBike">
+            <div class="tab-icon">🚴</div>
+            <span>骑行</span>
+        </a>
+        <a href="profile.html" class="tab-item" id="tabProfile">
+            <div class="tab-icon">👤</div>
+            <span>我的</span>
+        </a>
+    </nav>
+
+    <script>
+    const params = new URLSearchParams(location.search);
+    const bikeName = params.get('bike') || '山地自行车·基础款';
+    const pkgName = params.get('pkg') || '1天';
+    const qty = params.get('qty') || '1';
+    const total = params.get('total') || '80';
+    const date = params.get('date') || new Date().toLocaleDateString('zh-CN');
+
+    let currentStep = 1;
+    let contactName = '';
+    let contactPhone = '';
+
+    function genOrderNo() {
+        const now = new Date();
+        const pad = n => n.toString().padStart(2, '0');
+        return `DD${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+    }
+
+    function initStep1() {
+        document.getElementById('previewBike').textContent = bikeName;
+        document.getElementById('previewPkg').textContent = pkgName;
+        document.getElementById('previewQty').textContent = qty + '辆';
+        document.getElementById('previewTotal').textContent = '¥' + total;
+    }
+
+    function validateForm() {
+        const name = document.getElementById('inputName').value.trim();
+        const phone = document.getElementById('inputPhone').value.trim();
+        if (!name) { alert('请填写联系人姓名'); return false; }
+        if (!phone || !/^1\d{10}$/.test(phone)) { alert('请填写正确的手机号码'); return false; }
+        contactName = name;
+        contactPhone = phone;
+        return true;
+    }
+
+    function goStep2() {
+        if (!validateForm()) return;
+        const orderNo = genOrderNo();
+        document.getElementById('confirmName').textContent = contactName;
+        document.getElementById('confirmPhone').textContent = contactPhone;
+        document.getElementById('orderNo').textContent = orderNo;
+        document.getElementById('confirmBike').textContent = bikeName;
+        document.getElementById('confirmPkg').textContent = pkgName;
+        document.getElementById('confirmQty').textContent = qty + '辆';
+        document.getElementById('confirmDate').textContent = date;
+        document.getElementById('confirmTotal').textContent = '¥' + total;
+
+        document.getElementById('step1Content').classList.add('hidden');
+        document.getElementById('step2Content').classList.remove('hidden');
+        document.getElementById('step1').className = 'step-item done';
+        document.getElementById('step2').className = 'step-item active';
+        document.getElementById('bottomBtn').textContent = '保存订单';
+        currentStep = 2;
+        window.scrollTo(0, 0);
+    }
+
+    function goStep1() {
+        document.getElementById('step2Content').classList.add('hidden');
+        document.getElementById('step1Content').classList.remove('hidden');
+        document.getElementById('step1').className = 'step-item active';
+        document.getElementById('step2').className = 'step-item';
+        document.getElementById('bottomBtn').textContent = '提交订单';
+        currentStep = 1;
+        window.scrollTo(0, 0);
+    }
+
+    function stepAction() {
+        if (currentStep === 1) {
+            goStep2();
+        } else {
+            // 保存订单到 localStorage
+            const orders = JSON.parse(localStorage.getItem('myOrders') || '[]');
+            const orderNo = document.getElementById('orderNo').textContent;
+            orders.unshift({
+                id: orderNo,
+                bike: bikeName,
+                pkg: pkgName,
+                qty: qty,
+                date: date,
+                total: total,
+                status: 'pending',
+                contact: contactName,
+                phone: contactPhone,
+                time: new Date().toLocaleString('zh-CN')
+            });
+            localStorage.setItem('myOrders', JSON.stringify(orders));
+            alert('订单已保存！\n\n订单编号：' + orderNo + '\n\n请按页面提示的付款方式进行线下付款，付款后联系客服确认。');
+        }
+    }
+
+    initStep1();
+    </script>
+</body>
+</html>

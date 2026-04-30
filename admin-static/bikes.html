@@ -30,170 +30,303 @@
       </div>
     </header>
     <div class="content animate-in">
+
+      <!-- 页面标题 -->
       <div class="page-header">
         <div class="page-title"><span class="page-title-icon">🚴</span>车辆管理</div>
         <div class="page-actions">
-          <button class="btn btn-default" onclick="openModal('brandModal')">🏷️ 品牌管理</button>
+          <button class="btn btn-default" onclick="openModal('pkgModal')">📦 套餐管理</button>
           <button class="btn btn-primary" onclick="openModal('addModal')">➕ 添加车型</button>
         </div>
       </div>
 
-      <!-- 统计 -->
-      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
-        <div class="stat-card blue"><div class="stat-icon blue">🏷️</div><div class="stat-info"><div class="stat-value" id="brandCount">6</div><div class="stat-label">品牌总数</div></div></div>
-        <div class="stat-card green"><div class="stat-icon green">📂</div><div class="stat-info"><div class="stat-value" id="seriesCount">29</div><div class="stat-label">系列总数</div></div></div>
-        <div class="stat-card orange"><div class="stat-icon orange">🚴</div><div class="stat-info"><div class="stat-value">156</div><div class="stat-label">车型总数</div></div></div>
-        <div class="stat-card red"><div class="stat-icon red">⭐</div><div class="stat-info"><div class="stat-value">2,847</div><div class="stat-label">用户收藏</div></div></div>
+      <!-- 统计卡片 -->
+      <div class="stats-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:20px;">
+        <div class="stat-card blue">
+          <div class="stat-icon blue">🚴</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-label">车辆总数</div>
+          </div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon green">🏔️</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statMountain">0</div>
+            <div class="stat-label">山地车</div>
+          </div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon orange">🛣️</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statRoad">0</div>
+            <div class="stat-label">公路车</div>
+          </div>
+        </div>
+        <div class="stat-card" style="border-color:#d48806;">
+          <div class="stat-icon" style="background:#fff3e0;">⚡</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statEbike">0</div>
+            <div class="stat-label">电助力</div>
+          </div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon red">📅</div>
+          <div class="stat-info">
+            <div class="stat-value">48</div>
+            <div class="stat-label">今日预约</div>
+          </div>
+        </div>
       </div>
 
-      <!-- 车型列表视图 -->
-      <div id="modelsView">
+      <!-- 车辆列表 -->
+      <div class="panel">
+        <!-- 筛选工具栏 -->
         <div class="filter-bar">
-          <select class="form-select" id="filterBrand">
-            <option value="">全部品牌</option>
-          </select>
-          <select class="form-select" id="filterType">
-            <option value="">全部类型</option>
-            <option>公路车</option><option>山地车</option><option>砾石车</option>
-          </select>
-          <input class="form-input" placeholder="搜索车型名称..." id="filterKw">
-          <button class="btn btn-primary btn-sm" onclick="filterModels()">筛选</button>
+          <div class="filter-item">
+            <label>分类</label>
+            <select class="form-select" id="fCat" style="min-width:130px;">
+              <option value="">全部</option>
+              <option value="mountain">🚵 山地自行车</option>
+              <option value="road">🛣️ 公路自行车</option>
+              <option value="leisure">🌿 休闲自行车</option>
+              <option value="ebike">⚡ 电助力自行车</option>
+              <option value="kids-balance">🛴 儿童滑步车</option>
+              <option value="kids-bike">🎠 儿童自行车</option>
+              <option value="helmet">🪖 头盔/装备</option>
+              <option value="support">🚐 保障车</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>标签</label>
+            <select class="form-select" id="fTag" style="min-width:110px;">
+              <option value="">全部</option>
+              <option value="热门">热门</option>
+              <option value="推荐">推荐</option>
+              <option value="专业">专业</option>
+              <option value="新品">新品</option>
+            </select>
+          </div>
+          <div class="filter-item" style="flex:1;">
+            <label>搜索</label>
+            <input class="form-input" id="fKw" placeholder="输入车型名称..." style="flex:1;min-width:180px;">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="applyFilter()">筛选</button>
           <button class="btn btn-default btn-sm" onclick="resetFilter()">重置</button>
         </div>
-        <div class="panel">
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead><tr><th>品牌</th><th>系列</th><th>车型名称</th><th>年份</th><th>类型</th><th>价格</th><th>重量</th><th>材质</th><th style="width:100px;">操作</th></tr></thead>
-              <tbody id="modelBody"></tbody>
-            </table>
-          </div>
-          <div class="pagination">
-            <div class="pagination-info">共 <strong id="totalCount">0</strong> 条</div>
-            <div class="pagination-btns">
-              <button class="page-btn" disabled>‹</button>
-              <button class="page-btn active">1</button>
-              <button class="page-btn">›</button>
-            </div>
+
+        <!-- 表格 -->
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:60px;">封面</th>
+                <th>车型名称</th>
+                <th>分类</th>
+                <th>标签</th>
+                <th>日租</th>
+                <th>小时租</th>
+                <th>团租</th>
+                <th>里程租</th>
+                <th>押金</th>
+                <th style="width:100px;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="bikeBody"></tbody>
+          </table>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination">
+          <div class="pagination-info">共 <strong id="totalCount">0</strong> 条</div>
+          <div class="pagination-btns">
+            <button class="page-btn" disabled>‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">›</button>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </div>
 
-<!-- 品牌管理弹窗 -->
-<div class="modal-overlay" id="brandModal">
-  <div class="modal" style="max-width:600px;">
+<!-- ============================================================
+     套餐管理弹窗
+     ============================================================ -->
+<div class="modal-overlay" id="pkgModal">
+  <div class="modal" style="max-width:700px;">
     <div class="modal-header">
-      <div class="modal-title">🏷️ 品牌管理</div>
-      <button class="modal-close" onclick="closeModal('brandModal')">✕</button>
+      <div class="modal-title">📦 租赁套餐管理</div>
+      <button class="modal-close" onclick="closeModal('pkgModal')">✕</button>
     </div>
-    <div class="modal-body" style="max-height:400px;overflow-y:auto;">
-      <div id="brandList"></div>
+    <div class="modal-body" style="max-height:500px;overflow-y:auto;padding:16px;">
+
+      <p style="font-size:12px;color:var(--el-text-color-secondary);margin-bottom:16px;">
+        在此管理每种租赁类型的套餐阶梯，如"连租2天享9折、3天以上享8折"。套餐配置将同步到 H5 端车辆详情页。
+      </p>
+
+      <!-- 套餐类型Tab -->
+      <div class="pkg-tabs" style="display:flex;gap:4px;margin-bottom:16px;background:var(--el-bg-color);padding:4px;border-radius:8px;">
+        <button class="pkg-tab active" data-type="day" onclick="switchPkgTab('day')">☀️ 日租</button>
+        <button class="pkg-tab" data-type="hour" onclick="switchPkgTab('hour')">⏰ 小时租</button>
+        <button class="pkg-tab" data-type="team" onclick="switchPkgTab('team')">👥 团租</button>
+        <button class="pkg-tab" data-type="distance" onclick="switchPkgTab('distance')">📏 里程租</button>
+      </div>
+
+      <style>
+        .pkg-tab { flex:1; padding:8px 12px; border:none; background:transparent; border-radius:6px; font-size:13px; cursor:pointer; color:var(--el-text-color-secondary); transition:all 0.2s; }
+        .pkg-tab.active { background:#fff; color:var(--el-color-primary); font-weight:600; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+        .pkg-tier-row { display:flex;align-items:center;gap:10px;margin-bottom:10px; }
+        .pkg-tier-num { width:24px;height:24px;background:var(--el-color-primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0; }
+        .pkg-tier-name { flex:1; }
+        .pkg-tier-price { width:90px; }
+        .pkg-tier-disc { width:80px; }
+        .pkg-tier-remove { color:var(--el-color-danger);background:none;border:none;cursor:pointer;font-size:14px;padding:4px; }
+      </style>
+
+      <div id="pkgDayContent"></div>
+      <div id="pkgHourContent" style="display:none;"></div>
+      <div id="pkgTeamContent" style="display:none;"></div>
+      <div id="pkgDistanceContent" style="display:none;"></div>
+
+      <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--el-border-color);">
+        <button class="btn btn-default btn-sm" onclick="addPkgTier()">➕ 添加套餐阶梯</button>
+      </div>
+
     </div>
     <div class="modal-footer">
-      <button class="btn btn-default" onclick="openModal('addBrandModal')">➕ 添加品牌</button>
-      <button class="btn btn-primary" onclick="closeModal('brandModal')">关闭</button>
+      <button class="btn btn-default" onclick="closeModal('pkgModal')">取消</button>
+      <button class="btn btn-primary" onclick="savePkgs()">保存套餐</button>
     </div>
   </div>
 </div>
 
-<!-- 添加品牌弹窗 -->
-<div class="modal-overlay" id="addBrandModal">
-  <div class="modal" style="max-width:480px;">
-    <div class="modal-header">
-      <div class="modal-title">添加品牌</div>
-      <button class="modal-close" onclick="closeModal('addBrandModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label class="required">品牌名称 (中文)</label>
-        <input class="form-input" id="brandNameCn" placeholder="如: 崔克">
-      </div>
-      <div class="form-group">
-        <label class="required">品牌名称 (英文)</label>
-        <input class="form-input" id="brandNameEn" placeholder="如: TREK">
-      </div>
-      <div class="form-group">
-        <label>产地/国家</label>
-        <input class="form-input" id="brandOrigin" placeholder="如: 美国">
-      </div>
-      <div class="form-group">
-        <label>品类范围</label>
-        <div style="display:flex;gap:12px;flex-wrap:wrap;">
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="checkbox" value="公路车" class="brand-cat"> 公路车</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="checkbox" value="山地车" class="brand-cat"> 山地车</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="checkbox" value="砾石车" class="brand-cat"> 砾石车</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="checkbox" value="城市通勤" class="brand-cat"> 城市通勤</label>
-          <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="checkbox" value="旅行车" class="brand-cat"> 旅行车</label>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-default" onclick="closeModal('addBrandModal')">取消</button>
-      <button class="btn btn-primary" onclick="saveBrand()">确认添加</button>
-    </div>
-  </div>
-</div>
-
-<!-- 添加车型弹窗 -->
+<!-- ============================================================
+     添加/编辑车型弹窗
+     ============================================================ -->
 <div class="modal-overlay" id="addModal">
-  <div class="modal" style="max-width:560px;">
+  <div class="modal" style="max-width:600px;">
     <div class="modal-header">
       <div class="modal-title" id="addModalTitle">添加车型</div>
       <button class="modal-close" onclick="closeModal('addModal')">✕</button>
     </div>
     <div class="modal-body">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="required">品牌</label>
-          <select class="form-select" id="m_brand" style="width:100%;"></select>
-        </div>
-        <div class="form-group">
-          <label class="required">系列</label>
-          <input class="form-input" id="m_series" placeholder="如: Domane">
+
+      <!-- 封面预览 -->
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding:12px;background:var(--el-bg-color);border-radius:8px;">
+        <div id="coverPreview" style="width:64px;height:64px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:32px;background:linear-gradient(135deg,#1a5f9e,#2d8bc9);color:#fff;flex-shrink:0;">🚵</div>
+        <div>
+          <div style="font-size:13px;color:var(--el-text-color-secondary);margin-bottom:4px;">车辆封面预览</div>
+          <div style="font-size:12px;color:var(--el-text-color-placeholder);">选择emoji和颜色后自动更新</div>
         </div>
       </div>
+
+      <!-- 基本信息 -->
       <div class="form-group">
         <label class="required">车型名称</label>
-        <input class="form-input" id="m_name" placeholder="如: Domane SL 5">
+        <input class="form-input" id="m_name" placeholder="如：山地自行车·基础款">
       </div>
+
       <div class="form-row">
         <div class="form-group">
-          <label>年份</label>
-          <input class="form-input" id="m_year" type="number" placeholder="如: 2025">
+          <label class="required">车辆分类</label>
+          <select class="form-select" id="m_cat" style="width:100%;" onchange="updateCoverPreview()">
+            <option value="mountain">🚵 山地自行车</option>
+            <option value="road">🛣️ 公路自行车</option>
+            <option value="leisure">🌿 休闲自行车</option>
+            <option value="ebike">⚡ 电助力自行车</option>
+            <option value="kids-balance">🛴 儿童滑步车</option>
+            <option value="kids-bike">🎠 儿童自行车</option>
+            <option value="helmet">🪖 头盔/装备</option>
+            <option value="support">🚐 保障车</option>
+          </select>
         </div>
         <div class="form-group">
-          <label>类型</label>
-          <select class="form-select" id="m_type" style="width:100%;">
-            <option value="公路车">公路车</option>
-            <option value="山地车">山地车</option>
-            <option value="砾石车">砾石车</option>
+          <label>标签</label>
+          <select class="form-select" id="m_tag" style="width:100%;" onchange="updateCoverPreview()">
+            <option value="热门">热门</option>
+            <option value="推荐">推荐</option>
+            <option value="专业">专业</option>
+            <option value="新品">新品</option>
+            <option value="亲子">亲子</option>
+            <option value="安全">安全</option>
+            <option value="保障">保障</option>
           </select>
         </div>
       </div>
+
+      <div class="form-group">
+        <label>副标题/描述</label>
+        <input class="form-input" id="m_sub" placeholder="如：机械碟刹 | 21速 | 铝合金 | 26寸">
+      </div>
+
       <div class="form-row">
         <div class="form-group">
-          <label>价格 (元)</label>
-          <input class="form-input" id="m_price" type="number" placeholder="如: 22800">
+          <label>Emoji图标</label>
+          <input class="form-input" id="m_emoji" placeholder="如 🚵" maxlength="4" oninput="updateCoverPreview()" value="🚵">
         </div>
         <div class="form-group">
-          <label>重量</label>
-          <input class="form-input" id="m_weight" placeholder="如: 9.6kg">
+          <label>封面颜色</label>
+          <input class="form-input" id="m_color" type="color" value="#1a5f9e" oninput="updateCoverPreview()" style="height:36px;padding:2px 8px;">
+        </div>
+      </div>
+
+      <!-- 价格信息 -->
+      <div style="margin:16px 0;font-size:13px;font-weight:600;color:var(--el-text-color-primary);display:flex;align-items:center;gap:6px;">
+        💰 租赁价格设置
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>日租单价 (元/天)</label>
+          <input class="form-input" id="m_price_day" type="number" placeholder="80">
+        </div>
+        <div class="form-group">
+          <label>小时租单价 (元/时)</label>
+          <input class="form-input" id="m_price_hour" type="number" placeholder="20">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>团租单价 (元/人)</label>
+          <input class="form-input" id="m_price_team" type="number" placeholder="60">
+        </div>
+        <div class="form-group">
+          <label>里程租单价 (元/km)</label>
+          <input class="form-input" id="m_price_distance" type="number" placeholder="3">
         </div>
       </div>
       <div class="form-group">
-        <label>材质</label>
-        <select class="form-select" id="m_material" style="width:100%;">
-          <option value="碳纤维">碳纤维</option>
-          <option value="铝合金">铝合金</option>
-          <option value="钢架">钢架</option>
-        </select>
+        <label>押金 (元)</label>
+        <input class="form-input" id="m_deposit" type="number" placeholder="500" style="max-width:200px;">
       </div>
+
+      <!-- 规格参数 -->
+      <div style="margin:16px 0;font-size:13px;font-weight:600;color:var(--el-text-color-primary);display:flex;align-items:center;gap:6px;">
+        ⚙️ 车辆规格参数
+      </div>
+      <div id="specsContainer">
+        <div class="spec-row" style="display:flex;gap:10px;margin-bottom:10px;">
+          <input class="form-input spec-key" placeholder="参数名，如：速别" style="width:120px;">
+          <input class="form-input spec-val" placeholder="参数值，如：21速" style="flex:1;">
+          <button class="btn btn-text danger btn-sm" onclick="this.parentElement.remove()" style="padding:8px;">✕</button>
+        </div>
+      </div>
+      <button class="btn btn-default btn-sm" onclick="addSpecRow()" style="margin-bottom:16px;">➕ 添加规格项</button>
+
+      <!-- 租赁须知 -->
+      <div style="margin:16px 0;font-size:13px;font-weight:600;color:var(--el-text-color-primary);display:flex;align-items:center;gap:6px;">
+        📋 租赁须知
+      </div>
+      <div class="form-group">
+        <textarea class="form-input" id="m_notes" rows="4" style="resize:vertical;" placeholder="每行一条，如：&#10;1. 取车需缴纳押金¥500，还车退还&#10;2. 最低起租：1天&#10;3. 提前还车可退剩余费用"></textarea>
+      </div>
+
     </div>
     <div class="modal-footer">
       <button class="btn btn-default" onclick="closeModal('addModal')">取消</button>
-      <button class="btn btn-primary" onclick="saveModel()">确认添加</button>
+      <button class="btn btn-primary" onclick="saveBike()">确认保存</button>
     </div>
   </div>
 </div>
@@ -202,208 +335,373 @@
 <script>
 renderLayout('bikes', '车辆管理');
 
-// 品牌数据
-const brands = [
-  { slug:'trek', name:'崔克 TREK', origin:'美国', cats:['公路车','山地车','砾石车','城市通勤','旅行车','铁三'], series:['Domane','Madone','Émonda','Checkpoint','Fuel EX','Procaliber'] },
-  { slug:'giant', name:'捷安特 GIANT', origin:'中国台湾', cats:['公路车','山地车','砾石车','城市通勤','旅行车'], series:['Defy','Propel','TCR','Revolt','Trance'] },
-  { slug:'merida', name:'美利达 MERIDA', origin:'中国台湾', cats:['公路车','山地车','砾石车','城市通勤'], series:['Scultura','Reacto','Silex','Big.Seven'] },
-  { slug:'specialized', name:'闪电 Specialized', origin:'美国', cats:['公路车','山地车','砾石车','城市通勤','旅行车','铁三'], series:['Roubaix','Tarmac','Aethos','Diverge','Stumpjumper','Epic'] },
-  { slug:'canyon', name:'CANYON', origin:'德国', cats:['公路车','山地车','砾石车','城市通勤','旅行车'], series:['Endurace','Aeroad','Ultimate','Grail','Spectral'] },
-  { slug:'bianchi', name:'比安奇 Bianchi', origin:'意大利', cats:['公路车','山地车','城市通勤'], series:['Oltre','Sprint','Impulso'] },
+// ============================================================
+// 租赁车辆数据（和 H5 bike.html / bike-rental.html 完全对齐）
+// ============================================================
+const CATS = {
+  'mountain':      { label: '山地自行车',   emoji: '🚵', color: '#1a5f9e' },
+  'road':          { label: '公路自行车',   emoji: '🛣️', color: '#e31837' },
+  'leisure':       { label: '休闲自行车',   emoji: '🌿', color: '#52c41a' },
+  'ebike':         { label: '电助力自行车', emoji: '⚡', color: '#faad14' },
+  'kids-balance':   { label: '儿童滑步车',   emoji: '🛴', color: '#ff6b6b' },
+  'kids-bike':     { label: '儿童自行车',   emoji: '🎠', color: '#f759ab' },
+  'helmet':        { label: '头盔/装备',    emoji: '🪖', color: '#722ed1' },
+  'support':       { label: '保障车',       emoji: '🚐', color: '#13c2c2' },
+};
+
+const TAG_COLORS = {
+  '热门': 'tag-danger',
+  '推荐': 'tag-warning',
+  '专业': 'tag-info',
+  '新品': 'tag-success',
+  '亲子': 'tag-success',
+  '安全': 'tag-info',
+  '保障': 'tag-warning',
+};
+
+let bikesData = [
+  // 山地车
+  { id:'mtb-1', name:'山地自行车·基础款', sub:'机械碟刹 | 21速 | 铝合金 | 26寸/27.5寸', cat:'mountain', emoji:'🚵', color:'#2d8bc9', tag:'热门', prices:{ day:80, hour:20, team:60, distance:3 }, deposit:500, specs:{ '速别':'21速','刹车':'机械碟刹','车架':'铝合金','尺寸':'26寸/27.5寸' }, notes:'1. 取车需缴纳押金¥500，还车退还\n2. 最低起租：1天\n3. 提前还车可退剩余费用\n4. 取车时间：08:00-20:00' },
+  { id:'mtb-2', name:'山地自行车·进阶款', sub:'油压碟刹 | 27速 | 铝合金 | 27.5寸/29寸', cat:'mountain', emoji:'🚵', color:'#1a5f9e', tag:'推荐', prices:{ day:150, hour:35, team:120, distance:5 }, deposit:500, specs:{ '速别':'27速','刹车':'油压碟刹','车架':'铝合金','尺寸':'27.5寸/29寸' }, notes:'' },
+  { id:'mtb-3', name:'山地自行车·专业款', sub:'全避震 | 碳纤维 | 30速 | 29寸', cat:'mountain', emoji:'🚵', color:'#0d3a6e', tag:'专业', prices:{ day:300, hour:70, team:250, distance:8 }, deposit:800, specs:{ '速别':'30速','刹车':'油压碟刹','车架':'碳纤维','尺寸':'29寸' }, notes:'' },
+  // 公路车
+  { id:'road-1', name:'公路自行车·基础款', sub:'铝合金 | 14速 | 钳式刹车 | 700C', cat:'road', emoji:'🛣️', color:'#e31837', tag:'热门', prices:{ day:120, hour:30, team:100, distance:4 }, deposit:600, specs:{ '速别':'14速','刹车':'钳式刹车','车架':'铝合金','尺寸':'700C' }, notes:'' },
+  { id:'road-2', name:'公路自行车·进阶款', sub:'碳纤维前叉 | 18速 | 油压碟刹 | 700C', cat:'road', emoji:'🛣️', color:'#c0122e', tag:'推荐', prices:{ day:200, hour:50, team:160, distance:6 }, deposit:800, specs:{ '速别':'18速','刹车':'油压碟刹','车架':'铝合金','尺寸':'700C' }, notes:'' },
+  { id:'road-3', name:'公路自行车·专业款', sub:'全碳车架 | 22速 | 气动设计 | 竞赛级', cat:'road', emoji:'🛣️', color:'#a01026', tag:'专业', prices:{ day:400, hour:90, team:320, distance:10 }, deposit:1500, specs:{ '速别':'22速','刹车':'油压碟刹','车架':'碳纤维','尺寸':'700C' }, notes:'' },
+  // 休闲
+  { id:'leisure-1', name:'休闲自行车·城市款', sub:'链条罩 | 前后车篮 | 7速 | 26寸', cat:'leisure', emoji:'🌿', color:'#52c41a', tag:'新品', prices:{ day:60, hour:15, team:45, distance:2 }, deposit:300, specs:{ '速别':'7速','刹车':'钳式刹车','车架':'铝合金','尺寸':'26寸' }, notes:'' },
+  { id:'leisure-2', name:'休闲自行车·亲子款', sub:'后座载童 | 稳定可靠 | 7速 | 26寸', cat:'leisure', emoji:'🌿', color:'#389e0d', tag:'亲子', prices:{ day:80, hour:20, team:60, distance:3 }, deposit:300, specs:{ '速别':'7速','刹车':'前钳后鼓','车架':'钢','尺寸':'26寸' }, notes:'' },
+  // 电助力
+  { id:'ebike-1', name:'电助力自行车·通勤款', sub:'续航80km | 36V12Ah | 助力骑行', cat:'ebike', emoji:'⚡', color:'#faad14', tag:'热门', prices:{ day:180, hour:45, team:150, distance:5 }, deposit:1000, specs:{ '电池':'36V12Ah','续航':'80km','最高时速':'25km/h','重量':'22kg' }, notes:'' },
+  { id:'ebike-2', name:'电助力自行车·山地款', sub:'续航100km | 250W电机 | 山地适用', cat:'ebike', emoji:'⚡', color:'#d48806', tag:'推荐', prices:{ day:280, hour:70, team:220, distance:8 }, deposit:1200, specs:{ '电池':'36V15Ah','续航':'100km','最高时速':'25km/h','重量':'24kg' }, notes:'' },
+  { id:'ebike-3', name:'电助力自行车·货运款', sub:'续航60km | 载重150kg | 载货无忧', cat:'ebike', emoji:'⚡', color:'#c68a00', tag:'专业', prices:{ day:350, hour:80, team:280, distance:10 }, deposit:1500, specs:{ '电池':'48V20Ah','续航':'60km','最高时速':'25km/h','重量':'35kg' }, notes:'' },
+  // 儿童
+  { id:'balance-1', name:'儿童滑步车·小童款', sub:'适合2-4岁 | 铝合金 | 12寸轮 | 3kg', cat:'kids-balance', emoji:'🛴', color:'#ff6b6b', tag:'新品', prices:{ day:30, hour:10, team:25, distance:1 }, deposit:200, specs:{ '适用年龄':'2-4岁','车架':'铝合金','重量':'3kg','轮径':'12寸' }, notes:'' },
+  { id:'balance-2', name:'儿童滑步车·大童款', sub:'适合4-6岁 | 铝合金 | 14寸轮 | 4kg', cat:'kids-balance', emoji:'🛴', color:'#ff4d4f', tag:'热门', prices:{ day:40, hour:12, team:30, distance:1 }, deposit:200, specs:{ '适用年龄':'4-6岁','车架':'铝合金','重量':'4kg','轮径':'14寸' }, notes:'' },
+  { id:'kids-1', name:'儿童自行车·14寸', sub:'适合3-5岁 | 可拆辅助轮 | 安全可靠', cat:'kids-bike', emoji:'🎠', color:'#ff85c0', tag:'新品', prices:{ day:50, hour:15, team:40, distance:2 }, deposit:200, specs:{ '适用年龄':'3-5岁','轮径':'14寸','刹车':'钳式','辅助轮':'可拆辅助轮' }, notes:'' },
+  { id:'kids-2', name:'儿童自行车·16寸', sub:'适合4-6岁 | 铝合金 | 灵活轻便', cat:'kids-bike', emoji:'🎠', color:'#f759ab', tag:'推荐', prices:{ day:60, hour:18, team:48, distance:2 }, deposit:200, specs:{ '适用年龄':'4-6岁','轮径':'16寸','刹车':'钳式','辅助轮':'可拆辅助轮' }, notes:'' },
+  { id:'kids-3', name:'儿童自行车·20寸', sub:'适合6-8岁 | 可选辅助轮 | 成长伙伴', cat:'kids-bike', emoji:'🎠', color:'#eb2f96', tag:'成长', prices:{ day:70, hour:20, team:55, distance:3 }, deposit:200, specs:{ '适用年龄':'6-8岁','轮径':'20寸','刹车':'钳式','辅助轮':'可选辅助轮' }, notes:'' },
+  // 头盔
+  { id:'helmet-1', name:'自行车头盔·成人款', sub:'M/L码 | EPS加厚 | 12孔透气 | GB认证', cat:'helmet', emoji:'🪖', color:'#722ed1', tag:'安全', prices:{ day:15, hour:5, team:10, distance:0.5 }, deposit:100, specs:{ '尺寸':'M(55-58cm)/L(58-61cm)','重量':'280g','标准':'GB 24429','透气孔':'12孔' }, notes:'' },
+  { id:'helmet-2', name:'自行车头盔·儿童款', sub:'XS/S码 | 轻巧安全 | 8孔透气 | GB认证', cat:'helmet', emoji:'🪖', color:'#8b5cf6', tag:'安全', prices:{ day:10, hour:3, team:8, distance:0.5 }, deposit:50, specs:{ '尺寸':'XS(45-49cm)/S(49-53cm)','重量':'200g','标准':'GB 24429','透气孔':'8孔' }, notes:'' },
+  // 保障车
+  { id:'support-1', name:'救援保障车·基础款', sub:'面包车 | 可载3人+装备 | 工具箱/急救/备胎', cat:'support', emoji:'🚐', color:'#13c2c2', tag:'保障', prices:{ day:500, hour:120, team:400, distance:15 }, deposit:2000, specs:{ '车型':'面包车','载员':'可载3人+装备','装备':'工具箱/急救/备胎','燃料':'汽油' }, notes:'' },
+  { id:'support-2', name:'救援保障车·高级款', sub:'商务车 | 可载5人+装备 | 全套保障装备', cat:'support', emoji:'🚐', color:'#08979c', tag:'高级', prices:{ day:800, hour:200, team:650, distance:20 }, deposit:3000, specs:{ '车型':'商务车','载员':'可载5人+装备','装备':'发电机/牵引绳/热水壶','燃料':'汽油' }, notes:'' },
 ];
 
-// 车型数据
-const models = [
-  { brand:'TREK', series:'Domane', name:'Domane SL 5', year:2025, type:'公路车', price:22800, weight:'9.6kg', material:'碳纤维' },
-  { brand:'TREK', series:'Madone', name:'Madone SLR 6', year:2025, type:'公路车', price:52800, weight:'7.8kg', material:'碳纤维' },
-  { brand:'TREK', series:'Émonda', name:'Émonda SL 6', year:2024, type:'公路车', price:25800, weight:'8.2kg', material:'碳纤维' },
-  { brand:'GIANT', series:'Defy', name:'Defy Advanced 2', year:2025, type:'公路车', price:14800, weight:'8.8kg', material:'碳纤维' },
-  { brand:'GIANT', series:'Propel', name:'Propel Advanced SL', year:2025, type:'公路车', price:39800, weight:'7.2kg', material:'碳纤维' },
-  { brand:'GIANT', series:'TCR', name:'TCR Advanced Pro 1', year:2024, type:'公路车', price:19800, weight:'7.5kg', material:'碳纤维' },
-  { brand:'Specialized', series:'Roubaix', name:'Roubaix SL7 Comp', year:2025, type:'公路车', price:35800, weight:'8.4kg', material:'碳纤维' },
-  { brand:'Specialized', series:'Tarmac', name:'Tarmac SL7 Pro', year:2025, type:'公路车', price:49800, weight:'7.0kg', material:'碳纤维' },
-  { brand:'CANYON', series:'Endurace', name:'Endurace CF SL 8', year:2025, type:'公路车', price:26800, weight:'8.1kg', material:'碳纤维' },
-  { brand:'MERIDA', series:'Scultura', name:'Scultura 6000', year:2024, type:'公路车', price:19800, weight:'7.9kg', material:'碳纤维' },
-  { brand:'TREK', series:'Checkpoint', name:'Checkpoint SL 5', year:2025, type:'砾石车', price:24800, weight:'9.8kg', material:'碳纤维' },
-  { brand:'GIANT', series:'Revolt', name:'Revolt Advanced 2', year:2025, type:'砾石车', price:15800, weight:'9.5kg', material:'碳纤维' },
-];
+// 套餐数据（和 H5 bike-rental.html pkgData 完全对齐）
+let pkgData = {
+  day: [
+    { name:'1天',   price: 0, mult: 1 },
+    { name:'2天',   price: 0, mult: 0.9 },
+    { name:'3天+',  price: 0, mult: 0.8 },
+  ],
+  hour: [
+    { name:'2小时',  price: 0, mult: 1 },
+    { name:'4小时',  price: 0, mult: 0.9 },
+    { name:'8小时',  price: 0, mult: 0.8 },
+  ],
+  team: [
+    { name:'10人以下', price: 0, mult: 1 },
+    { name:'10-30人',  price: 0, mult: 0.9 },
+    { name:'30人+',    price: 0, mult: 0.8 },
+  ],
+  distance: [
+    { name:'30km内',  price: 0, mult: 1 },
+    { name:'50km内',  price: 0, mult: 0.9 },
+    { name:'100km内', price: 0, mult: 0.8 },
+  ],
+};
 
+// ============================================================
 // 初始化
+// ============================================================
 function init() {
   updateStats();
-  updateBrandSelect();
-  renderModels(models);
-  renderBrandList();
+  renderBikes(bikesData);
+  renderPkgTab('day');
 }
 
 function updateStats() {
-  const uniqueBrands = [...new Set(models.map(m => m.brand))];
-  document.getElementById('brandCount').textContent = uniqueBrands.length;
-  document.getElementById('totalCount').textContent = models.length;
+  document.getElementById('statTotal').textContent = bikesData.length;
+  document.getElementById('statMountain').textContent = bikesData.filter(b => b.cat === 'mountain').length;
+  document.getElementById('statRoad').textContent = bikesData.filter(b => b.cat === 'road').length;
+  document.getElementById('statEbike').textContent = bikesData.filter(b => b.cat === 'ebike').length;
 }
 
-function updateBrandSelect() {
-  const select = document.getElementById('filterBrand');
-  const mBrandSelect = document.getElementById('m_brand');
-  const uniqueBrands = [...new Set(brands.map(b => b.name.split(' ')[1] || b.name.split(' ')[0]))];
-  const options = uniqueBrands.map(b => `<option value="${b}">${b}</option>`).join('');
-  select.innerHTML = '<option value="">全部品牌</option>' + options;
-  mBrandSelect.innerHTML = options;
-}
-
-// 渲染车型表格
-function renderModels(data) {
+// ============================================================
+// 渲染车辆列表
+// ============================================================
+function renderBikes(data) {
   document.getElementById('totalCount').textContent = data.length;
-  document.getElementById('modelBody').innerHTML = data.map((m, i) => `
+  document.getElementById('bikeBody').innerHTML = data.map((b, i) => {
+    const catInfo = CATS[b.cat] || {};
+    const tagClass = TAG_COLORS[b.tag] || 'tag-default';
+    return `
     <tr>
-      <td style="font-weight:500;">${m.brand}</td>
-      <td>${m.series}</td>
-      <td><strong>${m.name}</strong></td>
-      <td>${m.year || '-'}</td>
-      <td><span class="tag ${m.type==='公路车'?'tag-info':m.type==='砾石车'?'tag-warning':'tag-success'}">${m.type}</span></td>
-      <td style="font-weight:600;">¥${m.price ? m.price.toLocaleString() : '0'}</td>
-      <td style="color:var(--el-text-color-secondary);">${m.weight || '-'}</td>
-      <td style="color:var(--el-text-color-secondary);">${m.material || '-'}</td>
       <td>
-        <button class="btn btn-text btn-sm" onclick="editModel(${i})">编辑</button>
-        <button class="btn btn-text btn-sm danger" onclick="deleteModel(${i})">删除</button>
+        <div style="width:48px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,${b.color},${b.color}88);color:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.15);">
+          ${b.emoji}
+        </div>
       </td>
-    </tr>
-  `).join('');
+      <td>
+        <div style="font-weight:600;font-size:13px;">${b.name}</div>
+        <div style="font-size:11px;color:var(--el-text-color-secondary);margin-top:2px;">${b.sub || ''}</div>
+      </td>
+      <td><span class="tag tag-default">${catInfo.label || b.cat}</span></td>
+      <td><span class="tag ${tagClass}">${b.tag}</span></td>
+      <td style="font-weight:600;color:var(--el-color-warning);">¥${b.prices.day}<span style="font-size:11px;color:var(--el-text-color-secondary);font-weight:normal;">/天</span></td>
+      <td style="color:var(--el-text-color-secondary);">¥${b.prices.hour}<span style="font-size:11px;">/时</span></td>
+      <td style="color:var(--el-text-color-secondary);">¥${b.prices.team}<span style="font-size:11px;">/人</span></td>
+      <td style="color:var(--el-text-color-secondary);">¥${b.prices.distance}<span style="font-size:11px;">/km</span></td>
+      <td style="color:var(--el-text-color-secondary);">¥${b.deposit}</td>
+      <td>
+        <button class="btn btn-text btn-sm" onclick="editBike(${i})">编辑</button>
+        <button class="btn btn-text btn-sm danger" onclick="deleteBike(${i})">删除</button>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
-// 渲染品牌列表
-function renderBrandList() {
-  document.getElementById('brandList').innerHTML = brands.map((b, i) => `
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--el-bg-color);border-radius:8px;margin-bottom:8px;">
-      <div>
-        <div style="font-weight:600;font-size:14px;">${b.name}</div>
-        <div style="font-size:12px;color:var(--el-text-color-secondary);margin-top:2px;">${b.origin} · ${b.series.length} 个系列</div>
-        <div style="font-size:12px;color:var(--el-text-color-placeholder);margin-top:4px;">${b.cats.join(' / ')}</div>
-      </div>
-      <div style="display:flex;gap:4px;">
-        <button class="btn btn-text btn-sm" onclick="showToast('编辑品牌 ${b.name}','info')">编辑</button>
-        <button class="btn btn-text btn-sm danger" onclick="deleteBrand(${i})">删除</button>
-      </div>
+// ============================================================
+// 筛选
+// ============================================================
+function applyFilter() {
+  const cat = document.getElementById('fCat').value;
+  const tag = document.getElementById('fTag').value;
+  const kw = document.getElementById('fKw').value.toLowerCase();
+  const filtered = bikesData.filter(b => {
+    if (cat && b.cat !== cat) return false;
+    if (tag && b.tag !== tag) return false;
+    if (kw && !b.name.toLowerCase().includes(kw)) return false;
+    return true;
+  });
+  renderBikes(filtered);
+}
+
+function resetFilter() {
+  document.getElementById('fCat').value = '';
+  document.getElementById('fTag').value = '';
+  document.getElementById('fKw').value = '';
+  renderBikes(bikesData);
+}
+
+// ============================================================
+// 车辆 CRUD
+// ============================================================
+function clearForm() {
+  document.getElementById('addModalTitle').textContent = '添加车型';
+  document.getElementById('m_name').value = '';
+  document.getElementById('m_sub').value = '';
+  document.getElementById('m_cat').value = 'mountain';
+  document.getElementById('m_tag').value = '热门';
+  document.getElementById('m_emoji').value = '🚵';
+  document.getElementById('m_color').value = '#1a5f9e';
+  document.getElementById('m_price_day').value = '';
+  document.getElementById('m_price_hour').value = '';
+  document.getElementById('m_price_team').value = '';
+  document.getElementById('m_price_distance').value = '';
+  document.getElementById('m_deposit').value = '';
+  document.getElementById('m_notes').value = '';
+  document.getElementById('specsContainer').innerHTML = `
+    <div class="spec-row" style="display:flex;gap:10px;margin-bottom:10px;">
+      <input class="form-input spec-key" placeholder="参数名，如：速别" style="width:120px;">
+      <input class="form-input spec-val" placeholder="参数值，如：21速" style="flex:1;">
+      <button class="btn btn-text danger btn-sm" onclick="this.parentElement.remove()" style="padding:8px;">✕</button>
+    </div>`;
+  updateCoverPreview();
+}
+
+let editingIdx = -1;
+
+function editBike(idx) {
+  editingIdx = idx;
+  const b = bikesData[idx];
+  document.getElementById('addModalTitle').textContent = '编辑车型';
+  document.getElementById('m_name').value = b.name;
+  document.getElementById('m_sub').value = b.sub || '';
+  document.getElementById('m_cat').value = b.cat;
+  document.getElementById('m_tag').value = b.tag;
+  document.getElementById('m_emoji').value = b.emoji;
+  document.getElementById('m_color').value = b.color;
+  document.getElementById('m_price_day').value = b.prices.day;
+  document.getElementById('m_price_hour').value = b.prices.hour;
+  document.getElementById('m_price_team').value = b.prices.team;
+  document.getElementById('m_price_distance').value = b.prices.distance;
+  document.getElementById('m_deposit').value = b.deposit;
+  document.getElementById('m_notes').value = b.notes || '';
+
+  // specs
+  const container = document.getElementById('specsContainer');
+  container.innerHTML = '';
+  const specEntries = Object.entries(b.specs || {});
+  if (specEntries.length === 0) {
+    addSpecRow();
+  } else {
+    specEntries.forEach(([k, v]) => {
+      container.innerHTML += `
+        <div class="spec-row" style="display:flex;gap:10px;margin-bottom:10px;">
+          <input class="form-input spec-key" placeholder="参数名" style="width:120px;" value="${k}">
+          <input class="form-input spec-val" placeholder="参数值" style="flex:1;" value="${v}">
+          <button class="btn btn-text danger btn-sm" onclick="this.parentElement.remove()" style="padding:8px;">✕</button>
+        </div>`;
+    });
+  }
+
+  updateCoverPreview();
+  openModal('addModal');
+}
+
+function deleteBike(idx) {
+  if (!confirm('确认删除该车型？')) return;
+  bikesData.splice(idx, 1);
+  updateStats();
+  applyFilter();
+  showToast('车型已删除', 'success');
+}
+
+function saveBike() {
+  const name = document.getElementById('m_name').value.trim();
+  if (!name) { showToast('请填写车型名称', 'error'); return; }
+
+  const cat = document.getElementById('m_cat').value;
+  const catInfo = CATS[cat] || {};
+
+  const specs = {};
+  document.querySelectorAll('.spec-row').forEach(row => {
+    const k = row.querySelector('.spec-key').value.trim();
+    const v = row.querySelector('.spec-val').value.trim();
+    if (k && v) specs[k] = v;
+  });
+
+  const bike = {
+    id: editingIdx >= 0 ? bikesData[editingIdx].id : (cat + '-' + Date.now()),
+    name: name,
+    sub: document.getElementById('m_sub').value.trim(),
+    cat: cat,
+    emoji: document.getElementById('m_emoji').value || catInfo.emoji || '🚵',
+    color: document.getElementById('m_color').value || catInfo.color || '#1a5f9e',
+    tag: document.getElementById('m_tag').value,
+    prices: {
+      day: parseFloat(document.getElementById('m_price_day').value) || 0,
+      hour: parseFloat(document.getElementById('m_price_hour').value) || 0,
+      team: parseFloat(document.getElementById('m_price_team').value) || 0,
+      distance: parseFloat(document.getElementById('m_price_distance').value) || 0,
+    },
+    deposit: parseFloat(document.getElementById('m_deposit').value) || 500,
+    specs: specs,
+    notes: document.getElementById('m_notes').value,
+  };
+
+  if (editingIdx >= 0) {
+    bikesData[editingIdx] = bike;
+    showToast('车型已更新', 'success');
+  } else {
+    bikesData.push(bike);
+    showToast('车型已添加', 'success');
+  }
+
+  editingIdx = -1;
+  closeModal('addModal');
+  clearForm();
+  updateStats();
+  applyFilter();
+}
+
+function addSpecRow() {
+  document.getElementById('specsContainer').innerHTML += `
+    <div class="spec-row" style="display:flex;gap:10px;margin-bottom:10px;">
+      <input class="form-input spec-key" placeholder="参数名，如：速别" style="width:120px;">
+      <input class="form-input spec-val" placeholder="参数值，如：21速" style="flex:1;">
+      <button class="btn btn-text danger btn-sm" onclick="this.parentElement.remove()" style="padding:8px;">✕</button>
+    </div>`;
+}
+
+// ============================================================
+// 封面预览
+// ============================================================
+function updateCoverPreview() {
+  const emoji = document.getElementById('m_emoji').value || '🚵';
+  const color = document.getElementById('m_color').value || '#1a5f9e';
+  const preview = document.getElementById('coverPreview');
+  if (preview) {
+    preview.textContent = emoji;
+    preview.style.background = `linear-gradient(135deg, ${color}, ${color}88)`;
+  }
+}
+
+// ============================================================
+// 套餐管理
+// ============================================================
+let currentPkgType = 'day';
+
+function switchPkgTab(type) {
+  currentPkgType = type;
+  document.querySelectorAll('.pkg-tab').forEach(t => t.classList.toggle('active', t.dataset.type === type));
+  document.querySelectorAll('[id$="Content"]').forEach(el => el.style.display = 'none');
+  renderPkgTab(type);
+}
+
+function renderPkgTab(type) {
+  const content = document.getElementById('pkg' + type.charAt(0).toUpperCase() + type.slice(1) + 'Content');
+  if (!content) return;
+  content.style.display = '';
+  const tiers = pkgData[type] || [];
+  content.innerHTML = tiers.map((t, i) => `
+    <div class="pkg-tier-row">
+      <div class="pkg-tier-num">${i + 1}</div>
+      <input class="form-input pkg-tier-name" data-idx="${i}" value="${t.name}" placeholder="套餐名称，如：2天" style="flex:1;">
+      <div style="font-size:12px;color:var(--el-text-color-secondary);white-space:nowrap;">折扣系数</div>
+      <input class="form-input pkg-tier-disc" data-idx="${i}" type="number" step="0.01" min="0.1" max="1" value="${t.mult}" placeholder="0.9" style="width:70px;">
+      <button class="pkg-tier-remove" onclick="removePkgTier('${type}', ${i})" title="删除此阶梯">✕</button>
     </div>
   `).join('');
 }
 
-// 筛选
-function filterModels() {
-  const brand = document.getElementById('filterBrand').value;
-  const type = document.getElementById('filterType').value;
-  const kw = document.getElementById('filterKw').value.toLowerCase();
-  const filtered = models.filter(m => {
-    if (brand && m.brand !== brand) return false;
-    if (type && m.type !== type) return false;
-    if (kw && !m.name.toLowerCase().includes(kw)) return false;
-    return true;
+function addPkgTier() {
+  const type = currentPkgType;
+  const defaultNames = { day:'3天+', hour:'8小时', team:'30人+', distance:'100km内' };
+  pkgData[type].push({ name: defaultNames[type] || '新套餐', price: 0, mult: 0.8 });
+  renderPkgTab(type);
+}
+
+function removePkgTier(type, idx) {
+  if (pkgData[type].length <= 1) { showToast('至少保留一个套餐阶梯', 'warning'); return; }
+  pkgData[type].splice(idx, 1);
+  renderPkgTab(type);
+}
+
+function savePkgs() {
+  // 从 DOM 读取最新名称和折扣系数
+  ['day','hour','team','distance'].forEach(type => {
+    const content = document.getElementById('pkg' + type.charAt(0).toUpperCase() + type.slice(1) + 'Content');
+    if (!content) return;
+    content.querySelectorAll('.pkg-tier-row').forEach((row, i) => {
+      if (pkgData[type][i]) {
+        pkgData[type][i].name = row.querySelector('.pkg-tier-name').value.trim() || pkgData[type][i].name;
+        pkgData[type][i].mult = parseFloat(row.querySelector('.pkg-tier-disc').value) || 1;
+      }
+    });
   });
-  renderModels(filtered);
+  closeModal('pkgModal');
+  showToast('套餐配置已保存', 'success');
 }
 
-function resetFilter() {
-  document.getElementById('filterBrand').value = '';
-  document.getElementById('filterType').value = '';
-  document.getElementById('filterKw').value = '';
-  renderModels(models);
-}
-
-// 品牌操作
-function saveBrand() {
-  const nameCn = document.getElementById('brandNameCn').value.trim();
-  const nameEn = document.getElementById('brandNameEn').value.trim().toUpperCase();
-  const origin = document.getElementById('brandOrigin').value.trim();
-  const cats = [...document.querySelectorAll('.brand-cat:checked')].map(c => c.value);
-  if (!nameCn || !nameEn) {
-    showToast('请填写品牌名称', 'error');
-    return;
+// ============================================================
+// 弹窗关闭时清空表单
+// ============================================================
+const _closeModal = closeModal;
+closeModal = function(id) {
+  _closeModal(id);
+  if (id === 'addModal') {
+    editingIdx = -1;
+    clearForm();
   }
-  brands.push({
-    slug: nameEn.toLowerCase(),
-    name: `${nameCn} ${nameEn}`,
-    origin: origin || '未知',
-    cats: cats.length ? cats : ['公路车'],
-    series: []
-  });
-  updateBrandSelect();
-  renderBrandList();
-  document.getElementById('brandNameCn').value = '';
-  document.getElementById('brandNameEn').value = '';
-  document.getElementById('brandOrigin').value = '';
-  document.querySelectorAll('.brand-cat').forEach(c => c.checked = false);
-  closeModal('addBrandModal');
-  showToast('品牌已添加', 'success');
-}
+};
 
-function deleteBrand(index) {
-  if (!confirm('确认删除该品牌？')) return;
-  brands.splice(index, 1);
-  updateBrandSelect();
-  renderBrandList();
-  updateStats();
-  showToast('品牌已删除', 'success');
-}
-
-// 车型操作
-function editModel(index) {
-  const m = models[index];
-  document.getElementById('addModalTitle').textContent = '编辑车型';
-  document.getElementById('m_brand').value = m.brand;
-  document.getElementById('m_series').value = m.series;
-  document.getElementById('m_name').value = m.name;
-  document.getElementById('m_year').value = m.year || '';
-  document.getElementById('m_type').value = m.type;
-  document.getElementById('m_price').value = m.price || '';
-  document.getElementById('m_weight').value = m.weight || '';
-  document.getElementById('m_material').value = m.material;
-  openModal('addModal');
-}
-
-function deleteModel(index) {
-  if (!confirm('确认删除该车型？')) return;
-  models.splice(index, 1);
-  renderModels(models);
-  updateStats();
-  showToast('车型已删除', 'success');
-}
-
-function saveModel() {
-  const brand = document.getElementById('m_brand').value;
-  const series = document.getElementById('m_series').value.trim();
-  const name = document.getElementById('m_name').value.trim();
-  if (!brand || !name) {
-    showToast('请填写品牌和车型名称', 'error');
-    return;
-  }
-  models.push({
-    brand,
-    series: series || '-',
-    name,
-    year: parseInt(document.getElementById('m_year').value) || '',
-    type: document.getElementById('m_type').value,
-    price: parseInt(document.getElementById('m_price').value) || 0,
-    weight: document.getElementById('m_weight').value,
-    material: document.getElementById('m_material').value
-  });
-  renderModels(models);
-  updateStats();
-  updateBrandSelect();
-  closeModal('addModal');
-  clearModelForm();
-  showToast('车型已添加', 'success');
-}
-
-function clearModelForm() {
-  document.getElementById('m_series').value = '';
-  document.getElementById('m_name').value = '';
-  document.getElementById('m_year').value = '';
-  document.getElementById('m_price').value = '';
-  document.getElementById('m_weight').value = '';
-  document.getElementById('addModalTitle').textContent = '添加车型';
-}
-
+// ============================================================
+// 启动
+// ============================================================
 init();
 </script>
 </body>

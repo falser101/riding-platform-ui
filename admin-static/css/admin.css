@@ -812,7 +812,7 @@ input, select, textarea { font-family: inherit; }
 }
 @media (max-width: 768px) {
   .stats-grid { grid-template-columns: 1fr; }
-  .sidebar { position: fixed; left: -200px; z-index: 200; height: 100%; }
+  .sidebar { position: fixed; left: -200px; z-index: 200; height: 100%; transition: left 0.25s ease; }
   .sidebar.open { left: 0; }
 }
 

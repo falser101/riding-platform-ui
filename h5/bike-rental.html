@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>车辆详情</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bike.css">
+    <style>
+        /* 活动卡片风格改造 */
+        .bike-detail-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin: 12px 16px;
+        }
+        .bike-detail-image {
+            position: relative;
+            height: 160px;
+            background: linear-gradient(135deg, #1a5f9e 0%, #2d8bc9 100%);
+            overflow: hidden;
+        }
+        .bike-detail-image .bike-emoji {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
+        }
+        .bike-detail-image .back-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 32px;
+            height: 32px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .bike-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: white;
+        }
+        .bike-tag-hot { background: #ff4d4f; }
+        .bike-tag-new { background: #52c41a; }
+        .bike-tag-recommend { background: #f5a623; }
+
+        .bike-detail-content {
+            padding: 14px;
+        }
+        .bike-detail-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        .bike-detail-sub {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+        .bike-detail-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+        .price-label {
+            font-size: 12px;
+            color: #999;
+        }
+        .price-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #f5a623;
+        }
+        .price-unit {
+            font-size: 12px;
+            font-weight: normal;
+            color: #999;
+        }
+
+        /* 套餐选择 */
+        .package-section {
+            padding: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .package-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .package-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .package-list {
+            display: inline-flex;
+            gap: 8px;
+        }
+        .package-item {
+            min-width: 80px;
+            padding: 10px 12px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .package-item.active {
+            background: #e6f2ff;
+            border-color: #1a5f9e;
+        }
+        .pkg-name {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .package-item.active .pkg-name {
+            color: #1a5f9e;
+        }
+        .pkg-price {
+            font-size: 14px;
+            color: #ff6b00;
+            font-weight: 700;
+        }
+        .pkg-unit {
+            font-size: 10px;
+            color: #999;
+            font-weight: normal;
+        }
+
+        /* 数量选择 */
+        .qty-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .qty-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #666;
+            cursor: pointer;
+        }
+        .qty-num {
+            min-width: 36px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* 规格参数 */
+        .spec-section {
+            padding: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .spec-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .spec-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+        .spec-label {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 2px;
+        }
+        .spec-value {
+            font-size: 13px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* 租赁须知 */
+        .notes-section {
+            padding: 14px;
+        }
+        .notes-title {
+            font-size: 13px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .notes-text {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* 底部下单栏 */
+        .order-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            padding-bottom: env(safe-area-inset-bottom, 0);
+            box-shadow: 0 -1px 4px rgba(0,0,0,0.06);
+            z-index: 100;
+        }
+        .order-total {
+            flex: 1;
+        }
+        .total-label {
+            font-size: 11px;
+            color: #999;
+        }
+        .total-price {
+            font-size: 20px;
+            color: #f5a623;
+            font-weight: 700;
+        }
+        .order-btn {
+            width: 120px;
+            height: 40px;
+            background: linear-gradient(135deg, #1a5f9e, #2d8bc9);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Toast */
+        .toast-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toast-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px 32px;
+            text-align: center;
+            max-width: 280px;
+        }
+        .toast-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .toast-text {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="page-content" style="padding-bottom: 80px;">
+
+            <!-- 详情卡片 -->
+            <div class="bike-detail-card" style="margin-top: 12px;">
+                <div class="bike-detail-image" id="coverEmoji">
+                    <span class="back-btn" onclick="history.back()">‹</span>
+                </div>
+                <div class="bike-detail-content">
+                    <div class="bike-detail-name" id="bikeName"></div>
+                    <div class="bike-detail-sub" id="bikeSub"></div>
+                    <div class="bike-detail-price">
+                        <span class="price-label">租金</span>
+                        <span class="price-value" id="priceDisplay">¥80<span class="price-unit">/天</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 套餐选择 -->
+            <div class="bike-detail-card" style="margin-top: 0;">
+                <div class="package-section">
+                    <div class="package-label">选择套餐</div>
+                    <div class="package-scroll">
+                        <div class="package-list" id="packageList"></div>
+                    </div>
+                </div>
+
+                <!-- 数量 -->
+                <div class="qty-section">
+                    <text class="qty-label">数量</text>
+                    <div class="qty-control">
+                        <div class="qty-btn" id="qtyMinus">−</div>
+                        <div class="qty-num" id="qtyNum">1</div>
+                        <div class="qty-btn" id="qtyPlus">+</div>
+                    </div>
+                </div>
+
+                <!-- 规格参数 -->
+                <div class="spec-section">
+                    <div class="spec-title">车辆参数</div>
+                    <div class="spec-grid" id="specsGrid"></div>
+                </div>
+
+                <!-- 租赁须知 -->
+                <div class="notes-section">
+                    <div class="notes-title">📋 租赁须知</div>
+                    <div class="notes-text" id="notesText"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部下单栏 -->
+    <div class="order-bar">
+        <div class="order-total">
+            <div class="total-label">合计</div>
+            <div class="total-price" id="totalPrice">¥80</div>
+        </div>
+        <button class="order-btn" id="orderBtn" onclick="submitOrder()">立即预约</button>
+    </div>
+
+    <script>
+    const bikesData = {
+        'mtb-1': { name: '山地自行车·基础款', sub: '机械碟刹 | 21速 | 铝合金 | 26寸/27.5寸', cat: 'mountain', emoji: '🚵', color: '#2d8bc9', tag: '热门', prices: { day: 80, hour: 20, team: 60, distance: 3 }, specs: { '速别': '21速', '刹车': '机械碟刹', '车架': '铝合金', '尺寸': '26寸/27.5寸' } },
+        'mtb-2': { name: '山地自行车·进阶款', sub: '油压碟刹 | 27速 | 铝合金 | 27.5寸/29寸', cat: 'mountain', emoji: '🚵', color: '#1a5f9e', tag: '推荐', prices: { day: 150, hour: 35, team: 120, distance: 5 }, specs: { '速别': '27速', '刹车': '油压碟刹', '车架': '铝合金', '尺寸': '27.5寸/29寸' } },
+        'mtb-3': { name: '山地自行车·专业款', sub: '全避震 | 碳纤维 | 30速 | 29寸', cat: 'mountain', emoji: '🚵', color: '#0d3a6e', tag: '专业', prices: { day: 300, hour: 70, team: 250, distance: 8 }, specs: { '速别': '30速', '刹车': '油压碟刹', '车架': '碳纤维', '尺寸': '29寸' } },
+        'road-1': { name: '公路自行车·基础款', sub: '铝合金 | 14速 | 钳式刹车 | 700C', cat: 'road', emoji: '🛣️', color: '#e31837', tag: '热门', prices: { day: 120, hour: 30, team: 100, distance: 4 }, specs: { '速别': '14速', '刹车': '钳式刹车', '车架': '铝合金', '尺寸': '700C' } },
+        'road-2': { name: '公路自行车·进阶款', sub: '碳纤维前叉 | 18速 | 油压碟刹 | 700C', cat: 'road', emoji: '🛣️', color: '#c0122e', tag: '推荐', prices: { day: 200, hour: 50, team: 160, distance: 6 }, specs: { '速别': '18速', '刹车': '油压碟刹', '车架': '铝合金', '尺寸': '700C' } },
+        'road-3': { name: '公路自行车·专业款', sub: '全碳车架 | 22速 | 气动设计 | 竞赛级', cat: 'road', emoji: '🛣️', color: '#a01026', tag: '专业', prices: { day: 400, hour: 90, team: 320, distance: 10 }, specs: { '速别': '22速', '刹车': '油压碟刹', '车架': '碳纤维', '尺寸': '700C' } },
+        'leisure-1': { name: '休闲自行车·城市款', sub: '链条罩 | 前后车篮 | 7速 | 26寸', cat: 'leisure', emoji: '🌿', color: '#52c41a', tag: '新品', prices: { day: 60, hour: 15, team: 45, distance: 2 }, specs: { '速别': '7速', '刹车': '钳式刹车', '车架': '铝合金', '尺寸': '26寸' } },
+        'leisure-2': { name: '休闲自行车·亲子款', sub: '后座载童 | 稳定可靠 | 7速 | 26寸', cat: 'leisure', emoji: '🌿', color: '#389e0d', tag: '亲子', prices: { day: 80, hour: 20, team: 60, distance: 3 }, specs: { '速别': '7速', '刹车': '前钳后鼓', '车架': '钢', '尺寸': '26寸' } },
+        'ebike-1': { name: '电助力自行车·通勤款', sub: '续航80km | 36V12Ah | 助力骑行', cat: 'ebike', emoji: '⚡', color: '#faad14', tag: '热门', prices: { day: 180, hour: 45, team: 150, distance: 5 }, specs: { '电池': '36V12Ah', '续航': '80km', '最高时速': '25km/h', '重量': '22kg' } },
+        'ebike-2': { name: '电助力自行车·山地款', sub: '续航100km | 250W电机 | 山地适用', cat: 'ebike', emoji: '⚡', color: '#d48806', tag: '推荐', prices: { day: 280, hour: 70, team: 220, distance: 8 }, specs: { '电池': '36V15Ah', '续航': '100km', '最高时速': '25km/h', '重量': '24kg' } },
+        'ebike-3': { name: '电助力自行车·货运款', sub: '续航60km | 载重150kg | 载货无忧', cat: 'ebike', emoji: '⚡', color: '#c68a00', tag: '专业', prices: { day: 350, hour: 80, team: 280, distance: 10 }, specs: { '电池': '48V20Ah', '续航': '60km', '最高时速': '25km/h', '重量': '35kg' } },
+        'balance-1': { name: '儿童滑步车·小童款', sub: '适合2-4岁 | 铝合金 | 12寸轮 | 3kg', cat: 'kids-balance', emoji: '🛴', color: '#ff6b6b', tag: '新品', prices: { day: 30, hour: 10, team: 25, distance: 1 }, specs: { '适用年龄': '2-4岁', '车架': '铝合金', '重量': '3kg', '轮径': '12寸' } },
+        'balance-2': { name: '儿童滑步车·大童款', sub: '适合4-6岁 | 铝合金 | 14寸轮 | 4kg', cat: 'kids-balance', emoji: '🛴', color: '#ff4d4f', tag: '热门', prices: { day: 40, hour: 12, team: 30, distance: 1 }, specs: { '适用年龄': '4-6岁', '车架': '铝合金', '重量': '4kg', '轮径': '14寸' } },
+        'kids-1': { name: '儿童自行车·14寸', sub: '适合3-5岁 | 可拆辅助轮 | 安全可靠', cat: 'kids-bike', emoji: '🎠', color: '#ff85c0', tag: '新品', prices: { day: 50, hour: 15, team: 40, distance: 2 }, specs: { '适用年龄': '3-5岁', '轮径': '14寸', '刹车': '钳式', '辅助轮': '可拆辅助轮' } },
+        'kids-2': { name: '儿童自行车·16寸', sub: '适合4-6岁 | 铝合金 | 灵活轻便', cat: 'kids-bike', emoji: '🎠', color: '#f759ab', tag: '推荐', prices: { day: 60, hour: 18, team: 48, distance: 2 }, specs: { '适用年龄': '4-6岁', '轮径': '16寸', '刹车': '钳式', '辅助轮': '可拆辅助轮' } },
+        'kids-3': { name: '儿童自行车·20寸', sub: '适合6-8岁 | 可选辅助轮 | 成长伙伴', cat: 'kids-bike', emoji: '🎠', color: '#eb2f96', tag: '成长', prices: { day: 70, hour: 20, team: 55, distance: 3 }, specs: { '适用年龄': '6-8岁', '轮径': '20寸', '刹车': '钳式', '辅助轮': '可选辅助轮' } },
+        'helmet-1': { name: '自行车头盔·成人款', sub: 'M/L码 | EPS加厚 | 12孔透气 | GB认证', cat: 'helmet', emoji: '🪖', color: '#722ed1', tag: '安全', prices: { day: 15, hour: 5, team: 10, distance: 0.5 }, specs: { '尺寸': 'M(55-58cm)/L(58-61cm)', '重量': '280g', '标准': 'GB 24429', '透气孔': '12孔' } },
+        'helmet-2': { name: '自行车头盔·儿童款', sub: 'XS/S码 | 轻巧安全 | 8孔透气 | GB认证', cat: 'helmet', emoji: '🪖', color: '#8b5cf6', tag: '安全', prices: { day: 10, hour: 3, team: 8, distance: 0.5 }, specs: { '尺寸': 'XS(45-49cm)/S(49-53cm)', '重量': '200g', '标准': 'GB 24429', '透气孔': '8孔' } },
+        'support-1': { name: '救援保障车·基础款', sub: '面包车 | 可载3人+装备 | 工具箱/急救/备胎', cat: 'support', emoji: '🚐', color: '#13c2c2', tag: '保障', prices: { day: 500, hour: 120, team: 400, distance: 15 }, specs: { '车型': '面包车', '载员': '可载3人+装备', '装备': '工具箱/急救/备胎', '燃料': '汽油' } },
+        'support-2': { name: '救援保障车·高级款', sub: '商务车 | 可载5人+装备 | 全套保障装备', cat: 'support', emoji: '🚐', color: '#08979c', tag: '高级', prices: { day: 800, hour: 200, team: 650, distance: 20 }, specs: { '车型': '商务车', '载员': '可载5人+装备', '装备': '发电机/牵引绳/热水壶', '燃料': '汽油' } },
+    };
+
+    const params = new URLSearchParams(location.search);
+    const bikeId = params.get('id') || 'mtb-1';
+    const rentalType = params.get('type') || 'day';
+    const bike = bikesData[bikeId] || bikesData['mtb-1'];
+
+    let qty = 1;
+    let selectedPkgIdx = 0;
+
+    // 套餐数据
+    const pkgData = {
+        day: [
+            { name: '1天', price: bike.prices.day },
+            { name: '2天', price: bike.prices.day * 2 * 0.9 },
+            { name: '3天+', price: bike.prices.day * 3 * 0.8 },
+        ],
+        hour: [
+            { name: '2小时', price: bike.prices.hour * 2 },
+            { name: '4小时', price: bike.prices.hour * 4 * 0.9 },
+            { name: '8小时', price: bike.prices.hour * 8 * 0.8 },
+        ],
+        team: [
+            { name: '10人以下', price: bike.prices.team },
+            { name: '10-30人', price: bike.prices.team * 0.9 },
+            { name: '30人+', price: bike.prices.team * 0.8 },
+        ],
+        distance: [
+            { name: '30km内', price: bike.prices.distance * 30 },
+            { name: '50km内', price: bike.prices.distance * 50 * 0.9 },
+            { name: '100km内', price: bike.prices.distance * 100 * 0.8 },
+        ]
+    };
+
+    const units = { day: '天', hour: '时', team: '人', distance: 'km' };
+    const typeUnits = { day: '元/天', hour: '元/时', team: '元/人', distance: '元/km' };
+
+    function init() {
+        // 封面
+        const cover = document.getElementById('coverEmoji');
+        cover.innerHTML = `
+            <span class="back-btn" onclick="history.back()">‹</span>
+            <span class="bike-emoji">${bike.emoji}</span>
+            <span class="bike-tag bike-tag-${bike.tag === '热门' ? 'hot' : bike.tag === '推荐' ? 'recommend' : 'new'}">${bike.tag}</span>
+        `;
+        cover.style.background = `linear-gradient(135deg, ${bike.color}, ${bike.color}99)`;
+
+        // 基本信息
+        document.getElementById('bikeName').textContent = bike.name;
+        document.getElementById('bikeSub').textContent = bike.sub;
+        document.getElementById('priceDisplay').innerHTML = `¥${bike.prices[rentalType]}<span class="price-unit">/${typeUnits[rentalType].replace('元/','')}</span>`;
+
+        // 套餐
+        const pkgs = pkgData[rentalType] || pkgData['day'];
+        const typeUnit = units[rentalType];
+        document.getElementById('packageList').innerHTML = pkgs.map((p, i) => `
+            <div class="package-item ${i === 0 ? 'active' : ''}" data-idx="${i}" onclick="selectPkg(${i})">
+                <div class="pkg-name">${p.name}</div>
+                <div class="pkg-price">¥${Math.round(p.price)}<span class="pkg-unit">/${typeUnit}</span></div>
+            </div>
+        `).join('');
+
+        // 规格
+        const specGrid = document.getElementById('specsGrid');
+        const specs = bike.specs;
+        specGrid.innerHTML = Object.entries(specs).map(([k, v]) => `
+            <div class="spec-item">
+                <div class="spec-label">${k}</div>
+                <div class="spec-value">${v}</div>
+            </div>
+        `).join('');
+
+        // 须知
+        const deposit = bike.cat === 'support' ? 2000 : bike.cat === 'helmet' ? 100 : 500;
+        document.getElementById('notesText').innerHTML = `
+            1. 取车需缴纳押金¥${deposit}，还车退还<br>
+            2. 最低起租：1${typeUnit === '人' ? '人' : typeUnit === 'km' ? 'km' : typeUnit === '时' ? '小时' : '天'}<br>
+            3. 提前还车可退剩余费用，节假日不可取消<br>
+            4. 损坏或遗失按原价赔偿<br>
+            5. 取车时间：08:00-20:00，还车：当日22:00前
+        `;
+
+        updateTotal();
+    }
+
+    function selectPkg(idx) {
+        document.querySelectorAll('.package-item').forEach((el, i) => {
+            el.classList.toggle('active', i === idx);
+        });
+        selectedPkgIdx = idx;
+        updateTotal();
+    }
+
+    function updateTotal() {
+        const pkgs = pkgData[rentalType] || pkgData['day'];
+        const total = pkgs[selectedPkgIdx].price * qty;
+        document.getElementById('totalPrice').textContent = `¥${Math.round(total)}`;
+    }
+
+    document.getElementById('qtyMinus').addEventListener('click', () => {
+        if (qty > 1) { qty--; document.getElementById('qtyNum').textContent = qty; updateTotal(); }
+    });
+    document.getElementById('qtyPlus').addEventListener('click', () => {
+        if (qty < 10) { qty++; document.getElementById('qtyNum').textContent = qty; updateTotal(); }
+    });
+
+    function submitOrder() {
+        const pkgs = pkgData[rentalType] || pkgData['day'];
+        const pkgName = pkgs[selectedPkgIdx].name;
+        const totalPrice = Math.round(pkgs[selectedPkgIdx].price * qty);
+        const today = new Date().toLocaleDateString('zh-CN');
+        // 跳转到订单确认页
+        location.href = `order-confirm.html?bike=${encodeURIComponent(bike.name)}&pkg=${encodeURIComponent(pkgName)}&qty=${qty}&total=${totalPrice}&date=${encodeURIComponent(today)}`;
+    }
+
+    function showToast(msg) {
+        const mask = document.createElement('div');
+        mask.className = 'toast-mask';
+        mask.innerHTML = `<div class="toast-content"><div class="toast-icon">✅</div><div class="toast-text">${msg}</div></div>`;
+        mask.addEventListener('click', () => mask.remove());
+        document.body.appendChild(mask);
+        setTimeout(() => mask.remove(), 2500);
+    }
+
+    init();
+    </script>
+</body>
+</html>

@@ -9,7 +9,8 @@ const NAV_CONFIG = [
  { icon: '👥', label: '俱乐部管理', href: 'clubs.html', id: 'clubs' },
  ]},
  { group: '运营', items: [
- { icon: '👤', label: '用户管理', href: 'users.html', id: 'users' },
+  { icon: '📋', label: '订单管理', href: 'orders.html', id: 'orders', badge: 0 },
+  { icon: '👤', label: '用户管理', href: 'users.html', id: 'users' },
  ]},
 ];
 
@@ -52,16 +53,48 @@ function renderLayout(activeId, breadcrumbText) {
     breadcrumb.innerHTML = `<span class="current">${breadcrumbText}</span>`;
   }
   
-  // Collapse toggle
+  // Collapse toggle — 同时支持桌面(collapsed) 和手机(open)
   const collapseBtn = document.getElementById('collapseBtn');
   if (collapseBtn) {
     collapseBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('collapsed');
-      localStorage.setItem('sidebar_collapsed', sidebar.classList.contains('collapsed'));
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        sidebar.classList.toggle('open');
+        // 手机端展开时添加遮罩层
+        if (sidebar.classList.contains('open')) {
+          let overlay = document.getElementById('sidebarOverlay');
+          if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'sidebarOverlay';
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:199;';
+            overlay.addEventListener('click', () => {
+              sidebar.classList.remove('open');
+              overlay.remove();
+            });
+            document.body.appendChild(overlay);
+          }
+        } else {
+          document.getElementById('sidebarOverlay')?.remove();
+        }
+      } else {
+        sidebar.classList.toggle('collapsed');
+        localStorage.setItem('sidebar_collapsed', sidebar.classList.contains('collapsed'));
+      }
     });
-    if (localStorage.getItem('sidebar_collapsed') === 'true') {
+    // 初始化时恢复桌面端状态
+    if (window.innerWidth > 768 && localStorage.getItem('sidebar_collapsed') === 'true') {
       sidebar.classList.add('collapsed');
     }
+    // 监听窗口大小变化，桌面→手机时清除 collapsed，手机→桌面时清除 open
+    window.addEventListener('resize', () => {
+      if (window.innerWidth <= 768) {
+        sidebar.classList.remove('collapsed');
+        localStorage.removeItem('sidebar_collapsed');
+      } else {
+        sidebar.classList.remove('open');
+        document.getElementById('sidebarOverlay')?.remove();
+      }
+    });
   }
   
   // User dropdown

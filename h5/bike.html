@@ -3,97 +3,437 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>骑行 - 骑行平台</title>
+    <title>车辆租赁</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/bike.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #f0f4f8;
+            height: 100vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 顶部 */
+        .mp-header {
+            height: 44px;
+            background: #1a5f9e;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            color: white;
+            font-size: 17px;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* 页面内容 */
+        .page-content {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 70px;
+        }
+
+        /* 筛选栏 */
+        .filter-bar {
+            display: flex;
+            background: white;
+            padding: 12px 16px;
+            gap: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .filter-item {
+            flex: 1;
+            position: relative;  /* 关键：让下拉菜单相对于此元素定位 */
+        }
+        .filter-btn {
+            width: 100%;
+            padding: 10px 12px;
+            background: #f5f5f5;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #333;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .filter-btn::after {
+            content: '▼';
+            font-size: 9px;
+            color: #999;
+            margin-left: 6px;
+        }
+        .filter-btn.active {
+            border-color: #1a5f9e;
+            color: #1a5f9e;
+            background: #e6f2ff;
+        }
+        .filter-btn.active::after {
+            color: #1a5f9e;
+        }
+
+        /* 下拉菜单 */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 200;
+            display: none;
+            overflow: hidden;
+        }
+        .dropdown-menu.show {
+            display: block;
+        }
+        .dropdown-item {
+            padding: 12px 14px;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        .dropdown-item:active {
+            background: #f5f5f5;
+        }
+        .dropdown-item.selected {
+            color: #1a5f9e;
+            font-weight: 600;
+            background: #e6f2ff;
+        }
+
+        /* 车辆列表 - 和offline.html活动列表一致 */
+        .bike-list { 
+            padding: 12px 16px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+        }
+
+        /* 车辆卡片 - 参考activity-card样式 */
+        .bike-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .bike-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .bike-card-image {
+            position: relative;
+            height: 160px;
+            overflow: hidden;
+        }
+        .bike-card-image .bg {
+            position: absolute;
+            inset: 0;
+        }
+        .bike-card-image .emoji {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 64px;
+        }
+        .bike-card-image .tag {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: white;
+            z-index: 2;
+        }
+        .tag-hot { background: #ff4d4f; }
+        .tag-new { background: #52c41a; }
+        .tag-recommend { background: #f5a623; }
+        .tag-pro { background: #722ed1; }
+
+        .bike-card-content {
+            padding: 14px;
+        }
+        .bike-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        .bike-card-desc {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .bike-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+        }
+        .bike-card-price {
+            color: #f5a623;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .bike-card-price .unit {
+            font-size: 12px;
+            font-weight: normal;
+            color: #999;
+        }
+
+        /* 底部Tab */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: env(safe-area-inset-bottom, 0);
+            z-index: 100;
+        }
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 10px;
+            gap: 2px;
+            text-decoration: none;
+        }
+        .tab-item.active { color: #1a5f9e; }
+        .tab-icon {
+            width: 22px;
+            height: 22px;
+            background: #999;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: white;
+        }
+        .tab-item.active .tab-icon { background: #1a5f9e; }
+    </style>
 </head>
 <body>
     <div class="app">
-        <div class="mp-header">
-            <span style="font-size:14px;">自行车</span>
-        </div>
+        <!-- 顶部 -->
+        <div class="mp-header">车辆租赁</div>
 
         <div class="page-content">
-            <!-- 品牌网格 -->
-            <div class="brand-grid">
-                <div class="brand-card" onclick="location.href='bike-brand.html?brand=trek'">
-                    <div class="brand-card-img trek">TREK</div>
-                    <div class="brand-card-info">
-                        <div class="brand-card-name">TREK 崔克</div>
-                        <div class="brand-card-desc">美国 · 公路/山地/砾石</div>
-                        <div class="brand-card-count">共 6 个系列</div>
+            <!-- 筛选栏 -->
+            <div class="filter-bar">
+                <div class="filter-item">
+                    <div class="filter-btn active" id="catBtn">全部车型</div>
+                    <div class="dropdown-menu" id="catMenu">
+                        <div class="dropdown-item selected" data-val="all">全部车型</div>
+                        <div class="dropdown-item" data-val="mountain">🚵 山地自行车</div>
+                        <div class="dropdown-item" data-val="road">🛣️ 公路自行车</div>
+                        <div class="dropdown-item" data-val="leisure">🌿 休闲自行车</div>
+                        <div class="dropdown-item" data-val="ebike">⚡ 电助力自行车</div>
                     </div>
                 </div>
-                <div class="brand-card" onclick="location.href='bike-brand.html?brand=giant'">
-                    <div class="brand-card-img giant">GIANT</div>
-                    <div class="brand-card-info">
-                        <div class="brand-card-name">GIANT 捷安特</div>
-                        <div class="brand-card-desc">中国台湾 · 公路/山地/城市</div>
-                        <div class="brand-card-count">共 5 个系列</div>
-                    </div>
-                </div>
-                <div class="brand-card" onclick="location.href='bike-brand.html?brand=merida'">
-                    <div class="brand-card-img merida">MERIDA</div>
-                    <div class="brand-card-info">
-                        <div class="brand-card-name">MERIDA 美利达</div>
-                        <div class="brand-card-desc">中国台湾 · 公路/山地/旅行</div>
-                        <div class="brand-card-count">共 4 个系列</div>
-                    </div>
-                </div>
-                <div class="brand-card" onclick="location.href='bike-brand.html?brand=specialized'">
-                    <div class="brand-card-img specialized">S-WORKS</div>
-                    <div class="brand-card-info">
-                        <div class="brand-card-name">Specialized</div>
-                        <div class="brand-card-desc">美国 · 公路/山地/通勤</div>
-                        <div class="brand-card-count">共 6 个系列</div>
-                    </div>
-                </div>
-                <div class="brand-card" onclick="location.href='bike-brand.html?brand=canyon'">
-                    <div class="brand-card-img canyon">CANYON</div>
-                    <div class="brand-card-info">
-                        <div class="brand-card-name">CANYON  Canyon</div>
-                        <div class="brand-card-desc">德国 · 公路/山地/铁三</div>
-                        <div class="brand-card-count">共 5 个系列</div>
-                    </div>
-                </div>
-                <div class="brand-card" onclick="location.href='bike-brand.html?brand=bianchi'">
-                    <div class="brand-card-img bianchi">BIANCHI</div>
-                    <div class="brand-card-info">
-                        <div class="brand-card-name">Bianchi  比安奇</div>
-                        <div class="brand-card-desc">意大利 · 公路/城市</div>
-                        <div class="brand-card-count">共 3 个系列</div>
+                <div class="filter-item">
+                    <div class="filter-btn" id="typeBtn">日租</div>
+                    <div class="dropdown-menu" id="typeMenu">
+                        <div class="dropdown-item selected" data-val="day">日租</div>
+                        <div class="dropdown-item" data-val="hour">小时租</div>
+                        <div class="dropdown-item" data-val="team">团租</div>
+                        <div class="dropdown-item" data-val="distance">里程租</div>
                     </div>
                 </div>
             </div>
 
-            <!-- 我的自行车入口 -->
-            <div style="padding: 8px 16px 4px;">
-                <div class="brand-card" style="display:flex;align-items:center;gap:12px;padding:12px;" onclick="location.href='my-bikes.html'">
-                    <div style="width:50px;height:50px;background:linear-gradient(135deg,#1a5f9e,#2d8bc9);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;">🚴</div>
-                    <div style="flex:1;">
-                        <div style="font-size:14px;font-weight:600;">我的自行车</div>
-                        <div style="font-size:12px;color:#999;">已添加 0 / 2 辆</div>
-                    </div>
-                    <div style="font-size:14px;color:#999;">›</div>
-                </div>
-            </div>
+            <!-- 车辆列表 -->
+            <div class="bike-list" id="bikeList"></div>
         </div>
     </div>
 
-        <!-- 底部Tab -->
+    <!-- 底部Tab -->
     <nav class="tab-bar">
-        <a href="offline.html" class="tab-item" id="tabActivity">
+        <a href="offline.html" class="tab-item">
             <div class="tab-icon">📍</div>
             <span>活动</span>
         </a>
-        <a href="bike.html" class="tab-item" id="tabBike" class="tab-item active">
+        <a href="bike.html" class="tab-item active">
             <div class="tab-icon">🚴</div>
             <span>骑行</span>
         </a>
-        <a href="profile.html" class="tab-item" id="tabProfile">
+        <a href="profile.html" class="tab-item">
             <div class="tab-icon">👤</div>
             <span>我的</span>
         </a>
     </nav>
+
+    <script>
+    const bikesData = [
+        { id: 'mtb-1', name: '山地自行车·基础款', sub: '机械碟刹 | 21速 | 铝合金', cat: 'mountain', emoji: '🚵', color: '#2d8bc9', tag: '热门' },
+        { id: 'mtb-2', name: '山地自行车·进阶款', sub: '油压碟刹 | 27速 | 铝合金', cat: 'mountain', emoji: '🚵', color: '#1a5f9e', tag: '推荐' },
+        { id: 'mtb-3', name: '山地自行车·专业款', sub: '全避震 | 碳纤维 | 30速', cat: 'mountain', emoji: '🚵', color: '#0d3a6e', tag: '专业' },
+        { id: 'road-1', name: '公路自行车·基础款', sub: '铝合金 | 14速 | 城市通勤', cat: 'road', emoji: '🛣️', color: '#e31837', tag: '热门' },
+        { id: 'road-2', name: '公路自行车·进阶款', sub: '碳纤维前叉 | 18速 | 平把设计', cat: 'road', emoji: '🛣️', color: '#c0122e', tag: '推荐' },
+        { id: 'road-3', name: '公路自行车·专业款', sub: '全碳车架 | 气动设计 | 竞赛级', cat: 'road', emoji: '🛣️', color: '#a01026', tag: '专业' },
+        { id: 'leisure-1', name: '休闲自行车·城市款', sub: '链条罩 | 前后车篮 | 7速', cat: 'leisure', emoji: '🌿', color: '#52c41a', tag: '新品' },
+        { id: 'leisure-2', name: '休闲自行车·亲子款', sub: '后座载童 | 稳定可靠 | 7速', cat: 'leisure', emoji: '🌿', color: '#389e0d', tag: '亲子' },
+        { id: 'ebike-1', name: '电助力自行车·通勤款', sub: '续航80km | 36V12Ah', cat: 'ebike', emoji: '⚡', color: '#faad14', tag: '热门' },
+        { id: 'ebike-2', name: '电助力自行车·山地款', sub: '续航100km | 250W电机', cat: 'ebike', emoji: '⚡', color: '#d48806', tag: '推荐' },
+        { id: 'ebike-3', name: '电助力自行车·货运款', sub: '续航60km | 载重150kg', cat: 'ebike', emoji: '⚡', color: '#c68a00', tag: '高级' },
+    ];
+
+    const prices = {
+        'mtb-1': { day: 80, hour: 20, team: 60, distance: 3 },
+        'mtb-2': { day: 150, hour: 35, team: 120, distance: 5 },
+        'mtb-3': { day: 300, hour: 70, team: 250, distance: 8 },
+        'road-1': { day: 120, hour: 30, team: 100, distance: 4 },
+        'road-2': { day: 200, hour: 50, team: 160, distance: 6 },
+        'road-3': { day: 400, hour: 90, team: 320, distance: 10 },
+        'leisure-1': { day: 60, hour: 15, team: 45, distance: 2 },
+        'leisure-2': { day: 80, hour: 20, team: 60, distance: 3 },
+        'ebike-1': { day: 180, hour: 45, team: 150, distance: 5 },
+        'ebike-2': { day: 280, hour: 70, team: 220, distance: 8 },
+        'ebike-3': { day: 350, hour: 80, team: 280, distance: 10 },
+    };
+
+    const typeLabels = { day: '日', hour: '时', team: '人', distance: 'km' };
+    const typeNames = { day: '日租', hour: '小时租', team: '团租', distance: '里程租' };
+
+    let currentCat = 'all';
+    let currentType = 'day';
+
+    function getTagClass(tag) {
+        if (tag === '热门') return 'tag-hot';
+        if (tag === '推荐' || tag === '高级') return 'tag-recommend';
+        if (tag === '专业') return 'tag-pro';
+        return 'tag-new';
+    }
+
+    function renderList() {
+        const filtered = currentCat === 'all' ? bikesData : bikesData.filter(b => b.cat === currentCat);
+
+        document.getElementById('bikeList').innerHTML = filtered.map(bike => {
+            const price = prices[bike.id][currentType];
+            const unit = typeLabels[currentType];
+            return `
+                <div class="bike-card" onclick="location.href='bike-rental.html?id=${bike.id}&type=${currentType}'">
+                    <div class="bike-card-image">
+                        <div class="bg" style="background: linear-gradient(135deg, ${bike.color} 0%, ${bike.color}99 100%)"></div>
+                        <div class="emoji">${bike.emoji}</div>
+                        <span class="tag ${getTagClass(bike.tag)}">${bike.tag}</span>
+                    </div>
+                    <div class="bike-card-content">
+                        <div class="bike-card-title">${bike.name}</div>
+                        <div class="bike-card-desc">${bike.sub}</div>
+                        <div class="bike-card-meta">
+                            <span>📅 ${typeNames[currentType]}</span>
+                            <span class="bike-card-price">¥${price}<span class="unit">/${unit}</span></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // 下拉菜单交互
+    function setupDropdown(btnId, menuId, items, onChange) {
+        const btn = document.getElementById(btnId);
+        const menu = document.getElementById(menuId);
+
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // 关闭其他菜单
+            document.querySelectorAll('.dropdown-menu').forEach(m => {
+                if (m.id !== menuId) m.classList.remove('show');
+            });
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                if (b.id !== btnId) b.classList.remove('active');
+            });
+            // 切换当前菜单
+            menu.classList.toggle('show');
+            btn.classList.toggle('active');
+        });
+
+        items.forEach(item => {
+            const el = menu.querySelector(`[data-val="${item.val}"]`);
+            el.addEventListener('click', () => {
+                // 更新选中状态
+                menu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('selected'));
+                el.classList.add('selected');
+                // 更新按钮文字
+                btn.textContent = item.label;
+                // 关闭菜单
+                menu.classList.remove('show');
+                btn.classList.remove('active');
+                // 触发回调
+                onChange(item.val, item.label);
+            });
+        });
+    }
+
+    // 点击其他地方关闭菜单
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    });
+
+    // 阻止菜单内点击冒泡
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.addEventListener('click', e => e.stopPropagation());
+    });
+
+    setupDropdown('catBtn', 'catMenu', [
+        { val: 'all', label: '全部车型' },
+        { val: 'mountain', label: '🚵 山地' },
+        { val: 'road', label: '🛣️ 公路' },
+        { val: 'leisure', label: '🌿 休闲' },
+        { val: 'ebike', label: '⚡ 电助力' },
+    ], (val) => {
+        currentCat = val;
+        renderList();
+    });
+
+    setupDropdown('typeBtn', 'typeMenu', [
+        { val: 'day', label: '日租' },
+        { val: 'hour', label: '小时租' },
+        { val: 'team', label: '团租' },
+        { val: 'distance', label: '里程租' },
+    ], (val, label) => {
+        currentType = val;
+        renderList();
+    });
+
+    renderList();
+    </script>
 </body>
 </html>

@@ -67,7 +67,7 @@
                 <th>用户名</th>
                 <th>手机号</th>
                 <th>报名次数</th>
-                <th>我的自行车</th>
+                <th>我的订单</th>
                 <th>俱乐部</th>
                 <th>注册时间</th>
                 <th>状态</th>
@@ -176,14 +176,14 @@ function viewUser(id) {
       </div>
       <div style="text-align:center;padding:12px;background:var(--success-bg);border-radius:10px;">
         <div style="font-size:20px;font-weight:800;color:var(--success);">${u.bikes.length}</div>
-        <div style="font-size:12px;color:var(--text3);">我的自行车</div>
+        <div style="font-size:12px;color:var(--text3);">我的订单</div>
       </div>
       <div style="text-align:center;padding:12px;background:var(--warning-bg);border-radius:10px;">
         <div style="font-size:20px;font-weight:800;color:var(--accent);">${u.clubs.length}</div>
         <div style="font-size:12px;color:var(--text3);">加入俱乐部</div>
       </div>
     </div>
-    ${u.bikes.length ? `<div style="margin-bottom:14px;"><div style="font-weight:600;margin-bottom:8px;">🚴 我的自行车</div>${u.bikes.map(b=>`<div style="padding:8px 12px;background:var(--border-light);border-radius:8px;font-size:13px;margin-bottom:4px;">${b}</div>`).join('')}</div>` : ''}
+    ${u.bikes.length ? `<div style="margin-bottom:14px;"><div style="font-weight:600;margin-bottom:8px;">📋 我的订单</div>${u.bikes.map(b=>`<div style="padding:8px 12px;background:var(--border-light);border-radius:8px;font-size:13px;margin-bottom:4px;">${b}</div>`).join('')}</div>` : ''}
     ${u.clubs.length ? `<div><div style="font-weight:600;margin-bottom:8px;">👥 已加入俱乐部</div>${u.clubs.map(c=>`<div style="padding:8px 12px;background:var(--border-light);border-radius:8px;font-size:13px;margin-bottom:4px;">${c}</div>`).join('')}</div>` : ''}`;
   openModal('userModal');
 }

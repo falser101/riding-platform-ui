@@ -3,33 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>我的自行车 - 骑行平台</title>
+    <title>我的订单 - 骑行平台</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/bike.css">
+    <style>
+        .order-list { padding: 12px 16px; }
+        .order-card {
+            background: #fff;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .order-card-header {
+            padding: 12px 14px;
+            background: #fafafa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .order-no { font-size: 12px; color: #999; }
+        .order-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        .status-pending { background: #fff7e6; color: #fa8c16; }
+        .status-paid { background: #e6f7ff; color: #1890ff; }
+        .status-done { background: #f6ffed; color: #52c41a; }
+        .status-cancel { background: #f5f5f5; color: #999; }
+        .order-card-body { padding: 14px; }
+        .order-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 14px;
+        }
+        .order-info-label { color: #999; }
+        .order-info-value { color: #333; text-align: right; flex: 1; margin-left: 12px; }
+        .order-card-footer {
+            padding: 10px 14px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .order-total-label { font-size: 12px; color: #999; }
+        .order-total-value { font-size: 18px; font-weight: 700; color: #ff4d4f; }
+        .order-action-btn {
+            padding: 5px 14px;
+            border-radius: 14px;
+            font-size: 12px;
+            border: 1px solid #1a5f9e;
+            color: #1a5f9e;
+            background: #fff;
+            cursor: pointer;
+        }
+        .my-bikes-empty { text-align: center; padding: 60px 20px; }
+        .my-bikes-empty .icon { font-size: 64px; margin-bottom: 16px; }
+        .my-bikes-empty p { font-size: 15px; color: #333; margin-bottom: 8px; }
+        .my-bikes-empty .sub { font-size: 13px; color: #999; margin-bottom: 20px; }
+        .add-link {
+            display: inline-block;
+            padding: 10px 28px;
+            background: linear-gradient(135deg, #1a5f9e, #2d8bc9);
+            color: #fff;
+            border-radius: 20px;
+            font-size: 14px;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
     <div class="app">
         <div class="page-title-bar">
             <span class="back-btn" onclick="history.back()">‹</span>
-            <h2>我的自行车</h2>
+            <h2>我的订单</h2>
         </div>
 
-        <div class="page-content">
-            <div id="myBikesList">
+        <div class="page-content" id="orderListWrap">
+            <div id="orderList" class="order-list">
                 <!-- 动态渲染 -->
             </div>
 
             <!-- 空状态 -->
             <div class="my-bikes-empty" id="emptyState" style="display:none;">
-                <div class="icon">🚴</div>
-                <p>还没有添加自行车</p>
-                <div style="font-size:12px;color:#999;margin-bottom:16px;">去自行车库探索心仪的车型吧</div>
-                <a href="bike.html" class="add-link">去添加</a>
-            </div>
-
-            <!-- 提示 -->
-            <div id="bikeTip" style="padding:8px 16px 16px;font-size:12px;color:#999;line-height:1.6;">
-                💡 点击车型可查看详情；最多可添加 <strong>2辆</strong> 自行车
+                <div class="icon">📋</div>
+                <p>暂无租赁订单</p>
+                <div class="sub">去车辆库预约心仪的车型吧</div>
+                <a href="bike.html" class="add-link">去预约</a>
             </div>
         </div>
     </div>
@@ -41,58 +105,133 @@
     </nav>
 
     <script>
-    function getMyBikes() {
-        return JSON.parse(localStorage.getItem('myBikes') || '[]');
+    // 订单状态显示映射
+    const statusMap = {
+        pending: { text: '待付款', class: 'status-pending' },
+        paid: { text: '已付款', class: 'status-paid' },
+        done: { text: '已完成', class: 'status-done' },
+        cancel: { text: '已取消', class: 'status-cancel' }
+    };
+
+    // 从 localStorage 读取订单
+    function getOrders() {
+        return JSON.parse(localStorage.getItem('myOrders') || '[]');
     }
-    function saveMyBikes(bikes) {
-        localStorage.setItem('myBikes', JSON.stringify(bikes));
+
+    function saveOrders(orders) {
+        localStorage.setItem('myOrders', JSON.stringify(orders));
+    }
+
+    // 模拟初始化一些订单数据（首次打开时）
+    function initMockOrders() {
+        const existing = getOrders();
+        if (existing.length === 0) {
+            const now = new Date();
+            const mockOrders = [
+                {
+                    id: 'DD20260501001',
+                    bike: '山地自行车·进阶款',
+                    pkg: '2天套餐',
+                    qty: 1,
+                    date: '2026-05-10',
+                    total: 280,
+                    status: 'pending',
+                    contact: '张先生',
+                    phone: '138****1234',
+                    time: '2026-05-01 10:23'
+                },
+                {
+                    id: 'DD20260501002',
+                    bike: '公路自行车·专业款',
+                    pkg: '1天套餐',
+                    qty: 2,
+                    date: '2026-05-05',
+                    total: 400,
+                    status: 'paid',
+                    contact: '李小姐',
+                    phone: '139****5678',
+                    time: '2026-04-28 14:35'
+                },
+                {
+                    id: 'DD20260501003',
+                    bike: '城市通勤车·基础款',
+                    pkg: '7天套餐',
+                    qty: 1,
+                    date: '2026-04-20',
+                    total: 350,
+                    status: 'done',
+                    contact: '王先生',
+                    phone: '137****9012',
+                    time: '2026-04-15 09:18'
+                }
+            ];
+            saveOrders(mockOrders);
+        }
     }
 
     function render() {
-        const bikes = getMyBikes();
-        const list = document.getElementById('myBikesList');
+        const orders = getOrders();
+        const list = document.getElementById('orderList');
         const empty = document.getElementById('emptyState');
-        const tip = document.getElementById('bikeTip');
 
-        if (bikes.length === 0) {
+        if (orders.length === 0) {
             list.style.display = 'none';
             empty.style.display = 'block';
-            tip.style.display = 'none';
             return;
         }
 
         empty.style.display = 'none';
-        list.style.display = 'flex';
-        tip.style.display = 'block';
+        list.style.display = 'block';
 
-        list.className = 'my-bikes-list';
-        list.innerHTML = bikes.map(b => `
-            <div class="my-bike-card">
-                <div class="my-bike-img" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
-                    ${b.emoji}
+        list.innerHTML = orders.map(order => {
+            const st = statusMap[order.status] || statusMap.pending;
+            return `
+            <div class="order-card">
+                <div class="order-card-header">
+                    <span class="order-no">${order.id}</span>
+                    <span class="order-status ${st.class}">${st.text}</span>
                 </div>
-                <div class="my-bike-body">
-                    <div class="my-bike-name">${b.name}</div>
-                    <div class="my-bike-brand">${b.brand} · ${b.year}款</div>
-                    <div class="my-bike-specs">
-                        ${b.type ? '类型：' + b.type + '<br>' : ''}
-                        ${b.price ? '参考价：¥' + b.price.toLocaleString() : ''}
+                <div class="order-card-body">
+                    <div class="order-info-row">
+                        <span class="order-info-label">预约车辆</span>
+                        <span class="order-info-value">${order.bike}</span>
                     </div>
-                    <div class="my-bike-actions">
-                        <button class="btn-detail" onclick="location.href='bike-detail.html?model=${b.id}'">查看详情</button>
-                        <button class="btn-remove" onclick="removeBike('${b.id}')">移除</button>
+                    <div class="order-info-row">
+                        <span class="order-info-label">预约套餐</span>
+                        <span class="order-info-value">${order.pkg}</span>
                     </div>
+                    <div class="order-info-row">
+                        <span class="order-info-label">预约日期</span>
+                        <span class="order-info-value">${order.date}</span>
+                    </div>
+                    <div class="order-info-row">
+                        <span class="order-info-label">联系人</span>
+                        <span class="order-info-value">${order.contact}</span>
+                    </div>
+                    <div class="order-info-row">
+                        <span class="order-info-label">联系电话</span>
+                        <span class="order-info-value">${order.phone}</span>
+                    </div>
+                    <div class="order-info-row">
+                        <span class="order-info-label">下单时间</span>
+                        <span class="order-info-value">${order.time}</span>
+                    </div>
+                </div>
+                <div class="order-card-footer">
+                    <div>
+                        <div class="order-total-label">应付金额</div>
+                        <div class="order-total-value">¥${order.total}</div>
+                    </div>
+                    ${order.status === 'pending' ? '<button class="order-action-btn" onclick="alert(\'请通过微信/支付宝/到店等方式线下付款，付款后联系客服确认\')">等待付款</button>' : ''}
+                    ${order.status === 'paid' ? '<button class="order-action-btn" onclick="alert(\'客服将尽快与您联系确认\')">联系客服</button>' : ''}
+                    ${order.status === 'done' ? '<button class="order-action-btn" onclick="location.href=\'bike.html\'">再次预约</button>' : ''}
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
-    function removeBike(id) {
-        const bikes = getMyBikes().filter(b => b.id !== id);
-        saveMyBikes(bikes);
-        render();
-    }
-
+    initMockOrders();
     render();
     </script>
 </body>

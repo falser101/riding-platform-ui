@@ -39,7 +39,7 @@
             </div>
 
             <!-- 添加按钮 -->
-            <button class="add-to-my-btn" id="addBtn" onclick="addToMyBike()">添加到我的自行车</button>
+            <button class="add-to-my-btn" id="addBtn" onclick="addToMyBike()">添加到我的订单</button>
         </div>
     </div>
 
@@ -132,7 +132,7 @@
         </div>
     `).join('');
 
-    // 读取我的自行车
+    // 读取我的订单
     function getMyBikes() {
         return JSON.parse(localStorage.getItem('myBikes') || '[]');
     }
@@ -147,14 +147,14 @@
         const full = bikes.length >= 2;
         const btn = document.getElementById('addBtn');
         if (exists) {
-            btn.textContent = '✓ 已添加到我的自行车';
+            btn.textContent = '✓ 已添加到我的订单';
             btn.classList.add('added');
             btn.disabled = true;
         } else if (full) {
-            btn.textContent = '我的自行车已满（最多2辆）';
+            btn.textContent = '我的订单已满（最多2辆）';
             btn.disabled = true;
         } else {
-            btn.textContent = `添加到我的自行车（${bikes.length}/2）`;
+            btn.textContent = `添加到我的订单（${bikes.length}/2）`;
             btn.disabled = false;
         }
     }
@@ -162,11 +162,11 @@
     function addToMyBike() {
         const bikes = getMyBikes();
         if (bikes.length >= 2) {
-            showToast('我的自行车已满（最多2辆）');
+            showToast('我的订单已满（最多2辆）');
             return;
         }
         if (bikes.some(b => b.id === modelId)) {
-            showToast('已在我的自行车中');
+            showToast('已在我的订单中');
             return;
         }
         bikes.push({
@@ -181,7 +181,7 @@
         });
         saveMyBikes(bikes);
         updateBtn();
-        showToast('已添加到我的自行车 ✓');
+        showToast('已添加到我的订单 ✓');
     }
 
     function showToast(msg) {
